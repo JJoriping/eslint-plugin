@@ -1,0 +1,22 @@
+{
+  "name": "@jjoriping/eslint-plugin",
+  "version": "0.1.0",
+  "main": "./dist/index.js",
+  "repository": "https://github.com/JJoriping/eslint-plugin.git",
+  "author": "JJoriping <op@jjo.kr>",
+  "license": "MIT",
+  "scripts": {
+    "watch": "tsc --watch"
+  },
+  "devDependencies": {
+    "@types/node": "^18.8.5",
+    "eslint": "^8.25.0",
+    "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "@typescript-eslint/utils": "^5.40.0"
+  },
+  "peerDependencies": {
+    "eslint": "^8.25.0"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "ES3",
+    "moduleResolution": "Node",
+    "skipLibCheck": true,
+
+    "rootDir": "./src",
+    "outDir": "./dist"
+  }
+}
