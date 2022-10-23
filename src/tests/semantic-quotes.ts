@@ -6,14 +6,14 @@ function f(key:string, value:string, comment?:string){
 "x".split('x');
 window['Array'] = Array;
 window['Array']();
-const oFoo = { 'x': 1, [`${1}`]: 2 };
-type OBar = { 'x': "y"|"z" }&{ [key in `${number}`]: key };
+type OBar = { 'o': "y"|"z" }&{ [key in `${number}`]: unknown };
+const oFoo:OBar = { 'o': 'y', [`${1}`]: `${0}` };
 f(`${"x"}`, "y");
 
 // X
 "x".split("x");
 window["Array"] = Array;
 window["Array"]();
-const xFoo = { "x": 1 };
-type XBar = { "x": "y"|'z' };
+type XBar = { "x": { 'y': "1"|"2" }, 'key': string };
+const xFoo:XBar = { 'x': { "y": "1" }, key: 'a' };
 f("x", 'y', 'z');

@@ -307,11 +307,10 @@ export default {
     }],
 
     // Custom rules
+    '@jjoriping/no-unsafe-unquoted-key': "warn",
     '@jjoriping/no-useless-template-literal': "warn",
     '@jjoriping/semantic-quotes': "warn"
 
-    // TODO 키로 쓰이는 문자열은 '', 그 외의 경우 "".
-    // TODO 키 수가 유한하지 않은 타입의 키 참조에 대해 dot-notation 금지. (computed-key 강제)
     // TODO 반복문(for, .map, .reduce, .every, .some, .forEach, .filter, .find, .findIndex)의 반복자 변수 작명법
     // TODO 속성 이름이 type alias에서는 ''에 묶여서, object와 interface에서는 그대로.
     // TODO 리터럴인 '[' '{' 뒤는 띄움. ']' '}' 앞은, 대응하는 여는 괄호가 같은 줄에 있으면 띄우고 아니면 붙임.

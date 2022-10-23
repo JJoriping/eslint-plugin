@@ -87,6 +87,45 @@ exports["default"] = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 }
             });
         };
+        var checkLiteral = function (symbol, node) {
+            if (keyishNamePattern.test(symbol.name)) {
+                assertStringLiteral(node, 'key', 'from-keyish-name');
+                return;
+            }
+            if (valueishNamePattern.test(symbol.name)) {
+                assertStringLiteral(node, 'value', 'from-valueish-name');
+                return;
+            }
+            var type = (0, type_1.getTSTypeBySymbol)(context, symbol, node);
+            var isKey = type.isUnion() && type.types.every(function (w) { return w.isStringLiteral(); });
+            if (isKey) {
+                assertStringLiteral(node, 'key', 'from-keyish-type');
+            }
+            else {
+                assertStringLiteral(node, 'value', 'from-valueish-type');
+            }
+        };
+        var checkObjectExpression = function (types, values) {
+            var typeMap = types.reduce(function (pv, v) {
+                pv[v.name] = v;
+                return pv;
+            }, {});
+            for (var _i = 0, values_1 = values; _i < values_1.length; _i++) {
+                var v = values_1[_i];
+                if (v.type !== ast_spec_1.AST_NODE_TYPES.Property)
+                    continue;
+                if (v.key.type !== ast_spec_1.AST_NODE_TYPES.Literal)
+                    continue;
+                if (typeof v.key.value !== "string")
+                    continue;
+                if (v.value.type === ast_spec_1.AST_NODE_TYPES.Literal) {
+                    checkLiteral(typeMap[v.key.value], v.value);
+                }
+                else if (v.value.type === ast_spec_1.AST_NODE_TYPES.ObjectExpression) {
+                    checkObjectExpression((0, type_1.getTSTypeBySymbol)(context, typeMap[v.key.value], v).getProperties(), v.value.properties);
+                }
+            }
+        };
         (0, type_1.useTypeChecker)(context);
         return {
             'CallExpression, NewExpression': function (node) {
@@ -99,42 +138,37 @@ exports["default"] = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                     var argument = node.arguments[i];
                     if (!argument)
                         continue;
-                    if (argument.type === ast_spec_1.AST_NODE_TYPES.Literal) {
-                        checkLiteral(parameter, argument);
-                    }
-                    else if (argument.type === ast_spec_1.AST_NODE_TYPES.ConditionalExpression) {
-                        for (var _i = 0, _a = [argument.consequent, argument.alternate]; _i < _a.length; _i++) {
-                            var w = _a[_i];
-                            if (w.type !== ast_spec_1.AST_NODE_TYPES.Literal)
-                                continue;
-                            checkLiteral(parameter, w);
-                        }
-                    }
-                }
-                function checkLiteral(parameter, node) {
-                    if (keyishNamePattern.test(parameter.name)) {
-                        assertStringLiteral(node, 'key', 'from-keyish-name');
-                        return;
-                    }
-                    if (valueishNamePattern.test(parameter.name)) {
-                        assertStringLiteral(node, 'value', 'from-valueish-name');
-                        return;
-                    }
-                    var type = (0, type_1.getTSTypeBySymbol)(context, parameter);
-                    var isKey = type.isUnion() && type.types.every(function (w) { return w.isStringLiteral(); });
-                    if (isKey) {
-                        assertStringLiteral(node, 'key', 'from-keyish-type');
-                    }
-                    else {
-                        assertStringLiteral(node, 'value', 'from-valueish-type');
+                    switch (argument.type) {
+                        case ast_spec_1.AST_NODE_TYPES.Literal:
+                            checkLiteral(parameter, argument);
+                            break;
+                        case ast_spec_1.AST_NODE_TYPES.ConditionalExpression:
+                            for (var _i = 0, _a = [argument.consequent, argument.alternate]; _i < _a.length; _i++) {
+                                var w = _a[_i];
+                                if (w.type !== ast_spec_1.AST_NODE_TYPES.Literal)
+                                    continue;
+                                checkLiteral(parameter, w);
+                            }
+                            break;
+                        case ast_spec_1.AST_NODE_TYPES.ObjectExpression:
+                            checkObjectExpression((0, type_1.getTSTypeBySymbol)(context, parameter, node).getProperties(), argument.properties);
+                            break;
                     }
                 }
             },
             MemberExpression: function (node) {
                 assertStringLiteral(node.property, 'key', 'from-keyish-usage');
             },
-            Property: function (node) {
-                assertStringLiteral(node.key, 'key', 'from-keyish-usage');
+            ObjectExpression: function (node) {
+                var _a;
+                switch ((_a = node.parent) === null || _a === void 0 ? void 0 : _a.type) {
+                    case ast_spec_1.AST_NODE_TYPES.VariableDeclarator:
+                        checkObjectExpression((0, type_1.getObjectProperties)(context, node.parent.id), node.properties);
+                        break;
+                    case ast_spec_1.AST_NODE_TYPES.TSAsExpression:
+                        checkObjectExpression((0, type_1.getObjectProperties)(context, node.parent.typeAnnotation), node.properties);
+                        break;
+                }
             },
             TSPropertySignature: function (node) {
                 assertStringLiteral(node.key, 'key', 'from-keyish-usage');

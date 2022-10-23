@@ -1,8 +1,8 @@
-import type { CallExpression, Literal, NewExpression, Node } from "@typescript-eslint/types/dist/generated/ast-spec";
+import type { CallExpression, Literal, NewExpression, Node, ObjectLiteralElement } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { AST_NODE_TYPES } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { ESLintUtils } from "@typescript-eslint/utils";
-import { Symbol } from "typescript";
-import { getFunctionParameters, getTSTypeBySymbol, MessageIdOf, useTypeChecker } from "../utils/type";
+import { Symbol, SyntaxKind } from "typescript";
+import { getFunctionParameters, getObjectProperties, getTSSymbolByNode, getTSTypeByNode, getTSTypeBySymbol, MessageIdOf, useTypeChecker } from "../utils/type";
 
 const QUOTES = [ "'", "\"", "`" ];
 const quotePattern = /^['"`]|['"`]$/g;
@@ -56,6 +56,40 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         }
       });
     };
+    const checkLiteral = (symbol:Symbol, node:Literal) => {
+      if(keyishNamePattern.test(symbol.name)){
+        assertStringLiteral(node, 'key', 'from-keyish-name');
+        return;
+      }
+      if(valueishNamePattern.test(symbol.name)){
+        assertStringLiteral(node, 'value', 'from-valueish-name');
+        return;
+      }
+      const type = getTSTypeBySymbol(context, symbol, node);
+      const isKey = type.isUnion() && type.types.every(w => w.isStringLiteral());
+
+      if(isKey){
+        assertStringLiteral(node, 'key', 'from-keyish-type');
+      }else{
+        assertStringLiteral(node, 'value', 'from-valueish-type');
+      }
+    };
+    const checkObjectExpression = (types:readonly Symbol[], values:ObjectLiteralElement[]) => {
+      const typeMap = types.reduce<Record<string, Symbol>>((pv, v) => {
+        pv[v.name] = v;
+        return pv;
+      }, {});
+      for(const v of values){
+        if(v.type !== AST_NODE_TYPES.Property) continue;
+        if(v.key.type !== AST_NODE_TYPES.Literal) continue;
+        if(typeof v.key.value !== "string") continue;
+        if(v.value.type === AST_NODE_TYPES.Literal){
+          checkLiteral(typeMap[v.key.value], v.value);
+        }else if(v.value.type === AST_NODE_TYPES.ObjectExpression){
+          checkObjectExpression(getTSTypeBySymbol(context, typeMap[v.key.value], v).getProperties(), v.value.properties);
+        }
+      }
+    };
     useTypeChecker(context);
 
     return {
@@ -68,39 +102,34 @@ export default ESLintUtils.RuleCreator.withoutDocs({
           const parameter = parameters[i];
           const argument = node.arguments[i];
           if(!argument) continue;
-          if(argument.type === AST_NODE_TYPES.Literal){
-            checkLiteral(parameter, argument);
-          }else if(argument.type === AST_NODE_TYPES.ConditionalExpression){
-            for(const w of [ argument.consequent, argument.alternate ]){
-              if(w.type !== AST_NODE_TYPES.Literal) continue;
-              checkLiteral(parameter, w);
-            }
-          }
-        }
-        function checkLiteral(parameter:Symbol, node:Literal):void{
-          if(keyishNamePattern.test(parameter.name)){
-            assertStringLiteral(node, 'key', 'from-keyish-name');
-            return;
-          }
-          if(valueishNamePattern.test(parameter.name)){
-            assertStringLiteral(node, 'value', 'from-valueish-name');
-            return;
-          }
-          const type = getTSTypeBySymbol(context, parameter);
-          const isKey = type.isUnion() && type.types.every(w => w.isStringLiteral());
-
-          if(isKey){
-            assertStringLiteral(node, 'key', 'from-keyish-type');
-          }else{
-            assertStringLiteral(node, 'value', 'from-valueish-type');
+          switch(argument.type){
+            case AST_NODE_TYPES.Literal:
+              checkLiteral(parameter, argument);
+              break;
+            case AST_NODE_TYPES.ConditionalExpression:
+              for(const w of [ argument.consequent, argument.alternate ]){
+                if(w.type !== AST_NODE_TYPES.Literal) continue;
+                checkLiteral(parameter, w);
+              }
+              break;
+            case AST_NODE_TYPES.ObjectExpression:
+              checkObjectExpression(getTSTypeBySymbol(context, parameter, node).getProperties(), argument.properties);
+              break;
           }
         }
       },
       MemberExpression: node => {
         assertStringLiteral(node.property, 'key', 'from-keyish-usage');
       },
-      Property: node => {
-        assertStringLiteral(node.key, 'key', 'from-keyish-usage');
+      ObjectExpression: node => {
+        switch(node.parent?.type){
+          case AST_NODE_TYPES.VariableDeclarator:
+            checkObjectExpression(getObjectProperties(context, node.parent.id), node.properties);
+            break;
+          case AST_NODE_TYPES.TSAsExpression:
+            checkObjectExpression(getObjectProperties(context, node.parent.typeAnnotation), node.properties);
+            break;
+        }
       },
       TSPropertySignature: node => {
         assertStringLiteral(node.key, 'key', 'from-keyish-usage');
