@@ -33,7 +33,7 @@ export default {
     'no-empty-pattern': "error",
     'no-ex-assign': "error",
     'no-floating-decimal': "error",
-    'no-implicit-coercion': [ "error", { disallowTemplateShorthand: true } ],
+    'no-implicit-coercion': "error",
     'no-inline-comments': "error",
     'no-invalid-regexp': "error",
     'no-lonely-if': "error",
@@ -307,7 +307,8 @@ export default {
     }],
 
     // Custom rules
-    '@jjoriping/no-useless-template-literal': "warn"
+    '@jjoriping/no-useless-template-literal': "warn",
+    '@jjoriping/semantic-quotes': "warn"
 
     // TODO 키로 쓰이는 문자열은 '', 그 외의 경우 "".
     // TODO 키 수가 유한하지 않은 타입의 키 참조에 대해 dot-notation 금지. (computed-key 강제)

@@ -1,4 +1,5 @@
 "use strict";
+var _a;
 function f(key, value, comment) {
     console.log(key, value);
 }
@@ -6,8 +7,8 @@ function f(key, value, comment) {
 "x".split('x');
 window['Array'] = Array;
 window['Array']();
-var oFoo = { 'x': 1 };
-f('x', "y");
+var oFoo = (_a = { 'x': 1 }, _a["".concat(1)] = 2, _a);
+f("".concat("x"), "y");
 // X
 "x".split("x");
 window["Array"] = Array;
