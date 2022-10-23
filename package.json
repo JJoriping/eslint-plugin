@@ -9,12 +9,18 @@
     "watch": "tsc --watch"
   },
   "devDependencies": {
+    "@jjoriping/eslint-plugin": "link:.",
     "@types/node": "^18.8.5",
-    "eslint": "^8.25.0",
-    "typescript": "^4.8.4"
+    "eslint": "^8.25.0"
   },
   "dependencies": {
-    "@typescript-eslint/utils": "^5.40.0"
+    "@typescript-eslint/eslint-plugin": "^5.40.0",
+    "@typescript-eslint/parser": "^5.40.0",
+    "@typescript-eslint/utils": "^5.40.0",
+    "eslint-plugin-react": "^7.31.10",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-unicorn": "^44.0.2",
+    "typescript": "^4.8.4"
   },
   "peerDependencies": {
     "eslint": "^8.25.0"

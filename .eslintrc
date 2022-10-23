@@ -1,0 +1,11 @@
+{
+  "plugins": [
+    "@jjoriping/eslint-plugin"
+  ],
+  "extends": [
+    "plugin:@jjoriping/eslint-plugin/all"
+  ],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  }
+}
