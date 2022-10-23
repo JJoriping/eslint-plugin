@@ -299,7 +299,9 @@ exports["default"] = {
                     req: false,
                     res: false
                 }
-            }]
+            }],
+        // Custom rules
+        '@jjoriping/no-useless-template-literal': "warn"
         // TODO 키로 쓰이는 문자열은 '', 그 외의 경우 "".
         // TODO 키 수가 유한하지 않은 타입의 키 참조에 대해 dot-notation 금지. (computed-key 강제)
         // TODO 반복문(for, .map, .reduce, .every, .some, .forEach, .filter, .find, .findIndex)의 반복자 변수 작명법
