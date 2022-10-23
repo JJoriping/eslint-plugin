@@ -1,4 +1,4 @@
-import type { CallExpression, NewExpression, Node } from "@typescript-eslint/types/dist/generated/ast-spec";
+import type { CallExpression, NewExpression, Node, FunctionDeclaration } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { ESLintUtils } from "@typescript-eslint/utils";
 import type { RuleContext } from "@typescript-eslint/utils/dist/ts-eslint";
 import { Symbol, Type } from "typescript";
@@ -39,6 +39,10 @@ export function getTSTypeBySymbol(context:Context, target:Symbol, location:Node)
   }
   return type;
 }
+export function typeToString(context:Context, type:Type):string{
+  return context.settings.typeChecker.typeToString(type);
+}
+
 export function getFunctionParameters(
   context:Context,
   callLikeExpression:CallExpression|NewExpression
@@ -49,6 +53,16 @@ export function getFunctionParameters(
 
   if(!signature) return null;
   return signature.parameters;
+}
+export function getFunctionReturnType(context:Context, declaration:FunctionDeclaration):Type{
+  const { service, typeChecker } = context.settings;
+  const tsNode = service.esTreeNodeToTSNodeMap.get(declaration);
+  const signature = typeChecker.getSignatureFromDeclaration(tsNode);
+
+  if(!signature){
+    throw Error(`No signature available from the declaration: ${declaration.id?.name}`);
+  }
+  return typeChecker.getReturnTypeOfSignature(signature);
 }
 export function getObjectProperties(context:Context, node:Node):readonly Symbol[]{
   return getTSTypeByNode(context, node).getProperties();

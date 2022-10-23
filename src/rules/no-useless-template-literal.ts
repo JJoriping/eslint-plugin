@@ -4,7 +4,7 @@ const backtickPattern = /^`|`$/g;
 
 export default ESLintUtils.RuleCreator.withoutDocs({
   meta: {
-    type: "layout",
+    type: "suggestion",
     fixable: "code",
     messages: {
       'default': "Template literal should contain at least one expression."

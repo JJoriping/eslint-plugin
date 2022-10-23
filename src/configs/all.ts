@@ -20,7 +20,6 @@ export default {
   rules: {
     // ESLint rules - errors
     'capitalized-comments': "error",
-    'curly': [ "error", "multi", "consistent" ],
     'default-case-last': "error",
     'eqeqeq': "error",
     'grouped-accessor-pairs': [ "error", "getBeforeSet" ],
@@ -80,7 +79,6 @@ export default {
     'no-useless-escape': "warn",
     'prefer-arrow-callback': "warn",
     'prefer-const': "warn",
-    'prefer-named-capture-group': "warn",
     'require-atomic-updates': "warn",
     'require-yield': "warn",
     'symbol-description': "warn",
@@ -278,7 +276,6 @@ export default {
     'unicorn/no-invalid-remove-event-listener': "warn",
     'unicorn/no-thenable': "error",
     'unicorn/no-this-assignment': "warn",
-    'unicorn/no-unsafe-regex': "warn",
     'unicorn/no-useless-promise-resolve-reject': "warn",
     'unicorn/no-useless-spread': "error",
     'unicorn/numeric-separators-style': [ "error", { onlyIfContainsSeparator: true } ],
@@ -309,14 +306,14 @@ export default {
     // Custom rules
     '@jjoriping/no-unsafe-unquoted-key': "warn",
     '@jjoriping/no-useless-template-literal': "warn",
-    '@jjoriping/semantic-quotes': "warn"
+    '@jjoriping/semantic-quotes': "warn",
+    '@jjoriping/return-type': "warn",
 
     // TODO 반복문(for, .map, .reduce, .every, .some, .forEach, .filter, .find, .findIndex)의 반복자 변수 작명법
     // TODO 속성 이름이 type alias에서는 ''에 묶여서, object와 interface에서는 그대로.
     // TODO 리터럴인 '[' '{' 뒤는 띄움. ']' '}' 앞은, 대응하는 여는 괄호가 같은 줄에 있으면 띄우고 아니면 붙임.
     // TODO 닫는 괄호나 ';' 뿐인 줄과 return 사이는 붙어야 함.
     // TODO 여러 줄 삼항 연산자, 여러 줄 속성/메소드 체이닝 뒤의 ';'은 그 다음 줄에 붙어야 함.
-    // TODO 반환형: 메소드는 반드시 기재, function은 간단한 경우 기재, 화살표 함수는 자유.
     // TODO [구간 1] 정적 필드 -> 정적 게터/세터
     //      [구간 2] -> 정적 화살표 함수 -> 정적 메소드 -> 정적 블록
     //      [구간 3] -> 인스턴스 필드 -> 인스턴스 게터/세터 -> signature

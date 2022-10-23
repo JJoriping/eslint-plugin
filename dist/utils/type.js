@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-exports.getObjectProperties = exports.getFunctionParameters = exports.getTSTypeBySymbol = exports.getTSSymbolByNode = exports.getTSTypeByNode = exports.useTypeChecker = void 0;
+exports.getObjectProperties = exports.getFunctionReturnType = exports.getFunctionParameters = exports.typeToString = exports.getTSTypeBySymbol = exports.getTSSymbolByNode = exports.getTSTypeByNode = exports.useTypeChecker = void 0;
 var utils_1 = require("@typescript-eslint/utils");
 function useTypeChecker(context) {
     context.settings.service = utils_1.ESLintUtils.getParserServices(context);
@@ -32,6 +32,10 @@ function getTSTypeBySymbol(context, target, location) {
     return type;
 }
 exports.getTSTypeBySymbol = getTSTypeBySymbol;
+function typeToString(context, type) {
+    return context.settings.typeChecker.typeToString(type);
+}
+exports.typeToString = typeToString;
 function getFunctionParameters(context, callLikeExpression) {
     var _a = context.settings, service = _a.service, typeChecker = _a.typeChecker;
     var tsNode = service.esTreeNodeToTSNodeMap.get(callLikeExpression);
@@ -41,6 +45,17 @@ function getFunctionParameters(context, callLikeExpression) {
     return signature.parameters;
 }
 exports.getFunctionParameters = getFunctionParameters;
+function getFunctionReturnType(context, declaration) {
+    var _a;
+    var _b = context.settings, service = _b.service, typeChecker = _b.typeChecker;
+    var tsNode = service.esTreeNodeToTSNodeMap.get(declaration);
+    var signature = typeChecker.getSignatureFromDeclaration(tsNode);
+    if (!signature) {
+        throw Error("No signature available from the declaration: ".concat((_a = declaration.id) === null || _a === void 0 ? void 0 : _a.name));
+    }
+    return typeChecker.getReturnTypeOfSignature(signature);
+}
+exports.getFunctionReturnType = getFunctionReturnType;
 function getObjectProperties(context, node) {
     return getTSTypeByNode(context, node).getProperties();
 }

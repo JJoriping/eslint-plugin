@@ -31,7 +31,7 @@ var utils_1 = require("@typescript-eslint/utils");
 var backtickPattern = /^`|`$/g;
 exports["default"] = utils_1.ESLintUtils.RuleCreator.withoutDocs({
     meta: {
-        type: "layout",
+        type: "suggestion",
         fixable: "code",
         messages: {
             'default': "Template literal should contain at least one expression."

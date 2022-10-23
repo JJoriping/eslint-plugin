@@ -31,7 +31,7 @@ var ast_spec_1 = require("@typescript-eslint/types/dist/generated/ast-spec");
 var utils_1 = require("@typescript-eslint/utils");
 var type_1 = require("../utils/type");
 var QUOTES = ["'", "\"", "`"];
-var quotePattern = /^['"`]|['"`]$/g;
+var quotePattern = /^["'`]|["'`]$/g;
 exports["default"] = utils_1.ESLintUtils.RuleCreator.withoutDocs({
     meta: {
         type: "layout",

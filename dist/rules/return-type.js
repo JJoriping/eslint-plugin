@@ -29,44 +29,63 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 var utils_1 = require("@typescript-eslint/utils");
 var type_1 = require("../utils/type");
-var propertyPattern = /\.\s*(\w+)$/;
 exports["default"] = utils_1.ESLintUtils.RuleCreator.withoutDocs({
     meta: {
-        type: "layout",
-        fixable: "code",
+        type: "suggestion",
+        hasSuggestions: true,
         messages: {
-            'default': "Access to the unsafe key `{{key}}` should use a string literal."
+            'for-method': "Method should have a return type annotation.",
+            'for-function': "Function with the simple return type `{{type}}` should have a return type annotation.",
+            'for-function/suggest/0': "Add a return type annotation"
         },
-        schema: []
+        schema: [{
+                type: "object",
+                properties: {
+                    simpleTypePattern: { type: "string" }
+                }
+            }]
     },
-    defaultOptions: [],
-    create: function (context) {
-        var sourceCode = context.getSourceCode();
+    defaultOptions: [{
+            simpleTypePattern: /^\w+(?: [&|] \w+)?$/.source
+        }],
+    create: function (context, _a) {
+        var simpleTypePatternString = _a[0].simpleTypePattern;
+        var simpleTypePattern = new RegExp(simpleTypePatternString);
         (0, type_1.useTypeChecker)(context);
         return {
-            MemberExpression: function (node) {
-                if (node.property.type !== utils_1.AST_NODE_TYPES.Identifier) {
+            MethodDefinition: function (node) {
+                if (node.value.returnType) {
                     return;
                 }
-                var type = (0, type_1.getTSTypeByNode)(context, node.object).getNonNullableType();
-                var properties = context.settings.typeChecker.getPropertyOfType(type, node.property.name);
-                if (properties) {
+                context.report({ node: node, messageId: 'for-method' });
+            },
+            FunctionDeclaration: function (node) {
+                if (node.returnType) {
+                    return;
+                }
+                var returnType = (0, type_1.typeToString)(context, (0, type_1.getFunctionReturnType)(context, node));
+                if (!simpleTypePattern.test(returnType)) {
                     return;
                 }
                 context.report({
-                    node: node.property,
-                    messageId: 'default',
-                    data: { key: node.property.name },
-                    fix: function (fixer) {
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4 /*yield*/, fixer.replaceText(node, sourceCode.getText(node).replace(propertyPattern, "['$1']"))];
-                                case 1:
-                                    _a.sent();
-                                    return [2 /*return*/];
+                    node: node,
+                    messageId: 'for-function',
+                    data: { type: returnType },
+                    suggest: [
+                        {
+                            messageId: 'for-function/suggest/0',
+                            fix: function (fixer) {
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0: return [4 /*yield*/, fixer.insertTextBefore(node.body, ":".concat(returnType.replace(/ /g, "")))];
+                                        case 1:
+                                            _a.sent();
+                                            return [2 /*return*/];
+                                    }
+                                });
                             }
-                        });
-                    }
+                        }
+                    ]
                 });
             }
         };

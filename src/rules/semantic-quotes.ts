@@ -1,11 +1,12 @@
 import type { CallExpression, Literal, NewExpression, Node, ObjectLiteralElement } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { AST_NODE_TYPES } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { ESLintUtils } from "@typescript-eslint/utils";
-import { Symbol, SyntaxKind } from "typescript";
-import { getFunctionParameters, getObjectProperties, getTSSymbolByNode, getTSTypeByNode, getTSTypeBySymbol, MessageIdOf, useTypeChecker } from "../utils/type";
+import type { Symbol } from "typescript";
+import type { MessageIdOf } from "../utils/type";
+import { getFunctionParameters, getObjectProperties, getTSTypeBySymbol, useTypeChecker } from "../utils/type";
 
 const QUOTES = [ "'", "\"", "`" ];
-const quotePattern = /^['"`]|['"`]$/g;
+const quotePattern = /^["'`]|["'`]$/g;
 
 export default ESLintUtils.RuleCreator.withoutDocs({
   meta: {

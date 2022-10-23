@@ -22,7 +22,6 @@ exports["default"] = {
     rules: {
         // ESLint rules - errors
         'capitalized-comments': "error",
-        'curly': ["error", "multi", "consistent"],
         'default-case-last': "error",
         'eqeqeq': "error",
         'grouped-accessor-pairs': ["error", "getBeforeSet"],
@@ -81,7 +80,6 @@ exports["default"] = {
         'no-useless-escape': "warn",
         'prefer-arrow-callback': "warn",
         'prefer-const': "warn",
-        'prefer-named-capture-group': "warn",
         'require-atomic-updates': "warn",
         'require-yield': "warn",
         'symbol-description': "warn",
@@ -273,7 +271,6 @@ exports["default"] = {
         'unicorn/no-invalid-remove-event-listener': "warn",
         'unicorn/no-thenable': "error",
         'unicorn/no-this-assignment': "warn",
-        'unicorn/no-unsafe-regex': "warn",
         'unicorn/no-useless-promise-resolve-reject': "warn",
         'unicorn/no-useless-spread': "error",
         'unicorn/numeric-separators-style': ["error", { onlyIfContainsSeparator: true }],
@@ -303,43 +300,7 @@ exports["default"] = {
         // Custom rules
         '@jjoriping/no-unsafe-unquoted-key': "warn",
         '@jjoriping/no-useless-template-literal': "warn",
-        '@jjoriping/semantic-quotes': "warn"
-        // TODO 반복문(for, .map, .reduce, .every, .some, .forEach, .filter, .find, .findIndex)의 반복자 변수 작명법
-        // TODO 속성 이름이 type alias에서는 ''에 묶여서, object와 interface에서는 그대로.
-        // TODO 리터럴인 '[' '{' 뒤는 띄움. ']' '}' 앞은, 대응하는 여는 괄호가 같은 줄에 있으면 띄우고 아니면 붙임.
-        // TODO 닫는 괄호나 ';' 뿐인 줄과 return 사이는 붙어야 함.
-        // TODO 여러 줄 삼항 연산자, 여러 줄 속성/메소드 체이닝 뒤의 ';'은 그 다음 줄에 붙어야 함.
-        // TODO 반환형: 메소드는 반드시 기재, function은 간단한 경우 기재, 화살표 함수는 자유.
-        // TODO [구간 1] 정적 필드 -> 정적 게터/세터
-        //      [구간 2] -> 정적 화살표 함수 -> 정적 메소드 -> 정적 블록
-        //      [구간 3] -> 인스턴스 필드 -> 인스턴스 게터/세터 -> signature
-        //      [구간 4] -> 생성자 -> 인스턴스 화살표 함수 -> 인스턴스 메소드.
-        //      구간 사이는 빈 줄이 들어감. 각 분류 안에서는 public -> protected -> private. 각 구간 안에서는 정렬.
-        // TODO interface는 method signature, type alias는 그렇지 않도록.
-        // TODO > 변수, 함수(리액트 컴포넌트 제외), 매개 변수, 속성/메소드 이름은 camelCase.
-        // TODO > 상수는 camelCase 또는 UPPER_SNAKE_CASE.
-        // TODO > 클래스, type alias, 인터페이스, 리액트 컴포넌트 이름, 제너릭 이름은 PascalCase.
-        // TODO > 열거형 이름은 PascalCase, 값 이름은 UPPER_SNAKE_CASE.
-        // TODO type alias는 ':' 앞 붙임, 뒤 띄움. 나머지는 ':' 앞뒤 붙임. 타입의 '=>' 앞뒤 띄움.
-        // TODO      한줄식            여러줄식
-        //      `>`  공백 없이 바로    대응하는 `<`와 같은 indent의 빈 줄
-        //      `/>` 공백이 있게 바로  대응하는 `<`와 같은 indent의 빈 줄
-        // TODO JSX 구문 `{x && y}`에서 `x`가 string 또는 number일 수 없음.
-        // TODO ReactNode, JSX.Element, MutableRefObject 및 그 배열은 변수 이름이 `$`로 시작.
-        // TODO 중위 연산자 주위는 띄움. 단, 타입 정의에서의 '&', '|'는 붙임.
-        /*
-         * const example = [ { a: 1, b: () => {
-         *   console.log(true);
-         * }}][0];
-         *
-         * function f({
-         *   x = [ 1 ],
-         *   y: y2 = { a: [
-         *     true
-         *   ]}
-         * }){
-         *   console.log(x, y2);
-         * }
-         */
+        '@jjoriping/semantic-quotes': "warn",
+        '@jjoriping/return-type': "warn"
     }
 };

@@ -23,7 +23,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         if(node.property.type !== AST_NODE_TYPES.Identifier){
           return;
         }
-        const type = getTSTypeByNode(context, node.object);
+        const type = getTSTypeByNode(context, node.object).getNonNullableType();
         const properties = context.settings.typeChecker.getPropertyOfType(type, node.property.name);
         if(properties){
           return;
