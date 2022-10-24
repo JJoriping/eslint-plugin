@@ -129,6 +129,8 @@ export default {
         const: { before: true, after: true },
         from: { before: true, after: true },
         import: { before: true, after: true },
+        in: { before: true, after: true },
+        of: { before: true, after: true },
         return: { before: true, after: true }
       }
     }],
@@ -292,7 +294,7 @@ export default {
     'unicorn/prevent-abbreviations': [ "warn", {
       replacements: {
         db: false,
-        e: { event: false },
+        e: false,
         i: false,
         j: false,
         prev: false,
@@ -304,12 +306,13 @@ export default {
     }],
 
     // Custom rules
+    '@jjoriping/iterator-name': "warn",
     '@jjoriping/no-unsafe-unquoted-key': "warn",
     '@jjoriping/no-useless-template-literal': "warn",
     '@jjoriping/semantic-quotes': "warn",
     '@jjoriping/return-type': "warn",
 
-    // TODO 반복문(for, .map, .reduce, .every, .some, .forEach, .filter, .find, .findIndex)의 반복자 변수 작명법
+    // TODO catch, .catch의 매개 변수 이름은 error
     // TODO 속성 이름이 type alias에서는 ''에 묶여서, object와 interface에서는 그대로.
     // TODO 리터럴인 '[' '{' 뒤는 띄움. ']' '}' 앞은, 대응하는 여는 괄호가 같은 줄에 있으면 띄우고 아니면 붙임.
     // TODO 닫는 괄호나 ';' 뿐인 줄과 return 사이는 붙어야 함.

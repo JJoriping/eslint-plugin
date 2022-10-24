@@ -128,6 +128,8 @@ exports["default"] = {
                     "const": { before: true, after: true },
                     from: { before: true, after: true },
                     "import": { before: true, after: true },
+                    "in": { before: true, after: true },
+                    of: { before: true, after: true },
                     "return": { before: true, after: true }
                 }
             }],
@@ -287,7 +289,7 @@ exports["default"] = {
         'unicorn/prevent-abbreviations': ["warn", {
                 replacements: {
                     db: false,
-                    e: { event: false },
+                    e: false,
                     i: false,
                     j: false,
                     prev: false,
@@ -298,6 +300,7 @@ exports["default"] = {
                 }
             }],
         // Custom rules
+        '@jjoriping/iterator-name': "warn",
         '@jjoriping/no-unsafe-unquoted-key': "warn",
         '@jjoriping/no-useless-template-literal': "warn",
         '@jjoriping/semantic-quotes': "warn",
