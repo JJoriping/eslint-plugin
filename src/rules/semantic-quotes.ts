@@ -57,7 +57,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         }
       });
     };
-    const checkLiteral = (symbol:Symbol, node:Literal) => {
+    const checkLiteral = (symbol:Symbol, node:Literal, ignoreKeyishUnion?:boolean) => {
       if(keyishNamePattern.test(symbol.name)){
         assertStringLiteral(node, 'key', 'from-keyish-name');
         return;
@@ -66,7 +66,11 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         assertStringLiteral(node, 'value', 'from-valueish-name');
         return;
       }
-      const type = getTSTypeBySymbol(context, symbol, node);
+      if(ignoreKeyishUnion){
+        assertStringLiteral(node, 'value', 'from-valueish-usage');
+        return;
+      }
+      const type = getTSTypeBySymbol(context, symbol, node).getNonNullableType();
       const isKey = type.isUnion() && type.types.every(w => w.isStringLiteral());
 
       if(isKey){
@@ -84,10 +88,13 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         if(v.type !== AST_NODE_TYPES.Property) continue;
         if(v.key.type !== AST_NODE_TYPES.Literal) continue;
         if(typeof v.key.value !== "string") continue;
+        const keySymbol = typeMap[v.key.value];
+
+        assertStringLiteral(v.key, 'key', 'from-keyish-usage');
         if(v.value.type === AST_NODE_TYPES.Literal){
-          checkLiteral(typeMap[v.key.value], v.value);
+          checkLiteral(keySymbol, v.value, true);
         }else if(v.value.type === AST_NODE_TYPES.ObjectExpression){
-          checkObjectExpression(getTSTypeBySymbol(context, typeMap[v.key.value], v).getProperties(), v.value.properties);
+          checkObjectExpression(getTSTypeBySymbol(context, keySymbol, v).getProperties(), v.value.properties);
         }
       }
     };

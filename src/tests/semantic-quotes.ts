@@ -1,4 +1,4 @@
-function f(key:string, value:string, comment?:string){
+function f(key:string, value:string, z?:"Z"|"z"):void{
   console.log(key, value);
 }
 
@@ -7,7 +7,7 @@ function f(key:string, value:string, comment?:string){
 window['Array'] = Array;
 window['Array']();
 type OBar = { 'o': "y"|"z" }&{ [key in `${number}`]: unknown };
-const oFoo:OBar = { 'o': 'y', [`${1}`]: `${0}` };
+const oFoo:OBar = { 'o': "y", [`${1}`]: `${0}` };
 f(`${"x"}`, "y");
 
 // X
@@ -15,5 +15,5 @@ f(`${"x"}`, "y");
 window["Array"] = Array;
 window["Array"]();
 type XBar = { "x": { 'y': "1"|"2" }, 'key': string };
-const xFoo:XBar = { 'x': { "y": "1" }, key: 'a' };
-f("x", 'y', 'z');
+const xFoo:XBar = { 'x': { "y": '1' }, key: 'a' };
+f("x", "y", "z");

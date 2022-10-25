@@ -87,7 +87,7 @@ exports["default"] = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 }
             });
         };
-        var checkLiteral = function (symbol, node) {
+        var checkLiteral = function (symbol, node, ignoreKeyishUnion) {
             if (keyishNamePattern.test(symbol.name)) {
                 assertStringLiteral(node, 'key', 'from-keyish-name');
                 return;
@@ -96,7 +96,11 @@ exports["default"] = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 assertStringLiteral(node, 'value', 'from-valueish-name');
                 return;
             }
-            var type = (0, type_1.getTSTypeBySymbol)(context, symbol, node);
+            if (ignoreKeyishUnion) {
+                assertStringLiteral(node, 'value', 'from-valueish-usage');
+                return;
+            }
+            var type = (0, type_1.getTSTypeBySymbol)(context, symbol, node).getNonNullableType();
             var isKey = type.isUnion() && type.types.every(function (w) { return w.isStringLiteral(); });
             if (isKey) {
                 assertStringLiteral(node, 'key', 'from-keyish-type');
@@ -118,11 +122,13 @@ exports["default"] = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                     continue;
                 if (typeof v.key.value !== "string")
                     continue;
+                var keySymbol = typeMap[v.key.value];
+                assertStringLiteral(v.key, 'key', 'from-keyish-usage');
                 if (v.value.type === ast_spec_1.AST_NODE_TYPES.Literal) {
-                    checkLiteral(typeMap[v.key.value], v.value);
+                    checkLiteral(keySymbol, v.value, true);
                 }
                 else if (v.value.type === ast_spec_1.AST_NODE_TYPES.ObjectExpression) {
-                    checkObjectExpression((0, type_1.getTSTypeBySymbol)(context, typeMap[v.key.value], v).getProperties(), v.value.properties);
+                    checkObjectExpression((0, type_1.getTSTypeBySymbol)(context, keySymbol, v).getProperties(), v.value.properties);
                 }
             }
         };

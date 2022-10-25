@@ -312,7 +312,6 @@ export default {
     '@jjoriping/semantic-quotes': "warn",
     '@jjoriping/return-type': "warn",
 
-    // TODO catch, .catch의 매개 변수 이름은 error
     // TODO 속성 이름이 type alias에서는 ''에 묶여서, object와 interface에서는 그대로.
     // TODO 리터럴인 '[' '{' 뒤는 띄움. ']' '}' 앞은, 대응하는 여는 괄호가 같은 줄에 있으면 띄우고 아니면 붙임.
     // TODO 닫는 괄호나 ';' 뿐인 줄과 return 사이는 붙어야 함.
