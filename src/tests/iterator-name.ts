@@ -16,3 +16,5 @@ for(const i of []){
   return 1;
 });
 Object.entries(global).map(([ x, y ]) => []);
+
+export {};

@@ -17,3 +17,5 @@ window["Array"]();
 type XBar = { "x": { 'y': "1"|"2" }, 'key': string };
 const xFoo:XBar = { 'x': { "y": '1' }, key: 'a' };
 f("x", "y", "z");
+
+export {};

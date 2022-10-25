@@ -122,15 +122,19 @@ exports["default"] = {
         '@typescript-eslint/func-call-spacing': ["warn", "never"],
         '@typescript-eslint/indent': ["warn", 2, { SwitchCase: 1 }],
         '@typescript-eslint/keyword-spacing': ["warn", {
-                before: false,
-                after: false,
                 overrides: {
-                    "const": { before: true, after: true },
-                    from: { before: true, after: true },
-                    "import": { before: true, after: true },
-                    "in": { before: true, after: true },
-                    of: { before: true, after: true },
-                    "return": { before: true, after: true }
+                    "catch": { before: false, after: false },
+                    "do": { before: false, after: false },
+                    "else": { before: false, after: false },
+                    "finally": { before: false, after: false },
+                    "for": { before: false, after: false },
+                    "if": { before: false, after: false },
+                    static: { before: false, after: false },
+                    "super": { before: false, after: false },
+                    "switch": { before: false, after: false },
+                    "try": { before: false, after: false },
+                    "while": { before: false, after: false },
+                    "with": { before: false, after: false }
                 }
             }],
         '@typescript-eslint/no-extra-parens': ["warn", "all", { ignoreJSX: "all" }],
@@ -301,6 +305,7 @@ exports["default"] = {
             }],
         // Custom rules
         '@jjoriping/iterator-name': "warn",
+        '@jjoriping/key-quotation-style': "warn",
         '@jjoriping/no-unsafe-unquoted-key': "warn",
         '@jjoriping/no-useless-template-literal': "warn",
         '@jjoriping/semantic-quotes': "warn",

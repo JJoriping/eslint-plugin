@@ -1,5 +1,6 @@
 "use strict";
 var _a;
+exports.__esModule = true;
 function f(key, value, z) {
     console.log(key, value);
 }

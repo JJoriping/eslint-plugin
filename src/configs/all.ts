@@ -123,15 +123,19 @@ export default {
     '@typescript-eslint/func-call-spacing': [ "warn", "never" ],
     '@typescript-eslint/indent': [ "warn", 2, { SwitchCase: 1 } ],
     '@typescript-eslint/keyword-spacing': [ "warn", {
-      before: false,
-      after: false,
       overrides: {
-        const: { before: true, after: true },
-        from: { before: true, after: true },
-        import: { before: true, after: true },
-        in: { before: true, after: true },
-        of: { before: true, after: true },
-        return: { before: true, after: true }
+        catch: { before: false, after: false },
+        do: { before: false, after: false },
+        else: { before: false, after: false },
+        finally: { before: false, after: false },
+        for: { before: false, after: false },
+        if: { before: false, after: false },
+        static: { before: false, after: false },
+        super: { before: false, after: false },
+        switch: { before: false, after: false },
+        try: { before: false, after: false },
+        while: { before: false, after: false },
+        with: { before: false, after: false }
       }
     }],
     '@typescript-eslint/no-extra-parens': [ "warn", "all", { ignoreJSX: "all" } ],
@@ -307,12 +311,12 @@ export default {
 
     // Custom rules
     '@jjoriping/iterator-name': "warn",
+    '@jjoriping/key-quotation-style': "warn",
     '@jjoriping/no-unsafe-unquoted-key': "warn",
     '@jjoriping/no-useless-template-literal': "warn",
     '@jjoriping/semantic-quotes': "warn",
     '@jjoriping/return-type': "warn",
 
-    // TODO 속성 이름이 type alias에서는 ''에 묶여서, object와 interface에서는 그대로.
     // TODO 리터럴인 '[' '{' 뒤는 띄움. ']' '}' 앞은, 대응하는 여는 괄호가 같은 줄에 있으면 띄우고 아니면 붙임.
     // TODO 닫는 괄호나 ';' 뿐인 줄과 return 사이는 붙어야 함.
     // TODO 여러 줄 삼항 연산자, 여러 줄 속성/메소드 체이닝 뒤의 ';'은 그 다음 줄에 붙어야 함.
