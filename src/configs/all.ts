@@ -96,7 +96,7 @@ export default {
     'generator-star-spacing': "warn",
     'implicit-arrow-linebreak': "warn",
     'jsx-quotes': "warn",
-    'key-spacing': [ "warn", { align: "colon" } ],
+    'key-spacing': "warn",
     'linebreak-style': "warn",
     'new-parens': "warn",
     'no-multi-spaces': "warn",
@@ -314,10 +314,10 @@ export default {
     '@jjoriping/key-quotation-style': "warn",
     '@jjoriping/no-unsafe-unquoted-key': "warn",
     '@jjoriping/no-useless-template-literal': "warn",
-    '@jjoriping/semantic-quotes': "warn",
+    '@jjoriping/parenthesis-spacing': "warn",
     '@jjoriping/return-type': "warn",
+    '@jjoriping/semantic-quotes': "warn",
 
-    // TODO 리터럴인 '[' '{' 뒤는 띄움. ']' '}' 앞은, 대응하는 여는 괄호가 같은 줄에 있으면 띄우고 아니면 붙임.
     // TODO 닫는 괄호나 ';' 뿐인 줄과 return 사이는 붙어야 함.
     // TODO 여러 줄 삼항 연산자, 여러 줄 속성/메소드 체이닝 뒤의 ';'은 그 다음 줄에 붙어야 함.
     // TODO [구간 1] 정적 필드 -> 정적 게터/세터

@@ -96,7 +96,7 @@ exports["default"] = {
         'generator-star-spacing': "warn",
         'implicit-arrow-linebreak': "warn",
         'jsx-quotes': "warn",
-        'key-spacing': ["warn", { align: "colon" }],
+        'key-spacing': "warn",
         'linebreak-style': "warn",
         'new-parens': "warn",
         'no-multi-spaces': "warn",
@@ -308,7 +308,8 @@ exports["default"] = {
         '@jjoriping/key-quotation-style': "warn",
         '@jjoriping/no-unsafe-unquoted-key': "warn",
         '@jjoriping/no-useless-template-literal': "warn",
-        '@jjoriping/semantic-quotes': "warn",
-        '@jjoriping/return-type': "warn"
+        '@jjoriping/parenthesis-spacing': "warn",
+        '@jjoriping/return-type': "warn",
+        '@jjoriping/semantic-quotes': "warn"
     }
 };
