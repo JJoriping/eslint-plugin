@@ -88,7 +88,6 @@ export default {
     'array-element-newline': [ "warn", "consistent" ],
     'arrow-parens': [ "warn", "as-needed" ],
     'arrow-spacing': "warn",
-    'comma-style': "warn",
     'computed-property-spacing': "warn",
     'dot-location': [ "warn", "property" ],
     'eol-last': [ "warn", "never" ],
@@ -121,7 +120,19 @@ export default {
     '@typescript-eslint/comma-dangle': [ "warn", "never" ],
     '@typescript-eslint/comma-spacing': "warn",
     '@typescript-eslint/func-call-spacing': [ "warn", "never" ],
-    '@typescript-eslint/indent': [ "warn", 2, { SwitchCase: 1 } ],
+    '@typescript-eslint/indent': [
+      "warn",
+      2,
+      {
+        SwitchCase: 1,
+        // NOTE https://github.com/typescript-eslint/typescript-eslint/issues/1824
+        ignoredNodes: [
+          "TSUnionType",
+          "TSIntersectionType",
+          "TSTypeParameterInstantiation"
+        ]
+      }
+    ],
     '@typescript-eslint/keyword-spacing': [ "warn", {
       overrides: {
         catch: { before: false, after: false },
@@ -312,14 +323,13 @@ export default {
     // Custom rules
     '@jjoriping/iterator-name': "warn",
     '@jjoriping/key-quotation-style': "warn",
+    '@jjoriping/multiline-expression-spacing': "warn",
     '@jjoriping/no-unsafe-unquoted-key': "warn",
     '@jjoriping/no-useless-template-literal': "warn",
     '@jjoriping/parenthesis-spacing': "warn",
     '@jjoriping/return-type': "warn",
-    '@jjoriping/semantic-quotes': "warn",
+    '@jjoriping/semantic-quotes': "warn"
 
-    // TODO 닫는 괄호나 ';' 뿐인 줄과 return 사이는 붙어야 함.
-    // TODO 여러 줄 삼항 연산자, 여러 줄 속성/메소드 체이닝 뒤의 ';'은 그 다음 줄에 붙어야 함.
     // TODO [구간 1] 정적 필드 -> 정적 게터/세터
     //      [구간 2] -> 정적 화살표 함수 -> 정적 메소드 -> 정적 블록
     //      [구간 3] -> 인스턴스 필드 -> 인스턴스 게터/세터 -> signature

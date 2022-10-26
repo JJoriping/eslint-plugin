@@ -28,7 +28,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 var utils_1 = require("@typescript-eslint/utils");
-var closingLinePattern = /^\s*(\)|\}|\]|\/>)/;
+var patterns_1 = require("../utils/patterns");
 exports["default"] = utils_1.ESLintUtils.RuleCreator.withoutDocs({
     meta: {
         type: "layout",
@@ -48,10 +48,10 @@ exports["default"] = utils_1.ESLintUtils.RuleCreator.withoutDocs({
         var sourceCode = context.getSourceCode();
         var isFirstCloserOfLine = function (closer) {
             var line = sourceCode.lines[closer.loc.start.line - 1];
-            var chunk = line.match(closingLinePattern);
+            var chunk = line.match(patterns_1.closingLinePattern);
             if (!chunk)
                 return false;
-            return closer.value === chunk[1];
+            return closer.value === chunk[2];
         };
         var checkLeadingSpace = function (from, messageId) {
             var _a;

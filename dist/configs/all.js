@@ -88,7 +88,6 @@ exports["default"] = {
         'array-element-newline': ["warn", "consistent"],
         'arrow-parens': ["warn", "as-needed"],
         'arrow-spacing': "warn",
-        'comma-style': "warn",
         'computed-property-spacing': "warn",
         'dot-location': ["warn", "property"],
         'eol-last': ["warn", "never"],
@@ -120,7 +119,19 @@ exports["default"] = {
         '@typescript-eslint/comma-dangle': ["warn", "never"],
         '@typescript-eslint/comma-spacing': "warn",
         '@typescript-eslint/func-call-spacing': ["warn", "never"],
-        '@typescript-eslint/indent': ["warn", 2, { SwitchCase: 1 }],
+        '@typescript-eslint/indent': [
+            "warn",
+            2,
+            {
+                SwitchCase: 1,
+                // NOTE https://github.com/typescript-eslint/typescript-eslint/issues/1824
+                ignoredNodes: [
+                    "TSUnionType",
+                    "TSIntersectionType",
+                    "TSTypeParameterInstantiation"
+                ]
+            }
+        ],
         '@typescript-eslint/keyword-spacing': ["warn", {
                 overrides: {
                     "catch": { before: false, after: false },
@@ -306,10 +317,43 @@ exports["default"] = {
         // Custom rules
         '@jjoriping/iterator-name': "warn",
         '@jjoriping/key-quotation-style': "warn",
+        '@jjoriping/multiline-expression-spacing': "warn",
         '@jjoriping/no-unsafe-unquoted-key': "warn",
         '@jjoriping/no-useless-template-literal': "warn",
         '@jjoriping/parenthesis-spacing': "warn",
         '@jjoriping/return-type': "warn",
         '@jjoriping/semantic-quotes': "warn"
+        // TODO 여러 줄 삼항 연산자, 여러 줄 속성/메소드 체이닝 뒤의 ';'은 그 다음 줄에 붙어야 함.
+        // TODO [구간 1] 정적 필드 -> 정적 게터/세터
+        //      [구간 2] -> 정적 화살표 함수 -> 정적 메소드 -> 정적 블록
+        //      [구간 3] -> 인스턴스 필드 -> 인스턴스 게터/세터 -> signature
+        //      [구간 4] -> 생성자 -> 인스턴스 화살표 함수 -> 인스턴스 메소드.
+        //      구간 사이는 빈 줄이 들어감. 각 분류 안에서는 public -> protected -> private. 각 구간 안에서는 정렬.
+        // TODO interface는 method signature, type alias는 그렇지 않도록.
+        // TODO > 변수, 함수(리액트 컴포넌트 제외), 매개 변수, 속성/메소드 이름은 camelCase.
+        // TODO > 상수는 camelCase 또는 UPPER_SNAKE_CASE.
+        // TODO > 클래스, type alias, 인터페이스, 리액트 컴포넌트 이름, 제너릭 이름은 PascalCase.
+        // TODO > 열거형 이름은 PascalCase, 값 이름은 UPPER_SNAKE_CASE.
+        // TODO type alias는 ':' 앞 붙임, 뒤 띄움. 나머지는 ':' 앞뒤 붙임. 타입의 '=>' 앞뒤 띄움.
+        // TODO      한줄식            여러줄식
+        //      `>`  공백 없이 바로    대응하는 `<`와 같은 indent의 빈 줄
+        //      `/>` 공백이 있게 바로  대응하는 `<`와 같은 indent의 빈 줄
+        // TODO JSX 구문 `{x && y}`에서 `x`가 string 또는 number일 수 없음.
+        // TODO ReactNode, JSX.Element, MutableRefObject 및 그 배열은 변수 이름이 `$`로 시작.
+        // TODO 중위 연산자 주위는 띄움. 단, 타입 정의에서의 '&', '|'는 붙임.
+        /*
+         * const example = [ { a: 1, b: () => {
+         *   console.log(true);
+         * }}][0];
+         *
+         * function f({
+         *   x = [ 1 ],
+         *   y: y2 = { a: [
+         *     true
+         *   ]}
+         * }){
+         *   console.log(x, y2);
+         * }
+         */
     }
 };

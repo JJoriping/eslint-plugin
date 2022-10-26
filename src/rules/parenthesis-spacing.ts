@@ -1,8 +1,7 @@
 import type { ArrayExpression, ArrayPattern, Node, ObjectExpression, ObjectPattern, Token } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { ESLintUtils } from "@typescript-eslint/utils";
+import { closingLinePattern } from "../utils/patterns";
 import { MessageIdOf } from "../utils/type";
-
-const closingLinePattern = /^\s*(\)|\}|\]|\/>)/;
 
 export default ESLintUtils.RuleCreator.withoutDocs({
   meta: {
@@ -27,7 +26,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       const chunk = line.match(closingLinePattern);
       if(!chunk) return false;
       
-      return closer.value === chunk[1];
+      return closer.value === chunk[2];
     };
     const checkLeadingSpace = (from:Node, messageId:MessageIdOf<typeof context>) => {
       const [ opener, payload ] = sourceCode.getFirstTokens(from, { count: 2 });
