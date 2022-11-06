@@ -1,5 +1,5 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 // O
 [].map(function (v) { });
 var _loop_1 = function (k, v) {

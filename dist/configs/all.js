@@ -1,6 +1,6 @@
 "use strict";
-exports.__esModule = true;
-exports["default"] = {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = {
     parser: "@typescript-eslint/parser",
     parserOptions: {
         sourceType: "module",
@@ -134,18 +134,18 @@ exports["default"] = {
         ],
         '@typescript-eslint/keyword-spacing': ["warn", {
                 overrides: {
-                    "catch": { before: false, after: false },
-                    "do": { before: false, after: false },
-                    "else": { before: false, after: false },
-                    "finally": { before: false, after: false },
-                    "for": { before: false, after: false },
-                    "if": { before: false, after: false },
+                    catch: { before: false, after: false },
+                    do: { before: false, after: false },
+                    else: { before: false, after: false },
+                    finally: { before: false, after: false },
+                    for: { before: false, after: false },
+                    if: { before: false, after: false },
                     static: { before: false, after: false },
-                    "super": { before: false, after: false },
-                    "switch": { before: false, after: false },
-                    "try": { before: false, after: false },
-                    "while": { before: false, after: false },
-                    "with": { before: false, after: false }
+                    super: { before: false, after: false },
+                    switch: { before: false, after: false },
+                    try: { before: false, after: false },
+                    while: { before: false, after: false },
+                    with: { before: false, after: false }
                 }
             }],
         '@typescript-eslint/no-extra-parens': ["warn", "all", { ignoreJSX: "all" }],
@@ -180,7 +180,7 @@ exports["default"] = {
         '@typescript-eslint/restrict-plus-operands': "error",
         '@typescript-eslint/unbound-method': "error",
         // TSLint rules - warnings
-        '@typescript-eslint/array-type': ["warn", { "default": "array-simple" }],
+        '@typescript-eslint/array-type': ["warn", { default: "array-simple" }],
         '@typescript-eslint/class-literal-property-style': "warn",
         '@typescript-eslint/consistent-generic-constructors': "warn",
         '@typescript-eslint/consistent-type-assertions': ["warn", {
@@ -241,7 +241,7 @@ exports["default"] = {
             {
                 declaration: "ignore",
                 assignment: "ignore",
-                "return": "parens-new-line",
+                return: "parens-new-line",
                 arrow: "parens-new-line",
                 condition: "ignore",
                 logical: "ignore",
@@ -315,6 +315,7 @@ exports["default"] = {
                 }
             }],
         // Custom rules
+        '@jjoriping/declaration-order': "warn",
         '@jjoriping/iterator-name': "warn",
         '@jjoriping/key-quotation-style': "warn",
         '@jjoriping/multiline-expression-spacing': "warn",
@@ -323,12 +324,7 @@ exports["default"] = {
         '@jjoriping/parenthesis-spacing': "warn",
         '@jjoriping/return-type': "warn",
         '@jjoriping/semantic-quotes': "warn"
-        // TODO 여러 줄 삼항 연산자, 여러 줄 속성/메소드 체이닝 뒤의 ';'은 그 다음 줄에 붙어야 함.
-        // TODO [구간 1] 정적 필드 -> 정적 게터/세터
-        //      [구간 2] -> 정적 화살표 함수 -> 정적 메소드 -> 정적 블록
-        //      [구간 3] -> 인스턴스 필드 -> 인스턴스 게터/세터 -> signature
-        //      [구간 4] -> 생성자 -> 인스턴스 화살표 함수 -> 인스턴스 메소드.
-        //      구간 사이는 빈 줄이 들어감. 각 분류 안에서는 public -> protected -> private. 각 구간 안에서는 정렬.
+        // TODO class expression 허용하지 않음
         // TODO interface는 method signature, type alias는 그렇지 않도록.
         // TODO > 변수, 함수(리액트 컴포넌트 제외), 매개 변수, 속성/메소드 이름은 camelCase.
         // TODO > 상수는 camelCase 또는 UPPER_SNAKE_CASE.

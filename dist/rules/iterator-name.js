@@ -1,5 +1,5 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("@typescript-eslint/utils");
 var text_1 = require("../utils/text");
 var type_1 = require("../utils/type");
@@ -18,7 +18,7 @@ var kindTable = {
     'reduce': ["previousValue", "value", "index"],
     'entries': ["entry", "index"]
 };
-exports["default"] = utils_1.ESLintUtils.RuleCreator.withoutDocs({
+exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
     meta: {
         type: "layout",
         messages: {

@@ -26,10 +26,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("@typescript-eslint/utils");
 var simpleNamePattern = /^\w+$/;
-exports["default"] = utils_1.ESLintUtils.RuleCreator.withoutDocs({
+exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
     meta: {
         type: "layout",
         fixable: "code",
@@ -41,9 +41,9 @@ exports["default"] = utils_1.ESLintUtils.RuleCreator.withoutDocs({
         schema: [{
                 type: "object",
                 properties: {
-                    typeAlias: { type: "string", "enum": ["none", "'", "\""] },
-                    object: { type: "string", "enum": ["none", "'", "\""] },
-                    interface: { type: "string", "enum": ["none", "'", "\""] }
+                    typeAlias: { type: "string", enum: ["none", "'", "\""] },
+                    object: { type: "string", enum: ["none", "'", "\""] },
+                    interface: { type: "string", enum: ["none", "'", "\""] }
                 }
             }]
     },

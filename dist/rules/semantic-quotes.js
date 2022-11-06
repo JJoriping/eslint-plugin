@@ -26,13 +26,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var ast_spec_1 = require("@typescript-eslint/types/dist/generated/ast-spec");
 var utils_1 = require("@typescript-eslint/utils");
 var type_1 = require("../utils/type");
 var QUOTES = ["'", "\"", "`"];
 var quotePattern = /^["'`]|["'`]$/g;
-exports["default"] = utils_1.ESLintUtils.RuleCreator.withoutDocs({
+exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
     meta: {
         type: "layout",
         fixable: "code",
@@ -48,7 +48,7 @@ exports["default"] = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 type: "object",
                 properties: {
                     keyishNamePattern: { type: "string" },
-                    valueishNamePattern: { type: "string" }
+                    valueishNamePattern: { type: "string" },
                 }
             }]
     },

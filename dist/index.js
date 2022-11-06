@@ -13,6 +13,6 @@ module.exports = {
         return pv;
     }, {}),
     configs: {
-        all: all_1["default"]
+        all: all_1.default
     }
 };

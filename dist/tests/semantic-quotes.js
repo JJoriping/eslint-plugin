@@ -1,6 +1,6 @@
 "use strict";
 var _a;
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 function f(key, value, z) {
     console.log(key, value);
 }

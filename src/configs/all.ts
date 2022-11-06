@@ -321,6 +321,7 @@ export default {
     }],
 
     // Custom rules
+    '@jjoriping/declaration-order': "warn",
     '@jjoriping/iterator-name': "warn",
     '@jjoriping/key-quotation-style': "warn",
     '@jjoriping/multiline-expression-spacing': "warn",
@@ -330,11 +331,7 @@ export default {
     '@jjoriping/return-type': "warn",
     '@jjoriping/semantic-quotes': "warn"
 
-    // TODO [구간 1] 정적 필드 -> 정적 게터/세터
-    //      [구간 2] -> 정적 화살표 함수 -> 정적 메소드 -> 정적 블록
-    //      [구간 3] -> 인스턴스 필드 -> 인스턴스 게터/세터 -> signature
-    //      [구간 4] -> 생성자 -> 인스턴스 화살표 함수 -> 인스턴스 메소드.
-    //      구간 사이는 빈 줄이 들어감. 각 분류 안에서는 public -> protected -> private. 각 구간 안에서는 정렬.
+    // TODO class expression 허용하지 않음
     // TODO interface는 method signature, type alias는 그렇지 않도록.
     // TODO > 변수, 함수(리액트 컴포넌트 제외), 매개 변수, 속성/메소드 이름은 camelCase.
     // TODO > 상수는 camelCase 또는 UPPER_SNAKE_CASE.

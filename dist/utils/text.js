@@ -1,5 +1,5 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.toOrdinal = void 0;
 var pluralRules = new Intl.PluralRules('en', { type: "ordinal" });
 var suffixes = {

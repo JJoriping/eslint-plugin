@@ -18,7 +18,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
     }]
   },
   defaultOptions: [{
-    simpleTypePattern: /^\w+(?: [&|] \w+)?$/.source
+    simpleTypePattern: /^\w+(?: [&|] \w+)?|\w+<\w+(?:, \w+)?>$/.source
   }],
   create(context, [{ simpleTypePattern: simpleTypePatternString }]){
     const simpleTypePattern = new RegExp(simpleTypePatternString);
@@ -28,6 +28,9 @@ export default ESLintUtils.RuleCreator.withoutDocs({
     return {
       MethodDefinition: node => {
         if(node.value.returnType){
+          return;
+        }
+        if(node.kind === "constructor"){
           return;
         }
         context.report({ node, messageId: 'for-method' });
