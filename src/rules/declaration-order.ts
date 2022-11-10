@@ -1,4 +1,4 @@
-import { ClassElement, Node } from "@typescript-eslint/types/dist/generated/ast-spec";
+import { Node } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
 import { hasEmptyLineBefore } from "../utils/code";
 

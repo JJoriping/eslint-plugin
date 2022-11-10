@@ -316,16 +316,17 @@ exports.default = {
             }],
         // Custom rules
         '@jjoriping/declaration-order': "warn",
+        '@jjoriping/function-type-annotation-style': "warn",
         '@jjoriping/iterator-name': "warn",
         '@jjoriping/key-quotation-style': "warn",
         '@jjoriping/multiline-expression-spacing': "warn",
+        '@jjoriping/no-class-expression': "warn",
         '@jjoriping/no-unsafe-unquoted-key': "warn",
         '@jjoriping/no-useless-template-literal': "warn",
         '@jjoriping/parenthesis-spacing': "warn",
         '@jjoriping/return-type': "warn",
         '@jjoriping/semantic-quotes': "warn"
-        // TODO class expression 허용하지 않음
-        // TODO interface는 method signature, type alias는 그렇지 않도록.
+        // TODO interface 이름 'I대소' 금지. type 이름 'T대소' 금지.
         // TODO > 변수, 함수(리액트 컴포넌트 제외), 매개 변수, 속성/메소드 이름은 camelCase.
         // TODO > 상수는 camelCase 또는 UPPER_SNAKE_CASE.
         // TODO > 클래스, type alias, 인터페이스, 리액트 컴포넌트 이름, 제너릭 이름은 PascalCase.
