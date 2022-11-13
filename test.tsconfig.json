@@ -5,10 +5,10 @@
     "moduleResolution": "Node",
     "skipLibCheck": true,
 
-    "rootDir": "./src",
-    "outDir": "./dist"
+    "rootDir": "./tests",
+    "noEmit": true
   },
   "include": [
-    "src/**/*"
+    "tests/**/*"
   ]
 }

@@ -3,7 +3,7 @@
 for(const [ k, v ] of Object.entries({})){
   [].map(w => console.log(k, v, w));
 }
-for(const [ item ] of []) console.log(item);
+for(const [ item ] of Array()) console.log(item);
 Object.entries(global).map(e => {});
 
 // X

@@ -6,6 +6,6 @@
     "plugin:@jjoriping/eslint-plugin/all"
   ],
   "parserOptions": {
-    "project": "./tsconfig.json"
+    "project": "./test.tsconfig.json"
   }
 }

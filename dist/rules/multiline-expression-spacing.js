@@ -29,6 +29,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("@typescript-eslint/utils");
 var patterns_1 = require("../utils/patterns");
+var code_1 = require("../utils/code");
 exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
     meta: {
         type: "layout",
@@ -44,16 +45,13 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
     defaultOptions: [],
     create: function (context) {
         var sourceCode = context.getSourceCode();
-        var getIntentation = function (line) {
-            return sourceCode.lines[line - 1].match(patterns_1.indentationPattern)[0];
-        };
         var checkExpression = function (node, messageId) {
             var isMultilined = node.loc.start.line !== node.loc.end.line;
             if (!isMultilined) {
                 return;
             }
             var chunk = sourceCode.lines[node.loc.end.line - 1].match(patterns_1.closingLinePattern);
-            if (chunk && getIntentation(node.loc.start.line) === chunk[1]) {
+            if (chunk && (0, code_1.getIndentation)(sourceCode, node.loc.start.line) === chunk[1]) {
                 return;
             }
             var next = sourceCode.getTokenAfter(node);

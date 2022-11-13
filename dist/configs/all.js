@@ -108,6 +108,7 @@ exports.default = {
         'rest-spread-spacing': "warn",
         'semi-spacing': "warn",
         'space-in-parens': "warn",
+        'space-infix-ops': "warn",
         'space-unary-ops': "warn",
         'switch-colon-spacing': "warn",
         'template-curly-spacing': "warn",
@@ -326,7 +327,8 @@ exports.default = {
         '@jjoriping/no-useless-template-literal': "warn",
         '@jjoriping/parenthesis-spacing': "warn",
         '@jjoriping/return-type': "warn",
-        '@jjoriping/semantic-quotes': "warn"
+        '@jjoriping/semantic-quotes': "warn",
+        '@jjoriping/type-operator-spacing': "warn"
         // TODO > 변수, 함수(리액트 컴포넌트 제외), 매개 변수, 속성/메소드 이름은 camelCase.
         // TODO > 상수는 camelCase 또는 UPPER_SNAKE_CASE.
         // TODO > 클래스, type alias, 인터페이스, 리액트 컴포넌트 이름, 제너릭 이름은 PascalCase.
@@ -337,7 +339,6 @@ exports.default = {
         //      `/>` 공백이 있게 바로  대응하는 `<`와 같은 indent의 빈 줄
         // TODO JSX 구문 `{x && y}`에서 `x`가 string 또는 number일 수 없음.
         // TODO ReactNode, JSX.Element, MutableRefObject 및 그 배열은 변수 이름이 `$`로 시작.
-        // TODO 중위 연산자 주위는 띄움. 단, 타입 정의에서의 '&', '|'는 붙임.
         /*
          * const example = [ { a: 1, b: () => {
          *   console.log(true);

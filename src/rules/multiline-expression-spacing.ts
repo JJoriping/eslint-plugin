@@ -1,6 +1,7 @@
 import type { Node } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
-import { closingLinePattern, indentationPattern } from "../utils/patterns";
+import { closingLinePattern } from "../utils/patterns";
+import { getIndentation } from "../utils/code";
 import { MessageIdOf } from "../utils/type";
 
 export default ESLintUtils.RuleCreator.withoutDocs({
@@ -19,16 +20,13 @@ export default ESLintUtils.RuleCreator.withoutDocs({
   create(context){
     const sourceCode = context.getSourceCode();
 
-    const getIntentation = (line:number) => {
-      return sourceCode.lines[line - 1].match(indentationPattern)![0];
-    };
     const checkExpression = (node:Node, messageId:MessageIdOf<typeof context>) => {
       const isMultilined = node.loc.start.line !== node.loc.end.line;
       if(!isMultilined){
         return;
       }
       const chunk = sourceCode.lines[node.loc.end.line - 1].match(closingLinePattern);
-      if(chunk && getIntentation(node.loc.start.line) === chunk[1]){
+      if(chunk && getIndentation(sourceCode, node.loc.start.line) === chunk[1]){
         return;
       }
       const next = sourceCode.getTokenAfter(node);
