@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __generator = (this && this.__generator) || function (thisArg, body) {
     var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
     return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
@@ -29,17 +40,25 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("@typescript-eslint/utils");
 var patterns_1 = require("../utils/patterns");
+var OBJECT_OR_ARRAY_TYPES = [
+    utils_1.AST_NODE_TYPES.ArrayExpression,
+    utils_1.AST_NODE_TYPES.ArrayPattern,
+    utils_1.AST_NODE_TYPES.ObjectExpression,
+    utils_1.AST_NODE_TYPES.ObjectPattern
+];
+var DIRECTION_TABLE = {
+    '[': "after",
+    '{': "after",
+    ']': "before",
+    '}': "before"
+};
 exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
     meta: {
         type: "layout",
         fixable: "whitespace",
         messages: {
-            'after-[': "Spacing required after `[`.",
-            'after-{': "Spacing required after `{`.",
-            'before-]': "Spacing required before `]`.",
-            'before-}': "Spacing required before `}`.",
-            'no-before-]': "No spacing required before `]`.",
-            'no-before-}': "No spacing required before `}`."
+            'should': "Spacing required {{direction}} `{{token}}`.",
+            'should-not': "No spacing required {{direction}} `{{token}}`."
         },
         schema: []
     },
@@ -51,30 +70,47 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             var chunk = line.match(patterns_1.closingLinePattern);
             if (!chunk)
                 return false;
-            return closer.value === chunk[2];
+            return closer.loc.start.column === chunk[0].length - 1;
         };
-        var checkLeadingSpace = function (from, messageId) {
+        var hasOnlyObjectOrArray = function (children) {
+            return children.length === 1 && children[0] !== null && OBJECT_OR_ARRAY_TYPES.includes(children[0].type);
+        };
+        var getMessageIdWithData = function (token, shouldBeSpaced) {
+            var direction = DIRECTION_TABLE[token];
+            return {
+                messageId: shouldBeSpaced ? "should" : "should-not",
+                data: { direction: direction, token: token }
+            };
+        };
+        var checkLeadingSpace = function (from, token, shouldBeSpaced) {
             var _a;
+            if (shouldBeSpaced === void 0) { shouldBeSpaced = false; }
             var _b = sourceCode.getFirstTokens(from, { count: 2 }), opener = _b[0], payload = _b[1];
-            if (payload && ((_a = sourceCode.isSpaceBetween) === null || _a === void 0 ? void 0 : _a.call(sourceCode, opener, payload))) {
+            if (!payload) {
                 return;
             }
-            context.report({
-                node: opener,
-                messageId: messageId,
-                fix: function (fixer) {
+            if (shouldBeSpaced === Boolean((_a = sourceCode.isSpaceBetween) === null || _a === void 0 ? void 0 : _a.call(sourceCode, opener, payload))) {
+                return;
+            }
+            context.report(__assign(__assign({ node: opener }, getMessageIdWithData(token, shouldBeSpaced)), { fix: function (fixer) {
                     return __generator(this, function (_a) {
                         switch (_a.label) {
-                            case 0: return [4 /*yield*/, fixer.insertTextAfter(opener, " ")];
+                            case 0:
+                                if (!shouldBeSpaced) return [3 /*break*/, 2];
+                                return [4 /*yield*/, fixer.insertTextAfter(opener, " ")];
                             case 1:
                                 _a.sent();
-                                return [2 /*return*/];
+                                return [3 /*break*/, 4];
+                            case 2: return [4 /*yield*/, fixer.removeRange([opener.range[1], payload.range[0]])];
+                            case 3:
+                                _a.sent();
+                                _a.label = 4;
+                            case 4: return [2 /*return*/];
                         }
                     });
-                }
-            });
+                } }));
         };
-        var checkTrailingSpace = function (from, messageId, shouldBeSpaced) {
+        var checkTrailingSpace = function (from, token, shouldBeSpaced) {
             var _a;
             if (shouldBeSpaced === void 0) { shouldBeSpaced = false; }
             var _b = sourceCode.getLastTokens(from, { count: 2 }), payload = _b[0], closer = _b[1];
@@ -87,10 +123,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             if (shouldBeSpaced === Boolean((_a = sourceCode.isSpaceBetween) === null || _a === void 0 ? void 0 : _a.call(sourceCode, payload, closer))) {
                 return;
             }
-            context.report({
-                node: closer,
-                messageId: messageId,
-                fix: function (fixer) {
+            context.report(__assign(__assign({ node: closer }, getMessageIdWithData(token, shouldBeSpaced)), { fix: function (fixer) {
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
@@ -106,32 +139,35 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                             case 4: return [2 /*return*/];
                         }
                     });
-                }
-            });
+                } }));
         };
         return {
             'ArrayExpression, ArrayPattern': function (node) {
                 if (!node.elements.length) {
                     return;
                 }
-                checkLeadingSpace(node, 'after-[');
-                if (node.loc.start.line === node.loc.end.line) {
-                    checkTrailingSpace(node, 'before-]', true);
+                var isMultiline = node.loc.start.line !== node.loc.end.line;
+                var only = !isMultiline && hasOnlyObjectOrArray(node.elements);
+                checkLeadingSpace(node, '[', !only);
+                if (isMultiline) {
+                    checkTrailingSpace(node, ']', false);
                 }
                 else {
-                    checkTrailingSpace(node, 'no-before-]', false);
+                    checkTrailingSpace(node, ']', !only);
                 }
             },
             'ObjectExpression, ObjectPattern': function (node) {
                 if (!node.properties.length) {
                     return;
                 }
-                checkLeadingSpace(node, 'after-{');
-                if (node.loc.start.line === node.loc.end.line) {
-                    checkTrailingSpace(node, 'before-}', true);
+                var isMultiline = node.loc.start.line !== node.loc.end.line;
+                var only = !isMultiline && hasOnlyObjectOrArray(node.properties);
+                checkLeadingSpace(node, '{', !only);
+                if (isMultiline) {
+                    checkTrailingSpace(node, '}', false);
                 }
                 else {
-                    checkTrailingSpace(node, 'no-before-}', false);
+                    checkTrailingSpace(node, '}', !only);
                 }
             }
         };

@@ -46,8 +46,8 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
     create: function (context) {
         var sourceCode = context.getSourceCode();
         var checkExpression = function (node, messageId) {
-            var isMultilined = node.loc.start.line !== node.loc.end.line;
-            if (!isMultilined) {
+            var isMultiline = node.loc.start.line !== node.loc.end.line;
+            if (!isMultiline) {
                 return;
             }
             var chunk = sourceCode.lines[node.loc.end.line - 1].match(patterns_1.closingLinePattern);

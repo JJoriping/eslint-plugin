@@ -1,19 +1,27 @@
 import type { ArrayExpression, ArrayPattern, Node, ObjectExpression, ObjectPattern, Token } from "@typescript-eslint/types/dist/generated/ast-spec";
-import { ESLintUtils } from "@typescript-eslint/utils";
+import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
 import { closingLinePattern } from "../utils/patterns";
-import { MessageIdOf } from "../utils/type";
+
+const OBJECT_OR_ARRAY_TYPES = [
+  AST_NODE_TYPES.ArrayExpression,
+  AST_NODE_TYPES.ArrayPattern,
+  AST_NODE_TYPES.ObjectExpression,
+  AST_NODE_TYPES.ObjectPattern
+];
+const DIRECTION_TABLE:Record<string, string> = {
+  '[': "after",
+  '{': "after",
+  ']': "before",
+  '}': "before"
+};
 
 export default ESLintUtils.RuleCreator.withoutDocs({
   meta: {
     type: "layout",
     fixable: "whitespace",
     messages: {
-      'after-[': "Spacing required after `[`.",
-      'after-{': "Spacing required after `{`.",
-      'before-]': "Spacing required before `]`.",
-      'before-}': "Spacing required before `}`.",
-      'no-before-]': "No spacing required before `]`.",
-      'no-before-}': "No spacing required before `}`."
+      'should': "Spacing required {{direction}} `{{token}}`.",
+      'should-not': "No spacing required {{direction}} `{{token}}`."
     },
     schema: []
   },
@@ -26,22 +34,40 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       const chunk = line.match(closingLinePattern);
       if(!chunk) return false;
       
-      return closer.value === chunk[2];
+      return closer.loc.start.column === chunk[0].length - 1;
     };
-    const checkLeadingSpace = (from:Node, messageId:MessageIdOf<typeof context>) => {
+    const hasOnlyObjectOrArray = (children:Array<Node|null>) => {
+      return children.length === 1 && children[0] !== null && OBJECT_OR_ARRAY_TYPES.includes(children[0].type);
+    };
+    const getMessageIdWithData = (token:string, shouldBeSpaced:boolean) => {
+      const direction = DIRECTION_TABLE[token];
+
+      return {
+        messageId: shouldBeSpaced ? "should" as const : "should-not" as const,
+        data: { direction, token }
+      };
+    };
+    const checkLeadingSpace = (from:Node, token:string, shouldBeSpaced:boolean = false) => {
       const [ opener, payload ] = sourceCode.getFirstTokens(from, { count: 2 });
-      if(payload && sourceCode.isSpaceBetween?.(opener, payload)){
+      if(!payload){
+        return;
+      }
+      if(shouldBeSpaced === Boolean(sourceCode.isSpaceBetween?.(opener, payload))){
         return;
       }
       context.report({
         node: opener,
-        messageId,
+        ...getMessageIdWithData(token, shouldBeSpaced),
         *fix(fixer){
-          yield fixer.insertTextAfter(opener, " ");
+          if(shouldBeSpaced){
+            yield fixer.insertTextAfter(opener, " ");
+          }else{
+            yield fixer.removeRange([ opener.range[1], payload.range[0] ]);
+          }
         }
       });
     };
-    const checkTrailingSpace = (from:Node, messageId:MessageIdOf<typeof context>, shouldBeSpaced:boolean = false) => {
+    const checkTrailingSpace = (from:Node, token:string, shouldBeSpaced:boolean = false) => {
       const [ payload, closer ] = sourceCode.getLastTokens(from, { count: 2 });
       if(!payload){
         return;
@@ -54,7 +80,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       }
       context.report({
         node: closer,
-        messageId,
+        ...getMessageIdWithData(token, shouldBeSpaced),
         *fix(fixer){
           if(shouldBeSpaced){
             yield fixer.insertTextBefore(closer, " ");
@@ -70,22 +96,28 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         if(!node.elements.length){
           return;
         }
-        checkLeadingSpace(node, 'after-[');
-        if(node.loc.start.line === node.loc.end.line){
-          checkTrailingSpace(node, 'before-]', true);
+        const isMultiline = node.loc.start.line !== node.loc.end.line;
+        const only = !isMultiline && hasOnlyObjectOrArray(node.elements);
+
+        checkLeadingSpace(node, '[', !only);
+        if(isMultiline){
+          checkTrailingSpace(node, ']', false);
         }else{
-          checkTrailingSpace(node, 'no-before-]', false);
+          checkTrailingSpace(node, ']', !only);
         }
       },
       'ObjectExpression, ObjectPattern': (node:ObjectExpression|ObjectPattern) => {
         if(!node.properties.length){
           return;
         }
-        checkLeadingSpace(node, 'after-{');
-        if(node.loc.start.line === node.loc.end.line){
-          checkTrailingSpace(node, 'before-}', true);
+        const isMultiline = node.loc.start.line !== node.loc.end.line;
+        const only = !isMultiline && hasOnlyObjectOrArray(node.properties);
+
+        checkLeadingSpace(node, '{', !only);
+        if(isMultiline){
+          checkTrailingSpace(node, '}', false);
         }else{
-          checkTrailingSpace(node, 'no-before-}', false);
+          checkTrailingSpace(node, '}', !only);
         }
       }
     };

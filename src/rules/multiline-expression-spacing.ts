@@ -21,8 +21,8 @@ export default ESLintUtils.RuleCreator.withoutDocs({
     const sourceCode = context.getSourceCode();
 
     const checkExpression = (node:Node, messageId:MessageIdOf<typeof context>) => {
-      const isMultilined = node.loc.start.line !== node.loc.end.line;
-      if(!isMultilined){
+      const isMultiline = node.loc.start.line !== node.loc.end.line;
+      if(!isMultiline){
         return;
       }
       const chunk = sourceCode.lines[node.loc.end.line - 1].match(closingLinePattern);
