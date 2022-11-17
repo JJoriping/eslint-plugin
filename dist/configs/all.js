@@ -330,7 +330,7 @@ exports.default = {
         '@jjoriping/semantic-quotes': "warn",
         '@jjoriping/type-colon-spacing': "warn",
         '@jjoriping/type-operator-spacing': "warn",
-        '@jjoriping/variable-name': "warn"
+        '@jjoriping/variable-case': "warn"
         // TODO      한줄식            여러줄식
         //      `>`  공백 없이 바로    대응하는 `<`와 같은 indent의 빈 줄
         //      `/>` 공백이 있게 바로  대응하는 `<`와 같은 indent의 빈 줄
