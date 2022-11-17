@@ -330,13 +330,13 @@ export default {
     '@jjoriping/no-type-name-affix': "warn",
     '@jjoriping/no-unsafe-unquoted-key': "warn",
     '@jjoriping/no-useless-template-literal': "warn",
+    '@jjoriping/one-exported-react-component': "warn",
     '@jjoriping/parenthesis-spacing': "warn",
     '@jjoriping/return-type': "warn",
     '@jjoriping/semantic-quotes': "warn",
     '@jjoriping/type-operator-spacing': "warn",
     '@jjoriping/variable-name': "warn"
 
-    // TODO export되는 리액트 컴포넌트는 한 파일에 한 개.
     // TODO type alias는 ':' 앞 붙임, 뒤 띄움. 나머지는 ':' 앞뒤 붙임. 타입의 '=>' 앞뒤 띄움.
     // TODO      한줄식            여러줄식
     //      `>`  공백 없이 바로    대응하는 `<`와 같은 indent의 빈 줄

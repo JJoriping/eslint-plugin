@@ -1,9 +1,9 @@
-import type { Identifier, Node, FunctionLike } from "@typescript-eslint/types/dist/generated/ast-spec";
+import type { FunctionLike, Identifier, Node } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
 import { JSONSchema4 } from "@typescript-eslint/utils/dist/json-schema";
+import type { Type } from "typescript";
 import { camelCasePattern, pascalCasePattern, upperSnakeCasePattern } from "../utils/patterns";
-import { getFunctionReturnType, getTSTypeByNode, typeToString, useTypeChecker } from "../utils/type";
-import type { SignatureKind, Type } from "typescript";
+import { getTSTypeByNode, isReactComponent, useTypeChecker } from "../utils/type";
 
 const CASE_TABLE = {
   'camelCase': camelCasePattern,
@@ -72,22 +72,12 @@ export default ESLintUtils.RuleCreator.withoutDocs({
   }],
   create(context, [{ cases, exceptions }]){
     const isConstructible = (type:Type) => type.getConstructSignatures().length > 0;
-    const isReactComponent = (type:Type) => {
-      const callSignatures = type.getCallSignatures();
-      if(!callSignatures.length) return false;
-      const returnType = context.settings.typeChecker.getReturnTypeOfSignature(callSignatures[0]).getNonNullableType();
-      const returnTypeSymbol = returnType.getSymbol();
-      if(!returnTypeSymbol) return false;
-      const returnTypeName =  context.settings.typeChecker.getFullyQualifiedName(returnTypeSymbol);
-
-      return returnTypeName === "React.ReactElement";
-    };
 
     const getSemanticType = (node:Identifier):null|keyof typeof cases => {
       const tsType = getTSTypeByNode(context, node).getNonNullableType();
 
       if(isConstructible(tsType)) return 'constructible';
-      if(isReactComponent(tsType)) return 'reactComponent';
+      if(isReactComponent(context, tsType)) return 'reactComponent';
       return null;
     };
     const checkCase = (type:keyof typeof cases, node:Node) => {

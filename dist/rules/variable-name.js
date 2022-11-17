@@ -70,22 +70,11 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
     create: function (context, _a) {
         var _b = _a[0], cases = _b.cases, exceptions = _b.exceptions;
         var isConstructible = function (type) { return type.getConstructSignatures().length > 0; };
-        var isReactComponent = function (type) {
-            var callSignatures = type.getCallSignatures();
-            if (!callSignatures.length)
-                return false;
-            var returnType = context.settings.typeChecker.getReturnTypeOfSignature(callSignatures[0]).getNonNullableType();
-            var returnTypeSymbol = returnType.getSymbol();
-            if (!returnTypeSymbol)
-                return false;
-            var returnTypeName = context.settings.typeChecker.getFullyQualifiedName(returnTypeSymbol);
-            return returnTypeName === "React.ReactElement";
-        };
         var getSemanticType = function (node) {
             var tsType = (0, type_1.getTSTypeByNode)(context, node).getNonNullableType();
             if (isConstructible(tsType))
                 return 'constructible';
-            if (isReactComponent(tsType))
+            if ((0, type_1.isReactComponent)(context, tsType))
                 return 'reactComponent';
             return null;
         };

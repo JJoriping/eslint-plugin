@@ -67,3 +67,14 @@ export function getFunctionReturnType(context:Context, declaration:FunctionDecla
 export function getObjectProperties(context:Context, node:Node):readonly Symbol[]{
   return getTSTypeByNode(context, node).getProperties();
 }
+
+export function isReactComponent(context:Context, type:Type):boolean{
+  const callSignatures = type.getCallSignatures();
+  if(!callSignatures.length) return false;
+  const returnType = context.settings.typeChecker.getReturnTypeOfSignature(callSignatures[0]).getNonNullableType();
+  const returnTypeSymbol = returnType.getSymbol();
+  if(!returnTypeSymbol) return false;
+  const returnTypeName =  context.settings.typeChecker.getFullyQualifiedName(returnTypeSymbol);
+
+  return returnTypeName === "React.ReactElement";
+}
