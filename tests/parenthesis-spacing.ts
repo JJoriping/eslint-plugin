@@ -18,5 +18,13 @@ console.log(
     x: 2
   }])
 );
+function x({
+  foo = [1],
+  bar: baz = {a: [
+    true
+  ] }
+}):void{
+  console.log(foo, baz);
+}
 
 export {};

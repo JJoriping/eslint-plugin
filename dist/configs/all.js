@@ -328,27 +328,13 @@ exports.default = {
         '@jjoriping/parenthesis-spacing': "warn",
         '@jjoriping/return-type': "warn",
         '@jjoriping/semantic-quotes': "warn",
+        '@jjoriping/type-colon-spacing': "warn",
         '@jjoriping/type-operator-spacing': "warn",
         '@jjoriping/variable-name': "warn"
-        // TODO type alias는 ':' 앞 붙임, 뒤 띄움. 나머지는 ':' 앞뒤 붙임. 타입의 '=>' 앞뒤 띄움.
         // TODO      한줄식            여러줄식
         //      `>`  공백 없이 바로    대응하는 `<`와 같은 indent의 빈 줄
         //      `/>` 공백이 있게 바로  대응하는 `<`와 같은 indent의 빈 줄
         // TODO JSX 구문 `{x && y}`에서 `x`가 string 또는 number일 수 없음.
         // TODO ReactNode, JSX.Element, MutableRefObject 및 그 배열은 변수 이름이 `$`로 시작.
-        /*
-         * const example = [ { a: 1, b: () => {
-         *   console.log(true);
-         * }}][0];
-         *
-         * function f({
-         *   x = [ 1 ],
-         *   y: y2 = { a: [
-         *     true
-         *   ]}
-         * }){
-         *   console.log(x, y2);
-         * }
-         */
     }
 };

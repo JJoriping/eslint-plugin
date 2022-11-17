@@ -8,6 +8,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
     fixable: "whitespace",
     messages: {
       'default': "Type operator `{{operator}}` should not be spaced in single-line style.",
+      'in-arrow-function': "Spacing required around `=>`.",
       'in-multiline': "Type operator `{{operator}}` should be spaced in multiline style.",
       'in-multiline-ending': "Line cannot be ended with `{{operator}}`.",
       'in-multiline-indent': "Line starting with a type operator should be indented."
@@ -19,6 +20,27 @@ export default ESLintUtils.RuleCreator.withoutDocs({
     const sourceCode = context.getSourceCode();
     
     return {
+      TSFunctionType: node => {
+        if(!node.returnType){
+          return;
+        }
+        const [ arrow, after ] = sourceCode.getFirstTokens(node.returnType, { count: 2 });
+        const before = sourceCode.getTokenBefore(arrow);
+        const hasSpaceBefore = before && sourceCode.isSpaceBetween?.(before, arrow);
+        const hasSpaceAfter = sourceCode.isSpaceBetween?.(arrow, after);
+        
+        if(hasSpaceBefore && hasSpaceAfter){
+          return;
+        }
+        context.report({
+          node: arrow,
+          messageId: "in-arrow-function",
+          *fix(fixer){
+            if(!hasSpaceBefore) yield fixer.insertTextBefore(arrow, " ");
+            if(!hasSpaceAfter) yield fixer.insertTextAfter(arrow, " ");
+          }
+        });
+      },
       'TSUnionType, TSIntersectionType': (node:TSUnionType|TSIntersectionType) => {
         for(let i = 0; i < node.types.length - 1; i++){
           const a = node.types[i];

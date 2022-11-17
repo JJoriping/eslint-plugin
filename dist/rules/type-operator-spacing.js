@@ -35,6 +35,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
         fixable: "whitespace",
         messages: {
             'default': "Type operator `{{operator}}` should not be spaced in single-line style.",
+            'in-arrow-function': "Spacing required around `=>`.",
             'in-multiline': "Type operator `{{operator}}` should be spaced in multiline style.",
             'in-multiline-ending': "Line cannot be ended with `{{operator}}`.",
             'in-multiline-indent': "Line starting with a type operator should be indented."
@@ -45,6 +46,42 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
     create: function (context) {
         var sourceCode = context.getSourceCode();
         return {
+            TSFunctionType: function (node) {
+                var _a, _b;
+                if (!node.returnType) {
+                    return;
+                }
+                var _c = sourceCode.getFirstTokens(node.returnType, { count: 2 }), arrow = _c[0], after = _c[1];
+                var before = sourceCode.getTokenBefore(arrow);
+                var hasSpaceBefore = before && ((_a = sourceCode.isSpaceBetween) === null || _a === void 0 ? void 0 : _a.call(sourceCode, before, arrow));
+                var hasSpaceAfter = (_b = sourceCode.isSpaceBetween) === null || _b === void 0 ? void 0 : _b.call(sourceCode, arrow, after);
+                if (hasSpaceBefore && hasSpaceAfter) {
+                    return;
+                }
+                context.report({
+                    node: arrow,
+                    messageId: "in-arrow-function",
+                    fix: function (fixer) {
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    if (!!hasSpaceBefore) return [3 /*break*/, 2];
+                                    return [4 /*yield*/, fixer.insertTextBefore(arrow, " ")];
+                                case 1:
+                                    _a.sent();
+                                    _a.label = 2;
+                                case 2:
+                                    if (!!hasSpaceAfter) return [3 /*break*/, 4];
+                                    return [4 /*yield*/, fixer.insertTextAfter(arrow, " ")];
+                                case 3:
+                                    _a.sent();
+                                    _a.label = 4;
+                                case 4: return [2 /*return*/];
+                            }
+                        });
+                    }
+                });
+            },
             'TSUnionType, TSIntersectionType': function (node) {
                 var _a, _b;
                 var _loop_1 = function (i) {
