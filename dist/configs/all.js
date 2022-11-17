@@ -253,7 +253,6 @@ exports.default = {
         'react/no-arrow-function-lifecycle': "error",
         'react/no-children-prop': "error",
         'react/no-danger-with-children': "error",
-        'react/no-multi-comp': "warn",
         'react/no-redundant-should-component-update': "warn",
         'react/no-string-refs': "error",
         'react/no-this-in-sfc': "error",
@@ -328,11 +327,9 @@ exports.default = {
         '@jjoriping/parenthesis-spacing': "warn",
         '@jjoriping/return-type': "warn",
         '@jjoriping/semantic-quotes': "warn",
-        '@jjoriping/type-operator-spacing': "warn"
-        // TODO > 변수, 함수(리액트 컴포넌트 제외), 매개 변수, 속성/메소드 이름은 camelCase.
-        // TODO > 상수는 camelCase 또는 UPPER_SNAKE_CASE.
-        // TODO > 클래스, type alias, 인터페이스, 리액트 컴포넌트 이름, 제너릭 이름은 PascalCase.
-        // TODO > 열거형 이름은 PascalCase, 값 이름은 UPPER_SNAKE_CASE.
+        '@jjoriping/type-operator-spacing': "warn",
+        '@jjoriping/variable-name': "warn"
+        // TODO export되는 리액트 컴포넌트는 한 파일에 한 개.
         // TODO type alias는 ':' 앞 붙임, 뒤 띄움. 나머지는 ':' 앞뒤 붙임. 타입의 '=>' 앞뒤 띄움.
         // TODO      한줄식            여러줄식
         //      `>`  공백 없이 바로    대응하는 `<`와 같은 indent의 빈 줄

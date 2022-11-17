@@ -133,6 +133,12 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             }
             return R;
         };
+        var getActualName = function (value) {
+            if (value[0] === "$") {
+                return value.slice(1);
+            }
+            return value;
+        };
         var checkParameterNames = function (kind, parameters, depth) {
             var _a, _b;
             for (var i = 0; i < parameters.length; i++) {
@@ -147,7 +153,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                     if (((_b = parameter.elements[1]) === null || _b === void 0 ? void 0 : _b.type) !== utils_1.AST_NODE_TYPES.Identifier) {
                         continue;
                     }
-                    if (parameter.elements[0].name === options.key[depth] && parameter.elements[1].name === options.value[depth]) {
+                    if (getActualName(parameter.elements[0].name) === options.key[depth] && getActualName(parameter.elements[1].name) === options.value[depth]) {
                         continue;
                     }
                     context.report({
@@ -166,7 +172,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                     if (!criterion) {
                         continue;
                     }
-                    if (parameter.name === criterion) {
+                    if (getActualName(parameter.name) === criterion) {
                         continue;
                     }
                     context.report({

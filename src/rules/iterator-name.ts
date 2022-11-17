@@ -133,6 +133,12 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       }
       return R;
     };
+    const getActualName = (value:string) => {
+      if(value[0] === "$"){
+        return value.slice(1);
+      }
+      return value;
+    };
     const checkParameterNames = (kind:(typeof kindTable)[string], parameters:Array<Identifier|ArrayPattern>, depth:number) => {
       for(let i = 0; i < parameters.length; i++){
         const parameter = parameters[i];
@@ -147,7 +153,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
           if(parameter.elements[1]?.type !== AST_NODE_TYPES.Identifier){
             continue;
           }
-          if(parameter.elements[0].name === options.key[depth] && parameter.elements[1].name === options.value[depth]){
+          if(getActualName(parameter.elements[0].name) === options.key[depth] && getActualName(parameter.elements[1].name) === options.value[depth]){
             continue;
           }
           context.report({
@@ -165,7 +171,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
           if(!criterion){
             continue;
           }
-          if(parameter.name === criterion){
+          if(getActualName(parameter.name) === criterion){
             continue;
           }
           context.report({

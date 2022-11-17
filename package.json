@@ -11,6 +11,7 @@
   "devDependencies": {
     "@jjoriping/eslint-plugin": "link:.",
     "@types/node": "^18.8.5",
+    "@types/react": "^18.0.25",
     "eslint": "^8.25.0"
   },
   "dependencies": {
