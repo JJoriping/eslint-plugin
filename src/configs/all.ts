@@ -324,6 +324,7 @@ export default {
     '@jjoriping/declaration-order': "warn",
     '@jjoriping/function-type-annotation-style': "warn",
     '@jjoriping/iterator-name': "warn",
+    '@jjoriping/jsx-indent': "warn",
     '@jjoriping/key-quotation-style': "warn",
     '@jjoriping/multiline-expression-spacing': "warn",
     '@jjoriping/no-class-expression': "warn",
@@ -338,9 +339,6 @@ export default {
     '@jjoriping/type-operator-spacing': "warn",
     '@jjoriping/variable-case': "warn"
 
-    // TODO      한줄식            여러줄식
-    //      `>`  공백 없이 바로    대응하는 `<`와 같은 indent의 빈 줄
-    //      `/>` 공백이 있게 바로  대응하는 `<`와 같은 indent의 빈 줄
     // TODO JSX 구문 `{x && y}`에서 `x`가 string 또는 number일 수 없음.
     // TODO ReactNode, JSX.Element, MutableRefObject 및 그 배열은 변수 이름이 `$`로 시작.
   }
