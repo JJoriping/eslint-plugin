@@ -1,5 +1,6 @@
 import type { ArrayExpression, ArrayPattern, Node, ObjectExpression, ObjectPattern, Token } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
+
 import { closingLinePattern } from "../utils/patterns";
 
 const OBJECT_OR_ARRAY_TYPES = [
@@ -28,17 +29,18 @@ export default ESLintUtils.RuleCreator.withoutDocs({
   defaultOptions: [],
   create(context){
     const sourceCode = context.getSourceCode();
-    
+
     const isFirstCloserOfLine = (closer:Token) => {
       const line = sourceCode.lines[closer.loc.start.line - 1];
       const chunk = line.match(closingLinePattern);
       if(!chunk) return false;
-      
+
       return closer.loc.start.column === chunk[0].length - 1;
     };
-    const hasOnlyObjectOrArray = (children:Array<Node|null>) => {
-      return children.length === 1 && children[0] !== null && OBJECT_OR_ARRAY_TYPES.includes(children[0].type);
-    };
+    const hasOnlyObjectOrArray = (children:Array<Node|null>) => children.length === 1
+      && children[0] !== null
+      && OBJECT_OR_ARRAY_TYPES.includes(children[0].type)
+    ;
     const getMessageIdWithData = (token:string, shouldBeSpaced:boolean) => {
       const direction = DIRECTION_TABLE[token];
 
@@ -68,7 +70,14 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       });
     };
     const checkTrailingSpace = (from:Node, token:string, shouldBeSpaced:boolean = false) => {
-      const [ payload, closer ] = sourceCode.getLastTokens(from, { count: 2 });
+      let payload:Token;
+      let closer:Token;
+
+      if('typeAnnotation' in from && from.typeAnnotation){
+        [ payload, closer ] = sourceCode.getTokensBefore(from.typeAnnotation, { count: 2 });
+      }else{
+        [ payload, closer ] = sourceCode.getLastTokens(from, { count: 2 });
+      }
       if(!payload){
         return;
       }
@@ -97,13 +106,13 @@ export default ESLintUtils.RuleCreator.withoutDocs({
           return;
         }
         const isMultiline = node.loc.start.line !== node.loc.end.line;
-        const only = !isMultiline && hasOnlyObjectOrArray(node.elements);
+        const only = hasOnlyObjectOrArray(node.elements);
 
-        checkLeadingSpace(node, '[', !only);
+        checkLeadingSpace(node, "[", !only);
         if(isMultiline){
-          checkTrailingSpace(node, ']', false);
+          checkTrailingSpace(node, "]", false);
         }else{
-          checkTrailingSpace(node, ']', !only);
+          checkTrailingSpace(node, "]", !only);
         }
       },
       'ObjectExpression, ObjectPattern': (node:ObjectExpression|ObjectPattern) => {
@@ -111,13 +120,13 @@ export default ESLintUtils.RuleCreator.withoutDocs({
           return;
         }
         const isMultiline = node.loc.start.line !== node.loc.end.line;
-        const only = !isMultiline && hasOnlyObjectOrArray(node.properties);
+        const only = hasOnlyObjectOrArray(node.properties);
 
-        checkLeadingSpace(node, '{', !only);
+        checkLeadingSpace(node, "{", !only);
         if(isMultiline){
-          checkTrailingSpace(node, '}', false);
+          checkTrailingSpace(node, "}", false);
         }else{
-          checkTrailingSpace(node, '}', !only);
+          checkTrailingSpace(node, "}", !only);
         }
       }
     };

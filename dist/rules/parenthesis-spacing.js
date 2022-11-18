@@ -72,9 +72,9 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 return false;
             return closer.loc.start.column === chunk[0].length - 1;
         };
-        var hasOnlyObjectOrArray = function (children) {
-            return children.length === 1 && children[0] !== null && OBJECT_OR_ARRAY_TYPES.includes(children[0].type);
-        };
+        var hasOnlyObjectOrArray = function (children) { return children.length === 1
+            && children[0] !== null
+            && OBJECT_OR_ARRAY_TYPES.includes(children[0].type); };
         var getMessageIdWithData = function (token, shouldBeSpaced) {
             var direction = DIRECTION_TABLE[token];
             return {
@@ -111,16 +111,24 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 } }));
         };
         var checkTrailingSpace = function (from, token, shouldBeSpaced) {
-            var _a;
+            var _a, _b;
+            var _c;
             if (shouldBeSpaced === void 0) { shouldBeSpaced = false; }
-            var _b = sourceCode.getLastTokens(from, { count: 2 }), payload = _b[0], closer = _b[1];
+            var payload;
+            var closer;
+            if ('typeAnnotation' in from && from.typeAnnotation) {
+                _a = sourceCode.getTokensBefore(from.typeAnnotation, { count: 2 }), payload = _a[0], closer = _a[1];
+            }
+            else {
+                _b = sourceCode.getLastTokens(from, { count: 2 }), payload = _b[0], closer = _b[1];
+            }
             if (!payload) {
                 return;
             }
             if (isFirstCloserOfLine(closer)) {
                 return;
             }
-            if (shouldBeSpaced === Boolean((_a = sourceCode.isSpaceBetween) === null || _a === void 0 ? void 0 : _a.call(sourceCode, payload, closer))) {
+            if (shouldBeSpaced === Boolean((_c = sourceCode.isSpaceBetween) === null || _c === void 0 ? void 0 : _c.call(sourceCode, payload, closer))) {
                 return;
             }
             context.report(__assign(__assign({ node: closer }, getMessageIdWithData(token, shouldBeSpaced)), { fix: function (fixer) {
@@ -147,13 +155,13 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                     return;
                 }
                 var isMultiline = node.loc.start.line !== node.loc.end.line;
-                var only = !isMultiline && hasOnlyObjectOrArray(node.elements);
-                checkLeadingSpace(node, '[', !only);
+                var only = hasOnlyObjectOrArray(node.elements);
+                checkLeadingSpace(node, "[", !only);
                 if (isMultiline) {
-                    checkTrailingSpace(node, ']', false);
+                    checkTrailingSpace(node, "]", false);
                 }
                 else {
-                    checkTrailingSpace(node, ']', !only);
+                    checkTrailingSpace(node, "]", !only);
                 }
             },
             'ObjectExpression, ObjectPattern': function (node) {
@@ -161,13 +169,13 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                     return;
                 }
                 var isMultiline = node.loc.start.line !== node.loc.end.line;
-                var only = !isMultiline && hasOnlyObjectOrArray(node.properties);
-                checkLeadingSpace(node, '{', !only);
+                var only = hasOnlyObjectOrArray(node.properties);
+                checkLeadingSpace(node, "{", !only);
                 if (isMultiline) {
-                    checkTrailingSpace(node, '}', false);
+                    checkTrailingSpace(node, "}", false);
                 }
                 else {
-                    checkTrailingSpace(node, '}', !only);
+                    checkTrailingSpace(node, "}", !only);
                 }
             }
         };

@@ -18,6 +18,7 @@
     "@typescript-eslint/eslint-plugin": "^5.40.0",
     "@typescript-eslint/parser": "^5.40.0",
     "@typescript-eslint/utils": "^5.40.0",
+    "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-react": "^7.31.10",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-unicorn": "^44.0.2",

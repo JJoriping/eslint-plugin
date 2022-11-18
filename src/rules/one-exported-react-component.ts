@@ -1,4 +1,5 @@
 import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
+
 import { getTSTypeByNode, isReactComponent, useTypeChecker } from "../utils/type";
 
 export default ESLintUtils.RuleCreator.withoutDocs({

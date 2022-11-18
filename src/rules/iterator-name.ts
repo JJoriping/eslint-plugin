@@ -1,22 +1,24 @@
 import type { Identifier, CallExpression, Expression, ArrayPattern, Node } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
+
 import { toOrdinal } from "../utils/text";
 import { getTSTypeByNode, useTypeChecker } from "../utils/type";
 
 const iterativeMethods = [ "map", "reduce", "every", "some", "forEach", "filter", "find", "findIndex" ];
 const kindTable:Record<string, Array<"index"|"key"|"value"|"previousValue"|"entry">> = {
-  'for': [ "index" ],
-  'forIn': [ "key" ],
-  'forOf': [ "value" ],
-  'map': [ "value", "index" ],
-  'every': [ "value", "index" ],
-  'some': [ "value", "index" ],
-  'forEach': [ "value", "index" ],
-  'filter': [ "value", "index" ],
-  'find': [ "value", "index" ],
-  'findIndex': [ "value", "index" ],
-  'reduce': [ "previousValue", "value", "index" ],
-  'entries': [ "entry", "index" ]
+  for: [ "index" ],
+  forIn: [ "key" ],
+  forOf: [ "value" ],
+
+  entries: [ "entry", "index" ],
+  every: [ "value", "index" ],
+  filter: [ "value", "index" ],
+  find: [ "value", "index" ],
+  findIndex: [ "value", "index" ],
+  forEach: [ "value", "index" ],
+  map: [ "value", "index" ],
+  reduce: [ "previousValue", "value", "index" ],
+  some: [ "value", "index" ]
 };
 
 export default ESLintUtils.RuleCreator.withoutDocs({
@@ -66,7 +68,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
           list = [ node.init.declarations[0].id ];
           break;
         case AST_NODE_TYPES.ForInStatement:
-        case AST_NODE_TYPES.ForOfStatement:
+        case AST_NODE_TYPES.ForOfStatement: {
           if(node.left.type !== AST_NODE_TYPES.VariableDeclaration){
             return null;
           }
@@ -80,7 +82,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
           name = node.type === AST_NODE_TYPES.ForInStatement ? "forIn" : "forOf";
           list = [ id ];
           calleeObject = node.right;
-          break;
+        } break;
         default: return null;
       }
       return { name, list, calleeObject };
@@ -134,7 +136,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       return R;
     };
     const getActualName = (value:string) => {
-      if(value[0] === "$"){
+      if(value.startsWith("$")){
         return value.slice(1);
       }
       return value;
@@ -198,7 +200,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
     };
 
     useTypeChecker(context);
-    
+
     return {
       CallExpression: node => {
         const parameters = getIterativeMethodParameters(node);

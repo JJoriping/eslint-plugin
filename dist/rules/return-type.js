@@ -41,16 +41,15 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
         schema: [{
                 type: "object",
                 properties: {
-                    simpleTypePattern: { type: "string" }
+                    simpleTypeMaxLength: { type: "integer" }
                 }
             }]
     },
     defaultOptions: [{
-            simpleTypePattern: /^\w+(?: [&|] \w+)?|\w+<\w+(?:, \w+)?>$/.source
+            simpleTypeMaxLength: 20
         }],
     create: function (context, _a) {
-        var simpleTypePatternString = _a[0].simpleTypePattern;
-        var simpleTypePattern = new RegExp(simpleTypePatternString);
+        var simpleTypeMaxLength = _a[0].simpleTypeMaxLength;
         (0, type_1.useTypeChecker)(context);
         return {
             MethodDefinition: function (node) {
@@ -67,15 +66,14 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                     return;
                 }
                 var returnType = (0, type_1.typeToString)(context, (0, type_1.getFunctionReturnType)(context, node));
-                if (!simpleTypePattern.test(returnType)) {
+                if (returnType.length > simpleTypeMaxLength) {
                     return;
                 }
                 context.report({
                     node: node,
                     messageId: 'for-function',
                     data: { type: returnType },
-                    suggest: [
-                        {
+                    suggest: [{
                             messageId: 'for-function/suggest/0',
                             fix: function (fixer) {
                                 return __generator(this, function (_a) {
@@ -87,8 +85,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                                     }
                                 });
                             }
-                        }
-                    ]
+                        }]
                 });
             }
         };

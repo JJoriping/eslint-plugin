@@ -8,6 +8,7 @@ export default {
   },
   plugins: [
     "@typescript-eslint",
+    "import",
     "react",
     "react-hooks",
     "unicorn"
@@ -55,7 +56,6 @@ export default {
     'operator-assignment': "error",
     'prefer-numeric-literals': "error",
     'prefer-regex-literals': "error",
-    'sort-imports': [ "error", { allowSeparatedGroups: true }],
     'sort-keys': [ "error", "asc", { minKeys: 10, allowLineSeparatedGroups: true } ],
     'spaced-comment': "error",
     'use-isnan': "error",
@@ -82,7 +82,7 @@ export default {
     'require-atomic-updates': "warn",
     'require-yield': "warn",
     'symbol-description': "warn",
-    
+
     // ESLint rules - styles
     'array-bracket-newline': [ "warn", "consistent" ],
     'array-element-newline': [ "warn", "consistent" ],
@@ -117,7 +117,6 @@ export default {
 
     // TSLint rules - extensions
     '@typescript-eslint/brace-style': "warn",
-    '@typescript-eslint/no-shadow': "warn",
     '@typescript-eslint/comma-dangle': [ "warn", "never" ],
     '@typescript-eslint/comma-spacing': "warn",
     '@typescript-eslint/func-call-spacing': [ "warn", "never" ],
@@ -126,32 +125,35 @@ export default {
       2,
       {
         SwitchCase: 1,
-        // NOTE https://github.com/typescript-eslint/typescript-eslint/issues/1824
         ignoredNodes: [
+          // NOTE https://github.com/typescript-eslint/typescript-eslint/issues/1824
           "TSUnionType",
           "TSIntersectionType",
-          "TSTypeParameterInstantiation"
+          "TSTypeParameterInstantiation",
+
+          "ConditionalExpression"
         ]
       }
     ],
     '@typescript-eslint/keyword-spacing': [ "warn", {
       overrides: {
         catch: { before: false, after: false },
-        do: { before: false, after: false },
+        do: { before: true, after: false },
         else: { before: false, after: false },
         finally: { before: false, after: false },
-        for: { before: false, after: false },
-        if: { before: false, after: false },
+        for: { before: true, after: false },
+        if: { before: true, after: false },
         static: { before: false, after: false },
-        super: { before: false, after: false },
-        switch: { before: false, after: false },
-        try: { before: false, after: false },
-        while: { before: false, after: false },
-        with: { before: false, after: false }
+        super: { before: true, after: false },
+        switch: { before: true, after: false },
+        try: { before: true, after: false },
+        while: { before: true, after: false },
+        with: { before: true, after: false }
       }
     }],
     '@typescript-eslint/no-extra-parens': [ "warn", "all", { ignoreJSX: "all" } ],
     '@typescript-eslint/no-extra-semi': "error",
+    '@typescript-eslint/no-shadow': "warn",
     '@typescript-eslint/no-throw-literal': "error",
     '@typescript-eslint/no-unused-expressions': [ "error", { allowShortCircuit: true, enforceForJSX: true } ],
     '@typescript-eslint/no-useless-constructor': "warn",
@@ -209,7 +211,6 @@ export default {
     '@typescript-eslint/no-non-null-asserted-optional-chain': "warn",
     '@typescript-eslint/no-redundant-type-constituents': "warn",
     '@typescript-eslint/no-unnecessary-boolean-literal-compare': "warn",
-    '@typescript-eslint/no-unnecessary-condition': "warn",
     '@typescript-eslint/no-unnecessary-qualifier': "warn",
     '@typescript-eslint/no-unnecessary-type-arguments': "warn",
     '@typescript-eslint/no-unnecessary-type-assertion': "warn",
@@ -220,12 +221,13 @@ export default {
     '@typescript-eslint/prefer-includes': "warn",
     '@typescript-eslint/prefer-namespace-keyword': "warn",
     '@typescript-eslint/prefer-optional-chain': "warn",
-    '@typescript-eslint/prefer-reduce-type-parameter': "warn",
     '@typescript-eslint/prefer-string-starts-ends-with': "warn",
     '@typescript-eslint/unified-signatures': "warn",
 
     // React rules
-    'react/boolean-prop-naming': [ "error", { rule: "^'?\b(?!is[A-Z\d])", message: "The name of the boolean prop `{{propName}}` cannot start with `is`." } ],
+    'react-hooks/exhaustive-deps': "warn",
+    'react-hooks/rules-of-hooks': "error",
+    'react/boolean-prop-naming': [ "error", { rule: /^'?\b(?!is[\dA-Z])/.source, message: "The name of the boolean prop `{{propName}}` cannot start with `is`." } ],
     'react/function-component-definition': [ "error", { namedComponents: "arrow-function", unnamedComponents: "arrow-function" } ],
     'react/hook-use-state': "warn",
     'react/jsx-boolean-value': "warn",
@@ -266,13 +268,19 @@ export default {
     'react/require-optimization': "warn",
     'react/self-closing-comp': "warn",
     'react/void-dom-elements-no-children': "error",
-    'react-hooks/exhaustive-deps': "warn",
-    'react-hooks/rules-of-hooks': "error",
+
+    // Import rules
+    'import/first': "error",
+    'import/order': [
+      "warn",
+      {
+        'newlines-between': "always"
+      }
+    ],
 
     // Unicorn rules
     'unicorn/better-regex': "warn",
     'unicorn/catch-error-name': "error",
-    'unicorn/consistent-function-scoping': "warn",
     'unicorn/custom-error-definition': "warn",
     'unicorn/empty-brace-spaces': "warn",
     'unicorn/error-message': "warn",
@@ -323,8 +331,8 @@ export default {
     '@jjoriping/declaration-order': "warn",
     '@jjoriping/function-type-annotation-style': "warn",
     '@jjoriping/iterator-name': "warn",
-    '@jjoriping/jsx-indent': "warn",
     '@jjoriping/jsx-expression-condition-type': "warn",
+    '@jjoriping/jsx-indent': "warn",
     '@jjoriping/key-quotation-style': "warn",
     '@jjoriping/multiline-expression-spacing': "warn",
     '@jjoriping/no-class-expression': "warn",
@@ -338,5 +346,12 @@ export default {
     '@jjoriping/type-colon-spacing': "warn",
     '@jjoriping/type-operator-spacing': "warn",
     '@jjoriping/variable-name': "warn"
+
+    /*
+     * TODO sort-keys 정렬을 제안 형식으로...
+     * TODO import나 export의 괄호 사이는 모두 띄운다.
+     * TODO 삼항 연산자를 여러 줄로 쓰는 경우 연산자가 줄 가장 앞에 나와야 하고 들여쓰기 적용. 단, else if 꼴인 경우 들여쓰기 미적용.
+     * TODO 집에 가고 싶다...
+     */
   }
 };

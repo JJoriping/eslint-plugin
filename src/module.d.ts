@@ -3,7 +3,7 @@ import type { TypeChecker } from "typescript";
 
 export module "@typescript-eslint/utils/dist/ts-eslint"{
   export interface SharedConfigurationSettings{
-    'service': ParserServices,
-    'typeChecker': TypeChecker
+    service:ParserServices;
+    typeChecker:TypeChecker;
   }
 }

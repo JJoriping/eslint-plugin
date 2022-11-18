@@ -33,7 +33,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
           *fix(fixer){
             yield fixer.replaceText(node, sourceCode.getText(node).replace(backtickPattern, to));
           }
-        })
+        });
       }
     };
   }

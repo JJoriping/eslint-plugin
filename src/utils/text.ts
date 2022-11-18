@@ -1,4 +1,4 @@
-const pluralRules = new Intl.PluralRules('en', { type: "ordinal" });
+const pluralRules = new Intl.PluralRules("en", { type: "ordinal" });
 const suffixes:Record<string, string> = {
   one: "st",
   two: "nd",

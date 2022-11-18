@@ -30,6 +30,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var ast_spec_1 = require("@typescript-eslint/types/dist/generated/ast-spec");
 var utils_1 = require("@typescript-eslint/utils");
 var type_1 = require("../utils/type");
+var type_2 = require("../utils/type");
 var QUOTES = ["'", "\"", "`"];
 var quotePattern = /^["'`]|["'`]$/g;
 exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
@@ -48,7 +49,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 type: "object",
                 properties: {
                     keyishNamePattern: { type: "string" },
-                    valueishNamePattern: { type: "string" },
+                    valueishNamePattern: { type: "string" }
                 }
             }]
     },
@@ -69,7 +70,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 return;
             }
             var target = as === "key" ? "'" : "\"";
-            if (node.raw[0] === target) {
+            if (node.raw[0].startsWith(target)) {
                 return;
             }
             context.report({
@@ -100,8 +101,8 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 assertStringLiteral(node, 'value', 'from-valueish-usage');
                 return;
             }
-            var type = (0, type_1.getTSTypeBySymbol)(context, symbol, node).getNonNullableType();
-            var isKey = type.isUnion() && type.types.every(function (w) { return w.isStringLiteral(); });
+            var type = (0, type_2.getTSTypeBySymbol)(context, symbol, node).getNonNullableType();
+            var isKey = type.isUnion() && type.types.every(function (v) { return v.isStringLiteral(); });
             if (isKey) {
                 assertStringLiteral(node, 'key', 'from-keyish-type');
             }
@@ -124,18 +125,18 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                     continue;
                 var keySymbol = typeMap[v.key.value];
                 assertStringLiteral(v.key, 'key', 'from-keyish-usage');
-                if (v.value.type === ast_spec_1.AST_NODE_TYPES.Literal) {
+                if (keySymbol && v.value.type === ast_spec_1.AST_NODE_TYPES.Literal) {
                     checkLiteral(keySymbol, v.value, true);
                 }
                 else if (v.value.type === ast_spec_1.AST_NODE_TYPES.ObjectExpression) {
-                    checkObjectExpression((0, type_1.getTSTypeBySymbol)(context, keySymbol, v).getProperties(), v.value.properties);
+                    checkObjectExpression((0, type_1.getTSTypeByNode)(context, v.value).getNonNullableType().getProperties(), v.value.properties);
                 }
             }
         };
-        (0, type_1.useTypeChecker)(context);
+        (0, type_2.useTypeChecker)(context);
         return {
             'CallExpression, NewExpression': function (node) {
-                var parameters = (0, type_1.getFunctionParameters)(context, node);
+                var parameters = (0, type_2.getFunctionParameters)(context, node);
                 if (!parameters) {
                     return;
                 }
@@ -157,7 +158,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                             }
                             break;
                         case ast_spec_1.AST_NODE_TYPES.ObjectExpression:
-                            checkObjectExpression((0, type_1.getTSTypeBySymbol)(context, parameter, node).getProperties(), argument.properties);
+                            checkObjectExpression((0, type_2.getTSTypeBySymbol)(context, parameter, node).getProperties(), argument.properties);
                             break;
                     }
                 }
@@ -169,10 +170,10 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 var _a;
                 switch ((_a = node.parent) === null || _a === void 0 ? void 0 : _a.type) {
                     case ast_spec_1.AST_NODE_TYPES.VariableDeclarator:
-                        checkObjectExpression((0, type_1.getObjectProperties)(context, node.parent.id), node.properties);
+                        checkObjectExpression((0, type_2.getObjectProperties)(context, node.parent.id), node.properties);
                         break;
                     case ast_spec_1.AST_NODE_TYPES.TSAsExpression:
-                        checkObjectExpression((0, type_1.getObjectProperties)(context, node.parent.typeAnnotation), node.properties);
+                        checkObjectExpression((0, type_2.getObjectProperties)(context, node.parent.typeAnnotation), node.properties);
                         break;
                 }
             },

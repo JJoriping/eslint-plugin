@@ -48,6 +48,9 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 if (node.property.type !== utils_1.AST_NODE_TYPES.Identifier) {
                     return;
                 }
+                if (node.computed) {
+                    return;
+                }
                 var type = (0, type_1.getTSTypeByNode)(context, node.object).getNonNullableType();
                 var properties = context.settings.typeChecker.getPropertyOfType(type, node.property.name);
                 if (properties) {

@@ -5,7 +5,10 @@
   "extends": [
     "plugin:@jjoriping/eslint-plugin/all"
   ],
+  "rules": {
+    "react-hooks/rules-of-hooks": "off"
+  },
   "parserOptions": {
-    "project": "./test.tsconfig.json"
+    "project": "./tsconfig.json"
   }
 }

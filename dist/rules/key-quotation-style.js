@@ -93,9 +93,12 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                     messageId: messageId,
                     data: { quotation: as },
                     fix: function (fixer) {
+                        var actualAs;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
-                                case 0: return [4 /*yield*/, fixer.replaceText(v.key, as + style.name + as)];
+                                case 0:
+                                    actualAs = as === "none" ? "" : as;
+                                    return [4 /*yield*/, fixer.replaceText(v.key, actualAs + style.name + actualAs)];
                                 case 1:
                                     _a.sent();
                                     return [2 /*return*/];
@@ -114,6 +117,9 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
         return {
             TSTypeLiteral: function (node) {
                 var filteredMembers = node.members.filter(function (v) { return v.type === utils_1.AST_NODE_TYPES.TSPropertySignature; });
+                if (filteredMembers.length <= 1) {
+                    return;
+                }
                 if (!filteredMembers.every(function (v) { return isSimple(v.key); })) {
                     return;
                 }
@@ -121,6 +127,9 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             },
             TSInterfaceBody: function (node) {
                 var filteredMembers = node.body.filter(function (v) { return v.type === utils_1.AST_NODE_TYPES.TSPropertySignature; });
+                if (filteredMembers.length <= 1) {
+                    return;
+                }
                 if (!filteredMembers.every(function (v) { return isSimple(v.key); })) {
                     return;
                 }
@@ -128,6 +137,9 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             },
             ObjectExpression: function (node) {
                 var filteredMembers = node.properties.filter(function (v) { return v.type === utils_1.AST_NODE_TYPES.Property; });
+                if (filteredMembers.length <= 1) {
+                    return;
+                }
                 if (!filteredMembers.every(function (v) { return isSimple(v.key); })) {
                     return;
                 }

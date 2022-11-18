@@ -74,7 +74,7 @@ export function isReactComponent(context:Context, type:Type):boolean{
   const returnType = context.settings.typeChecker.getReturnTypeOfSignature(callSignatures[0]).getNonNullableType();
   const returnTypeSymbol = returnType.getSymbol();
   if(!returnTypeSymbol) return false;
-  const returnTypeName =  context.settings.typeChecker.getFullyQualifiedName(returnTypeSymbol);
+  const returnTypeName = context.settings.typeChecker.getFullyQualifiedName(returnTypeSymbol);
 
   return returnTypeName === "React.ReactElement";
 }

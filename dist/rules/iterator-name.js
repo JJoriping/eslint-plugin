@@ -5,18 +5,18 @@ var text_1 = require("../utils/text");
 var type_1 = require("../utils/type");
 var iterativeMethods = ["map", "reduce", "every", "some", "forEach", "filter", "find", "findIndex"];
 var kindTable = {
-    'for': ["index"],
-    'forIn': ["key"],
-    'forOf': ["value"],
-    'map': ["value", "index"],
-    'every': ["value", "index"],
-    'some': ["value", "index"],
-    'forEach': ["value", "index"],
-    'filter': ["value", "index"],
-    'find': ["value", "index"],
-    'findIndex': ["value", "index"],
-    'reduce': ["previousValue", "value", "index"],
-    'entries': ["entry", "index"]
+    for: ["index"],
+    forIn: ["key"],
+    forOf: ["value"],
+    entries: ["entry", "index"],
+    every: ["value", "index"],
+    filter: ["value", "index"],
+    find: ["value", "index"],
+    findIndex: ["value", "index"],
+    forEach: ["value", "index"],
+    map: ["value", "index"],
+    reduce: ["previousValue", "value", "index"],
+    some: ["value", "index"]
 };
 exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
     meta: {
@@ -66,19 +66,21 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                     break;
                 case utils_1.AST_NODE_TYPES.ForInStatement:
                 case utils_1.AST_NODE_TYPES.ForOfStatement:
-                    if (node.left.type !== utils_1.AST_NODE_TYPES.VariableDeclaration) {
-                        return null;
+                    {
+                        if (node.left.type !== utils_1.AST_NODE_TYPES.VariableDeclaration) {
+                            return null;
+                        }
+                        if (node.left.declarations.length !== 1) {
+                            return null;
+                        }
+                        var id = node.left.declarations[0].id;
+                        if (id.type !== utils_1.AST_NODE_TYPES.Identifier && id.type !== utils_1.AST_NODE_TYPES.ArrayPattern) {
+                            return null;
+                        }
+                        name = node.type === utils_1.AST_NODE_TYPES.ForInStatement ? "forIn" : "forOf";
+                        list = [id];
+                        calleeObject = node.right;
                     }
-                    if (node.left.declarations.length !== 1) {
-                        return null;
-                    }
-                    var id = node.left.declarations[0].id;
-                    if (id.type !== utils_1.AST_NODE_TYPES.Identifier && id.type !== utils_1.AST_NODE_TYPES.ArrayPattern) {
-                        return null;
-                    }
-                    name = node.type === utils_1.AST_NODE_TYPES.ForInStatement ? "forIn" : "forOf";
-                    list = [id];
-                    calleeObject = node.right;
                     break;
                 default: return null;
             }
@@ -134,7 +136,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             return R;
         };
         var getActualName = function (value) {
-            if (value[0] === "$") {
+            if (value.startsWith("$")) {
                 return value.slice(1);
             }
             return value;

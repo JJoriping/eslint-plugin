@@ -1,4 +1,5 @@
 import { ESLintUtils } from "@typescript-eslint/utils";
+
 import { getFunctionReturnType, typeToString, useTypeChecker } from "../utils/type";
 
 export default ESLintUtils.RuleCreator.withoutDocs({
@@ -13,16 +14,14 @@ export default ESLintUtils.RuleCreator.withoutDocs({
     schema: [{
       type: "object",
       properties: {
-        simpleTypePattern: { type: "string" }
+        simpleTypeMaxLength: { type: "integer" }
       }
     }]
   },
   defaultOptions: [{
-    simpleTypePattern: /^\w+(?: [&|] \w+)?|\w+<\w+(?:, \w+)?>$/.source
+    simpleTypeMaxLength: 20
   }],
-  create(context, [{ simpleTypePattern: simpleTypePatternString }]){
-    const simpleTypePattern = new RegExp(simpleTypePatternString);
-
+  create(context, [{ simpleTypeMaxLength }]){
     useTypeChecker(context);
 
     return {
@@ -41,21 +40,19 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         }
         const returnType = typeToString(context, getFunctionReturnType(context, node));
 
-        if(!simpleTypePattern.test(returnType)){
+        if(returnType.length > simpleTypeMaxLength){
           return;
         }
         context.report({
           node,
           messageId: 'for-function',
           data: { type: returnType },
-          suggest: [
-            {
-              messageId: 'for-function/suggest/0',
-              *fix(fixer){
-                yield fixer.insertTextBefore(node.body, `:${returnType.replace(/ /g, "")}`);
-              }
+          suggest: [{
+            messageId: 'for-function/suggest/0',
+            *fix(fixer){
+              yield fixer.insertTextBefore(node.body, `:${returnType.replace(/ /g, "")}`);
             }
-          ]
+          }]
         });
       }
     };

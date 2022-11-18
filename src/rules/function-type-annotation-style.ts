@@ -27,8 +27,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         if(node.typeAnnotation?.typeAnnotation.type !== AST_NODE_TYPES.TSFunctionType){
           return;
         }
-        const type = node.parent?.type === AST_NODE_TYPES.TSTypeLiteral
-          ? "typeAlias"
+        const type = node.parent?.type === AST_NODE_TYPES.TSTypeLiteral ? "typeAlias"
           : node.parent?.type === AST_NODE_TYPES.TSInterfaceBody
           ? "interface"
           : undefined
@@ -77,14 +76,14 @@ export default ESLintUtils.RuleCreator.withoutDocs({
           data: { key: sourceCode.getText(node.key), type: options[type] },
           *fix(fixer){
             const colon = node.returnType && sourceCode.getFirstToken(node.returnType);
-            
+
             yield fixer.insertTextAfter(node.key, ":");
             if(colon){
               yield fixer.replaceText(colon, "=>");
             }
           }
         });
-      },
+      }
     };
   }
 });

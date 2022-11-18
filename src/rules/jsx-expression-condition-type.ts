@@ -1,6 +1,8 @@
 import type { LogicalExpression } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { ESLintUtils } from "@typescript-eslint/utils";
-import { Type, TypeFlags } from "typescript";
+import type { Type } from "typescript";
+import { TypeFlags } from "typescript";
+
 import { getTSTypeByNode, useTypeChecker } from "../utils/type";
 
 export default ESLintUtils.RuleCreator.withoutDocs({

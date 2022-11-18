@@ -1,8 +1,9 @@
 import type { Node } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
+
 import { closingLinePattern } from "../utils/patterns";
 import { getIndentation } from "../utils/code";
-import { MessageIdOf } from "../utils/type";
+import type { MessageIdOf } from "../utils/type";
 
 export default ESLintUtils.RuleCreator.withoutDocs({
   meta: {

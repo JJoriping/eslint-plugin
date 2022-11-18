@@ -2,7 +2,9 @@ import type { CallExpression, Literal, NewExpression, Node, ObjectLiteralElement
 import { AST_NODE_TYPES } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { ESLintUtils } from "@typescript-eslint/utils";
 import type { Symbol } from "typescript";
+
 import type { MessageIdOf } from "../utils/type";
+import { getTSTypeByNode } from "../utils/type";
 import { getFunctionParameters, getObjectProperties, getTSTypeBySymbol, useTypeChecker } from "../utils/type";
 
 const QUOTES = [ "'", "\"", "`" ];
@@ -26,7 +28,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       type: "object",
       properties: {
         keyishNamePattern: { type: "string" },
-        valueishNamePattern: { type: "string" },
+        valueishNamePattern: { type: "string" }
       }
     }]
   },
@@ -46,7 +48,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         return;
       }
       const target = as === "key" ? "'" : "\"";
-      if(node.raw[0] === target){
+      if(node.raw[0].startsWith(target)){
         return;
       }
       context.report({
@@ -71,7 +73,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         return;
       }
       const type = getTSTypeBySymbol(context, symbol, node).getNonNullableType();
-      const isKey = type.isUnion() && type.types.every(w => w.isStringLiteral());
+      const isKey = type.isUnion() && type.types.every(v => v.isStringLiteral());
 
       if(isKey){
         assertStringLiteral(node, 'key', 'from-keyish-type');
@@ -80,7 +82,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       }
     };
     const checkObjectExpression = (types:readonly Symbol[], values:ObjectLiteralElement[]) => {
-      const typeMap = types.reduce<Record<string, Symbol>>((pv, v) => {
+      const typeMap = types.reduce<Record<string, Symbol|undefined>>((pv, v) => {
         pv[v.name] = v;
         return pv;
       }, {});
@@ -91,10 +93,10 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         const keySymbol = typeMap[v.key.value];
 
         assertStringLiteral(v.key, 'key', 'from-keyish-usage');
-        if(v.value.type === AST_NODE_TYPES.Literal){
+        if(keySymbol && v.value.type === AST_NODE_TYPES.Literal){
           checkLiteral(keySymbol, v.value, true);
         }else if(v.value.type === AST_NODE_TYPES.ObjectExpression){
-          checkObjectExpression(getTSTypeBySymbol(context, keySymbol, v).getProperties(), v.value.properties);
+          checkObjectExpression(getTSTypeByNode(context, v.value).getNonNullableType().getProperties(), v.value.properties);
         }
       }
     };

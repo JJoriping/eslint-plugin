@@ -1,5 +1,6 @@
 import type { TSUnionType, TSIntersectionType } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { ESLintUtils } from "@typescript-eslint/utils";
+
 import { getIndentation } from "../utils/code";
 
 export default ESLintUtils.RuleCreator.withoutDocs({
@@ -18,7 +19,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
   defaultOptions: [],
   create(context){
     const sourceCode = context.getSourceCode();
-    
+
     return {
       TSFunctionType: node => {
         if(!node.returnType){
@@ -28,7 +29,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         const before = sourceCode.getTokenBefore(arrow);
         const hasSpaceBefore = before && sourceCode.isSpaceBetween?.(before, arrow);
         const hasSpaceAfter = sourceCode.isSpaceBetween?.(arrow, after);
-        
+
         if(hasSpaceBefore && hasSpaceAfter){
           return;
         }

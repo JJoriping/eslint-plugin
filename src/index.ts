@@ -1,5 +1,6 @@
 import { readdirSync } from "fs";
 import { resolve } from "path";
+
 import all from "./configs/all";
 
 const rules = readdirSync(resolve(__dirname, "rules"));

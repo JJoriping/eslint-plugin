@@ -1,5 +1,6 @@
-import { Node } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
+import type { Node } from "@typescript-eslint/types/dist/generated/ast-spec";
+
 import { hasEmptyLineBefore } from "../utils/code";
 
 const staticBlock = Symbol("static block");
@@ -31,7 +32,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       'interorder': "`{{target}}` node should appear prior to any `{{base}}` node.",
       'intraorder': "`{{target}}` should appear prior to `{{base}}`.",
       'empty-line': "One empty line should appear between `{{base}}` and `{{target}}`.",
-      'no-literal-member': "Name of a class member cannot be a string literal.",
+      'no-literal-member': "Name of a class member cannot be a string literal."
     },
     schema: []
   },
@@ -63,7 +64,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
                 messageId: "empty-line",
                 data: { target: getScoreString(score), base: getScoreString(prevScore) },
                 *fix(fixer){
-                  yield fixer.insertTextBefore(v, "\n")
+                  yield fixer.insertTextBefore(v, "\n");
                 }
               });
             }
@@ -96,7 +97,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
     };
   }
 });
-function getDefinitionOrderTable(items:Node[]){
+function getDefinitionOrderTable(items:Node[]):Record<string|symbol, number>{
   const R:Record<string|symbol, number> = {};
 
   for(const v of items){

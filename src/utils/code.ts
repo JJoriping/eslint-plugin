@@ -1,5 +1,6 @@
-import { Node } from "@typescript-eslint/types/dist/generated/ast-spec";
-import { SourceCode } from "@typescript-eslint/utils/dist/ts-eslint";
+import type { Node } from "@typescript-eslint/types/dist/generated/ast-spec";
+import type { SourceCode } from "@typescript-eslint/utils/dist/ts-eslint";
+
 import { emptyLinePattern, indentationPattern } from "./patterns";
 
 export function getIndentation(sourceCode:Readonly<SourceCode>, line:number):string{

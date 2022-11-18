@@ -1,6 +1,7 @@
-import type { Expression, TSPropertySignature, Property } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
-import { MessageIdOf } from "../utils/type";
+import type { Expression, Property, TSPropertySignature } from "@typescript-eslint/types/dist/generated/ast-spec";
+
+import type { MessageIdOf } from "../utils/type";
 
 const simpleNamePattern = /^\w+$/;
 
@@ -67,7 +68,9 @@ export default ESLintUtils.RuleCreator.withoutDocs({
           messageId,
           data: { quotation: as },
           *fix(fixer){
-            yield fixer.replaceText(v.key, as + style.name + as);
+            const actualAs = as === "none" ? "" : as;
+
+            yield fixer.replaceText(v.key, actualAs + style.name + actualAs);
           }
         });
       }
@@ -76,6 +79,9 @@ export default ESLintUtils.RuleCreator.withoutDocs({
     return {
       TSTypeLiteral: node => {
         const filteredMembers = node.members.filter((v):v is TSPropertySignature => v.type === AST_NODE_TYPES.TSPropertySignature);
+        if(filteredMembers.length <= 1){
+          return;
+        }
         if(!filteredMembers.every(v => isSimple(v.key))){
           return;
         }
@@ -83,6 +89,9 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       },
       TSInterfaceBody: node => {
         const filteredMembers = node.body.filter((v):v is TSPropertySignature => v.type === AST_NODE_TYPES.TSPropertySignature);
+        if(filteredMembers.length <= 1){
+          return;
+        }
         if(!filteredMembers.every(v => isSimple(v.key))){
           return;
         }
@@ -90,6 +99,9 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       },
       ObjectExpression: node => {
         const filteredMembers = node.properties.filter((v):v is Property => v.type === AST_NODE_TYPES.Property);
+        if(filteredMembers.length <= 1){
+          return;
+        }
         if(!filteredMembers.every(v => isSimple(v.key))){
           return;
         }

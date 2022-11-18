@@ -39,7 +39,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             'interorder': "`{{target}}` node should appear prior to any `{{base}}` node.",
             'intraorder': "`{{target}}` should appear prior to `{{base}}`.",
             'empty-line': "One empty line should appear between `{{base}}` and `{{target}}`.",
-            'no-literal-member': "Name of a class member cannot be a string literal.",
+            'no-literal-member': "Name of a class member cannot be a string literal."
         },
         schema: []
     },
