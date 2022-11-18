@@ -331,7 +331,6 @@ exports.default = {
         '@jjoriping/semantic-quotes': "warn",
         '@jjoriping/type-colon-spacing': "warn",
         '@jjoriping/type-operator-spacing': "warn",
-        '@jjoriping/variable-case': "warn"
-        // TODO ReactNode, JSX.Element, MutableRefObject 및 그 배열은 변수 이름이 `$`로 시작.
+        '@jjoriping/variable-name': "warn"
     }
 };

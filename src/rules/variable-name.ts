@@ -3,7 +3,7 @@ import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
 import { JSONSchema4 } from "@typescript-eslint/utils/dist/json-schema";
 import type { Type } from "typescript";
 import { camelCasePattern, pascalCasePattern, upperSnakeCasePattern } from "../utils/patterns";
-import { getTSTypeByNode, isReactComponent, useTypeChecker } from "../utils/type";
+import { getTSTypeByNode, isReactComponent, typeToString, useTypeChecker } from "../utils/type";
 
 const CASE_TABLE = {
   'camelCase': camelCasePattern,
@@ -26,7 +26,10 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       'for-interface': "Interface name should follow {{list}}.",
       'for-generic': "Generic name should follow {{list}}.",
       'for-enum': "Enumerator name should follow {{list}}.",
-      'for-enumValue': "Enumerator value's name should follow {{list}}."
+      'for-enumValue': "Enumerator value's name should follow {{list}}.",
+
+      'for-domVariable': "Name of the DOM-typed variable `{{type}}` should follow the pattern `{{pattern}}`.",
+      'for-catchParameter': "Catch parameter name should follow the pattern `{{pattern}}`."
     },
     schema: [{
       type: "object",
@@ -50,6 +53,14 @@ export default ESLintUtils.RuleCreator.withoutDocs({
             return pv;
           }, {} as Record<string, JSONSchema4>)
         },
+        names: {
+          type: "object",
+          properties: {
+            domVariable: { type: "string" },
+            catchParameter: { type: "string" }
+          }
+        },
+        domTypePatterns: { type: "array", items: { type: "string" } },
         exceptions: { type: "array", items: { type: "string" } }
       }
     }]
@@ -68,16 +79,37 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       enum: [ "PascalCase" ] as typeof CASE_TABLE_KEYS,
       enumValue: [ "UPPER_SNAKE_CASE" ] as typeof CASE_TABLE_KEYS
     },
+    names: {
+      domVariable: /^\$/.source,
+      catchParameter: /^error$/.source
+    },
+    domTypePatterns: [
+      /\b(?:HTML\w*|SVG\w*)?Element\b/.source,
+      /\b(?:Mutable)?RefObject\b/.source
+    ],
     exceptions: [ "_" ]
   }],
-  create(context, [{ cases, exceptions }]){
-    const isConstructible = (type:Type) => type.getConstructSignatures().length > 0;
+  create(context, [{ cases, names, domTypePatterns: domTypePatternStrings, exceptions }]){
+    const NAME_TABLE = {
+      domVariable: new RegExp(names.domVariable),
+      catchParameter: new RegExp(names.catchParameter)
+    };
+    const domTypePatterns = domTypePatternStrings.map(v => new RegExp(v));
 
-    const getSemanticType = (node:Identifier):null|keyof typeof cases => {
+    const isConstructible = (type:Type) => type.getConstructSignatures().length > 0;
+    const isDOMObject = (type:Type):boolean => {
+      const typeString = typeToString(context, type);
+
+      return domTypePatterns.some(v => v.test(typeString));
+    };
+
+    const getSemanticType = (node:Identifier):null|['cases', keyof typeof cases]|['names', keyof typeof names] => {
+      if(node.parent?.type === AST_NODE_TYPES.CatchClause) return [ 'names', 'catchParameter' ];
       const tsType = getTSTypeByNode(context, node).getNonNullableType();
 
-      if(isConstructible(tsType)) return 'constructible';
-      if(isReactComponent(context, tsType)) return 'reactComponent';
+      if(isConstructible(tsType)) return [ 'cases', 'constructible' ];
+      if(isReactComponent(context, tsType)) return [ 'cases', 'reactComponent' ];
+      if(isDOMObject(tsType)) return [ 'names', 'domVariable' ];
       return null;
     };
     const checkCase = (type:keyof typeof cases, node:Node) => {
@@ -103,16 +135,27 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       if(exceptions.includes(name)){
         return;
       }
-      const actualType = getSemanticType(node) || type;
-      const valid = cases[actualType].some(v => CASE_TABLE[v].test(name));
-      if(valid){
-        return;
+      const actualType = getSemanticType(node) || [ 'cases', type ];
+      let data:Record<string, unknown>;
+
+      switch(actualType[0]){
+        case "cases":
+          if(cases[actualType[1]].some(v => CASE_TABLE[v].test(name))){
+            return;
+          }
+          data = { list: cases[actualType[1]].map(v => `\`${v}\``).join(' or ') };
+          break;
+        case "names":
+          if(NAME_TABLE[actualType[1]].test(name)){
+            return;
+          }
+          data = {
+            pattern: NAME_TABLE[actualType[1]].source,
+            type: typeToString(context, getTSTypeByNode(context, node))
+          };
+          break;
       }
-      context.report({
-        node,
-        messageId: `for-${actualType}`,
-        data: { list: cases[actualType].map(v => `\`${v}\``).join(' or ') }
-      });
+      context.report({ node, messageId: `for-${actualType[1]}`, data });
     };
 
     useTypeChecker(context);
