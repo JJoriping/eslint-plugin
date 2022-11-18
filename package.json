@@ -6,7 +6,8 @@
   "author": "JJoriping <op@jjo.kr>",
   "license": "MIT",
   "scripts": {
-    "watch": "tsc --watch"
+    "watch": "tsc --watch",
+    "test": "eslint --parser-options={\"project\":\"./test.tsconfig.json\"}"
   },
   "devDependencies": {
     "@jjoriping/eslint-plugin": "link:.",
