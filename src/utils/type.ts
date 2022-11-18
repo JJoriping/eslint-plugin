@@ -1,7 +1,7 @@
 import type { CallExpression, NewExpression, Node, FunctionDeclaration } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { ESLintUtils } from "@typescript-eslint/utils";
 import type { RuleContext } from "@typescript-eslint/utils/dist/ts-eslint";
-import { Symbol, Type } from "typescript";
+import type { Symbol, Type } from "typescript";
 
 export type Context = Readonly<RuleContext<string, unknown[]>>;
 export type MessageIdOf<C extends Context> = C extends Readonly<RuleContext<infer R, unknown[]>>

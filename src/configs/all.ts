@@ -237,7 +237,6 @@ export default {
     'react/jsx-handler-names': "warn",
     'react/jsx-key': "warn",
     'react/jsx-no-constructed-context-values': "warn",
-    'react/jsx-no-leaked-render': "warn",
     'react/jsx-no-script-url': "error",
     'react/jsx-no-target-blank': "warn",
     'react/jsx-no-useless-fragment': "warn",
@@ -325,6 +324,7 @@ export default {
     '@jjoriping/function-type-annotation-style': "warn",
     '@jjoriping/iterator-name': "warn",
     '@jjoriping/jsx-indent': "warn",
+    '@jjoriping/jsx-expression-condition-type': "warn",
     '@jjoriping/key-quotation-style': "warn",
     '@jjoriping/multiline-expression-spacing': "warn",
     '@jjoriping/no-class-expression': "warn",
@@ -339,7 +339,6 @@ export default {
     '@jjoriping/type-operator-spacing': "warn",
     '@jjoriping/variable-case': "warn"
 
-    // TODO JSX 구문 `{x && y}`에서 `x`가 string 또는 number일 수 없음.
     // TODO ReactNode, JSX.Element, MutableRefObject 및 그 배열은 변수 이름이 `$`로 시작.
   }
 };
