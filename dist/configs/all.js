@@ -340,7 +340,6 @@ exports.default = {
         '@jjoriping/variable-name': "warn"
         /*
          * TODO sort-keys 정렬을 제안 형식으로...
-         * TODO import나 export의 괄호 사이는 모두 띄운다.
          * TODO 삼항 연산자를 여러 줄로 쓰는 경우 연산자가 줄 가장 앞에 나와야 하고 들여쓰기 적용. 단, else if 꼴인 경우 들여쓰기 미적용.
          * TODO 집에 가고 싶다...
          */

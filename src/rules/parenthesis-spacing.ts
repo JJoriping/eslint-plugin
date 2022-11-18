@@ -1,4 +1,5 @@
-import type { ArrayExpression, ArrayPattern, Node, ObjectExpression, ObjectPattern, Token } from "@typescript-eslint/types/dist/generated/ast-spec";
+import type { ArrayExpression, ArrayPattern, Node, ObjectExpression, ObjectPattern, Token, ImportDeclaration, ExportNamedDeclaration } from "@typescript-eslint/types/dist/generated/ast-spec";
+import { AST_TOKEN_TYPES } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
 
 import { closingLinePattern } from "../utils/patterns";
@@ -49,8 +50,15 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         data: { direction, token }
       };
     };
-    const checkLeadingSpace = (from:Node, token:string, shouldBeSpaced:boolean = false) => {
-      const [ opener, payload ] = sourceCode.getFirstTokens(from, { count: 2 });
+    const checkLeadingSpace = (from:Node|Token, token:string, shouldBeSpaced:boolean = false) => {
+      let opener:Token;
+      let payload:Token|null;
+
+      if(from.type in AST_TOKEN_TYPES){
+        [ opener, payload ] = [ from as Token, sourceCode.getTokenAfter(from) ];
+      }else{
+        [ opener, payload ] = sourceCode.getFirstTokens(from as Node, { count: 2 });
+      }
       if(!payload){
         return;
       }
@@ -64,19 +72,21 @@ export default ESLintUtils.RuleCreator.withoutDocs({
           if(shouldBeSpaced){
             yield fixer.insertTextAfter(opener, " ");
           }else{
-            yield fixer.removeRange([ opener.range[1], payload.range[0] ]);
+            yield fixer.removeRange([ opener.range[1], payload!.range[0] ]);
           }
         }
       });
     };
-    const checkTrailingSpace = (from:Node, token:string, shouldBeSpaced:boolean = false) => {
-      let payload:Token;
+    const checkTrailingSpace = (from:Node|Token, token:string, shouldBeSpaced:boolean = false) => {
+      let payload:Token|null;
       let closer:Token;
 
-      if('typeAnnotation' in from && from.typeAnnotation){
+      if(from.type in AST_TOKEN_TYPES){
+        [ payload, closer ] = [ sourceCode.getTokenBefore(from), from as Token ];
+      }else if('typeAnnotation' in from && from.typeAnnotation){
         [ payload, closer ] = sourceCode.getTokensBefore(from.typeAnnotation, { count: 2 });
       }else{
-        [ payload, closer ] = sourceCode.getLastTokens(from, { count: 2 });
+        [ payload, closer ] = sourceCode.getLastTokens(from as Node, { count: 2 });
       }
       if(!payload){
         return;
@@ -94,7 +104,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
           if(shouldBeSpaced){
             yield fixer.insertTextBefore(closer, " ");
           }else{
-            yield fixer.removeRange([ payload.range[1], closer.range[0] ]);
+            yield fixer.removeRange([ payload!.range[1], closer.range[0] ]);
           }
         }
       });
@@ -128,6 +138,16 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         }else{
           checkTrailingSpace(node, "}", !only);
         }
+      },
+      'ImportDeclaration, ExportNamedDeclaration': (node:ImportDeclaration|ExportNamedDeclaration) => {
+        if(!node.specifiers.length){
+          return;
+        }
+        const opening = sourceCode.getTokenBefore(node.specifiers[0]);
+        const closing = sourceCode.getTokenAfter(node.specifiers[node.specifiers.length - 1]);
+
+        if(opening) checkLeadingSpace(opening, "{", true);
+        if(closing) checkTrailingSpace(closing, "}", true);
       }
     };
   }

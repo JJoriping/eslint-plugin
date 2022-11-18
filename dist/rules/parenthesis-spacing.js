@@ -38,6 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var ast_spec_1 = require("@typescript-eslint/types/dist/generated/ast-spec");
 var utils_1 = require("@typescript-eslint/utils");
 var patterns_1 = require("../utils/patterns");
 var OBJECT_OR_ARRAY_TYPES = [
@@ -83,13 +84,21 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             };
         };
         var checkLeadingSpace = function (from, token, shouldBeSpaced) {
-            var _a;
+            var _a, _b;
+            var _c;
             if (shouldBeSpaced === void 0) { shouldBeSpaced = false; }
-            var _b = sourceCode.getFirstTokens(from, { count: 2 }), opener = _b[0], payload = _b[1];
+            var opener;
+            var payload;
+            if (from.type in ast_spec_1.AST_TOKEN_TYPES) {
+                _a = [from, sourceCode.getTokenAfter(from)], opener = _a[0], payload = _a[1];
+            }
+            else {
+                _b = sourceCode.getFirstTokens(from, { count: 2 }), opener = _b[0], payload = _b[1];
+            }
             if (!payload) {
                 return;
             }
-            if (shouldBeSpaced === Boolean((_a = sourceCode.isSpaceBetween) === null || _a === void 0 ? void 0 : _a.call(sourceCode, opener, payload))) {
+            if (shouldBeSpaced === Boolean((_c = sourceCode.isSpaceBetween) === null || _c === void 0 ? void 0 : _c.call(sourceCode, opener, payload))) {
                 return;
             }
             context.report(__assign(__assign({ node: opener }, getMessageIdWithData(token, shouldBeSpaced)), { fix: function (fixer) {
@@ -111,16 +120,19 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 } }));
         };
         var checkTrailingSpace = function (from, token, shouldBeSpaced) {
-            var _a, _b;
-            var _c;
+            var _a, _b, _c;
+            var _d;
             if (shouldBeSpaced === void 0) { shouldBeSpaced = false; }
             var payload;
             var closer;
-            if ('typeAnnotation' in from && from.typeAnnotation) {
-                _a = sourceCode.getTokensBefore(from.typeAnnotation, { count: 2 }), payload = _a[0], closer = _a[1];
+            if (from.type in ast_spec_1.AST_TOKEN_TYPES) {
+                _a = [sourceCode.getTokenBefore(from), from], payload = _a[0], closer = _a[1];
+            }
+            else if ('typeAnnotation' in from && from.typeAnnotation) {
+                _b = sourceCode.getTokensBefore(from.typeAnnotation, { count: 2 }), payload = _b[0], closer = _b[1];
             }
             else {
-                _b = sourceCode.getLastTokens(from, { count: 2 }), payload = _b[0], closer = _b[1];
+                _c = sourceCode.getLastTokens(from, { count: 2 }), payload = _c[0], closer = _c[1];
             }
             if (!payload) {
                 return;
@@ -128,7 +140,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             if (isFirstCloserOfLine(closer)) {
                 return;
             }
-            if (shouldBeSpaced === Boolean((_c = sourceCode.isSpaceBetween) === null || _c === void 0 ? void 0 : _c.call(sourceCode, payload, closer))) {
+            if (shouldBeSpaced === Boolean((_d = sourceCode.isSpaceBetween) === null || _d === void 0 ? void 0 : _d.call(sourceCode, payload, closer))) {
                 return;
             }
             context.report(__assign(__assign({ node: closer }, getMessageIdWithData(token, shouldBeSpaced)), { fix: function (fixer) {
@@ -177,6 +189,17 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 else {
                     checkTrailingSpace(node, "}", !only);
                 }
+            },
+            'ImportDeclaration, ExportNamedDeclaration': function (node) {
+                if (!node.specifiers.length) {
+                    return;
+                }
+                var opening = sourceCode.getTokenBefore(node.specifiers[0]);
+                var closing = sourceCode.getTokenAfter(node.specifiers[node.specifiers.length - 1]);
+                if (opening)
+                    checkLeadingSpace(opening, "{", true);
+                if (closing)
+                    checkTrailingSpace(closing, "}", true);
             }
         };
     }
