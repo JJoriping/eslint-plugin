@@ -27,7 +27,8 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         if(node.typeAnnotation?.typeAnnotation.type !== AST_NODE_TYPES.TSFunctionType){
           return;
         }
-        const type = node.parent?.type === AST_NODE_TYPES.TSTypeLiteral ? "typeAlias"
+        const type = node.parent?.type === AST_NODE_TYPES.TSTypeLiteral
+          ? "typeAlias"
           : node.parent?.type === AST_NODE_TYPES.TSInterfaceBody
           ? "interface"
           : undefined

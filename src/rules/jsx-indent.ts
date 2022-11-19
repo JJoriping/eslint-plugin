@@ -8,12 +8,12 @@ export default ESLintUtils.RuleCreator.withoutDocs({
     type: "layout",
     fixable: "whitespace",
     messages: {
-      'in-tag-opening': "Opening of a tag should not be spaced.",
-      'in-tag-closing': "Closing of a single line tag should not be spaced.",
-      'in-tag-self-closing': "Self-closing of a tag should be spaced.",
-      'in-tag-indentation': "Closing of a multiline tag should appear at the first of its line.",
+      'in-children-indentation': "Children of a tag should be indented.",
       'in-multiline-tag-closing': "Closing of a tag should not be multiline.",
-      'in-children-indentation': "Children of a tag should be indented."
+      'in-tag-closing': "Closing of a single line tag should not be spaced.",
+      'in-tag-indentation': "Closing of a multiline tag should appear at the first of its line.",
+      'in-tag-opening': "Opening of a tag should not be spaced.",
+      'in-tag-self-closing': "Self-closing of a tag should be spaced."
     },
     schema: []
   },

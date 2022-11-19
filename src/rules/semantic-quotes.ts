@@ -141,11 +141,11 @@ export default ESLintUtils.RuleCreator.withoutDocs({
             break;
         }
       },
-      TSPropertySignature: node => {
-        assertStringLiteral(node.key, 'key', 'from-keyish-usage');
-      },
       TSLiteralType: node => {
         assertStringLiteral(node.literal, 'value', 'from-valueish-usage');
+      },
+      TSPropertySignature: node => {
+        assertStringLiteral(node.key, 'key', 'from-keyish-usage');
       }
     };
   }
