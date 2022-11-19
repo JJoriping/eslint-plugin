@@ -324,6 +324,7 @@ exports.default = {
             }],
         // Custom rules
         '@jjoriping/declaration-order': "warn",
+        '@jjoriping/desirousness': "warn",
         '@jjoriping/function-type-annotation-style': "warn",
         '@jjoriping/iterator-name': "warn",
         '@jjoriping/jsx-expression-condition-type': "warn",
@@ -343,8 +344,5 @@ exports.default = {
         '@jjoriping/type-colon-spacing': "warn",
         '@jjoriping/type-operator-spacing': "warn",
         '@jjoriping/variable-name': "warn"
-        /*
-         * TODO 집에 가고 싶다...
-         */
     }
 };
