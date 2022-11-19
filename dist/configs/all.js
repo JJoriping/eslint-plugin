@@ -58,7 +58,6 @@ exports.default = {
         'operator-assignment': "error",
         'prefer-numeric-literals': "error",
         'prefer-regex-literals': "error",
-        'sort-keys': ["error", "asc", { minKeys: 10, allowLineSeparatedGroups: true }],
         'spaced-comment': "error",
         'use-isnan': "error",
         'yoda': "error",
@@ -149,7 +148,11 @@ exports.default = {
                     with: { before: true, after: false }
                 }
             }],
-        '@typescript-eslint/no-extra-parens': ["warn", "all", { ignoreJSX: "all" }],
+        '@typescript-eslint/no-extra-parens': [
+            "warn",
+            "all",
+            { ignoreJSX: "all", nestedBinaryExpressions: false }
+        ],
         '@typescript-eslint/no-extra-semi': "error",
         '@typescript-eslint/no-shadow': "warn",
         '@typescript-eslint/no-throw-literal': "error",
@@ -240,13 +243,13 @@ exports.default = {
         'react/jsx-wrap-multilines': [
             "warn",
             {
-                declaration: "ignore",
-                assignment: "ignore",
-                return: "parens-new-line",
                 arrow: "parens-new-line",
+                assignment: "ignore",
                 condition: "ignore",
+                declaration: "ignore",
                 logical: "ignore",
-                prop: "ignore"
+                prop: "ignore",
+                return: "parens-new-line"
             }
         ],
         'react/no-access-state-in-setstate': "warn",
@@ -335,12 +338,12 @@ exports.default = {
         '@jjoriping/parenthesis-spacing': "warn",
         '@jjoriping/return-type': "warn",
         '@jjoriping/semantic-quotes': "warn",
+        '@jjoriping/sort-keys': "warn",
         '@jjoriping/ternary-spacing': "warn",
         '@jjoriping/type-colon-spacing': "warn",
         '@jjoriping/type-operator-spacing': "warn",
         '@jjoriping/variable-name': "warn"
         /*
-         * TODO sort-keys 정렬을 제안 형식으로...
          * TODO 집에 가고 싶다...
          */
     }

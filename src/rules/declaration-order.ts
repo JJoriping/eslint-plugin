@@ -30,7 +30,6 @@ export default ESLintUtils.RuleCreator.withoutDocs({
     fixable: "whitespace",
     messages: {
       'interorder': "`{{target}}` node should appear prior to any `{{base}}` node.",
-      'intraorder': "`{{target}}` should appear prior to `{{base}}`.",
       'empty-line': "One empty line should appear between `{{base}}` and `{{target}}`.",
       'no-literal-member': "Name of a class member cannot be a string literal."
     },
@@ -43,7 +42,6 @@ export default ESLintUtils.RuleCreator.withoutDocs({
     const checkElements = (list:Node[], checkEmptyLine?:boolean) => {
       const orderTable = getDefinitionOrderTable(list);
       let prevScore:number|undefined;
-      let prevKey:string|undefined;
 
       for(const v of list){
         const key = getDefinitionIdentifier(v);
@@ -69,16 +67,6 @@ export default ESLintUtils.RuleCreator.withoutDocs({
               });
             }
           }
-        }
-        if(typeof key !== "symbol"){
-          if(prevKey && prevScore === score && prevKey.localeCompare(key) > 0){
-            context.report({
-              node: v,
-              messageId: "intraorder",
-              data: { target: key, base: prevKey }
-            });
-          }
-          prevKey = key;
         }
         prevScore = score;
       }

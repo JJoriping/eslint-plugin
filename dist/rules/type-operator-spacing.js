@@ -132,7 +132,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                                 }
                             });
                         }
-                        if (aLineIndentation_1.length >= bLineIndentation.length) {
+                        if (i === 0 && aLineIndentation_1.length >= bLineIndentation.length) {
                             context.report({
                                 node: bFirst,
                                 messageId: "in-multiline-indent",
@@ -143,6 +143,25 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                                                     sourceCode.lineStartIndices[bFirst.loc.start.line - 1],
                                                     operator.range[0]
                                                 ], aLineIndentation_1 + "  ")];
+                                            case 1:
+                                                _a.sent();
+                                                return [2 /*return*/];
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                        if (i > 0 && aLineIndentation_1.length !== bLineIndentation.length) {
+                            context.report({
+                                node: bFirst,
+                                messageId: "in-multiline-indent",
+                                fix: function (fixer) {
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, fixer.replaceTextRange([
+                                                    sourceCode.lineStartIndices[bFirst.loc.start.line - 1],
+                                                    operator.range[0]
+                                                ], aLineIndentation_1)];
                                             case 1:
                                                 _a.sent();
                                                 return [2 /*return*/];

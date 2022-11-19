@@ -76,7 +76,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
                 }
               });
             }
-            if(aLineIndentation.length >= bLineIndentation.length){
+            if(i === 0 && aLineIndentation.length >= bLineIndentation.length){
               context.report({
                 node: bFirst,
                 messageId: "in-multiline-indent",
@@ -85,6 +85,18 @@ export default ESLintUtils.RuleCreator.withoutDocs({
                     sourceCode.lineStartIndices[bFirst.loc.start.line - 1],
                     operator.range[0]
                   ], aLineIndentation + "  ");
+                }
+              });
+            }
+            if(i > 0 && aLineIndentation.length !== bLineIndentation.length){
+              context.report({
+                node: bFirst,
+                messageId: "in-multiline-indent",
+                *fix(fixer){
+                  yield fixer.replaceTextRange([
+                    sourceCode.lineStartIndices[bFirst.loc.start.line - 1],
+                    operator.range[0]
+                  ], aLineIndentation);
                 }
               });
             }

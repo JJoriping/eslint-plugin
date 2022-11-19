@@ -56,7 +56,6 @@ interface O3{
   get o16():any;
   [o19:string]:unknown;
 
-  o20:() => void;
   o23():any;
 }
 
