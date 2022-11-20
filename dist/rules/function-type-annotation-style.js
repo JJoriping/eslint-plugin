@@ -56,7 +56,8 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 if (((_a = node.typeAnnotation) === null || _a === void 0 ? void 0 : _a.typeAnnotation.type) !== utils_1.AST_NODE_TYPES.TSFunctionType) {
                     return;
                 }
-                var type = ((_b = node.parent) === null || _b === void 0 ? void 0 : _b.type) === utils_1.AST_NODE_TYPES.TSTypeLiteral ? "typeAlias"
+                var type = ((_b = node.parent) === null || _b === void 0 ? void 0 : _b.type) === utils_1.AST_NODE_TYPES.TSTypeLiteral
+                    ? "typeAlias"
                     : ((_c = node.parent) === null || _c === void 0 ? void 0 : _c.type) === utils_1.AST_NODE_TYPES.TSInterfaceBody
                         ? "interface"
                         : undefined;

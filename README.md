@@ -2,6 +2,10 @@
 
 수년 동안 코딩해 오면서 정립된 제 코딩 스타일을 가능한 한 재현하고 있는 ESLint 플러그인입니다.
 
+## 설치 방법
+- `yarn add @jjoriping/eslint-plugin@github:JJoriping/eslint-plugin`
+- 위 명령어 끝에 `#v1.0.0` 등 태그를 추가해 버전을 설정할 수 있습니다.
+
 ## 설정 방법
 ESLint 설정 파일에 다음을 추가합니다.
 - 배열 `plugins`에 `@jjoriping/eslint-plugin` 추가

@@ -27,20 +27,20 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
         schema: [{
                 type: "object",
                 properties: {
+                    entry: { type: "array", items: { type: "string" } },
                     index: { type: "array", items: { type: "string" } },
                     key: { type: "array", items: { type: "string" } },
-                    value: { type: "array", items: { type: "string" } },
                     previousValue: { type: "array", items: { type: "string" } },
-                    entry: { type: "array", items: { type: "string" } }
+                    value: { type: "array", items: { type: "string" } }
                 }
             }]
     },
     defaultOptions: [{
+            entry: ["e", "f", "g", "h", "i"],
             index: ["i", "j", "k", "l", "m"],
             key: ["k", "l", "m", "n", "o"],
-            value: ["v", "w", "x", "y", "z"],
             previousValue: ["pv", "pw", "px", "py", "pz"],
-            entry: ["e", "f", "g", "h", "i"]
+            value: ["v", "w", "x", "y", "z"]
         }],
     create: function (context, _a) {
         var options = _a[0];

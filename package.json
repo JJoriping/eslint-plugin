@@ -1,11 +1,12 @@
 {
   "name": "@jjoriping/eslint-plugin",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "main": "./dist/index.js",
   "repository": "https://github.com/JJoriping/eslint-plugin.git",
   "author": "JJoriping <op@jjo.kr>",
   "license": "MIT",
   "scripts": {
+    "build": "tsc -b",
     "watch": "tsc --watch",
     "test": "eslint --parser-options={\"project\":\"./test.tsconfig.json\"}"
   },
