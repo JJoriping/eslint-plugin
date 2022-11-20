@@ -143,7 +143,8 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
         };
         var checkParameterNames = function (kind, parameters, depth) {
             var _a, _b;
-            for (var i = 0; i < parameters.length; i++) {
+            var max = Math.min(kind.length, parameters.length);
+            for (var i = 0; i < max; i++) {
                 var parameter = parameters[i];
                 if (parameter.type === utils_1.AST_NODE_TYPES.ArrayPattern) {
                     if (kind[i] !== "entry") {

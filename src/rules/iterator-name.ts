@@ -142,7 +142,9 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       return value;
     };
     const checkParameterNames = (kind:(typeof kindTable)[string], parameters:Array<Identifier|ArrayPattern>, depth:number) => {
-      for(let i = 0; i < parameters.length; i++){
+      const max = Math.min(kind.length, parameters.length);
+
+      for(let i = 0; i < max; i++){
         const parameter = parameters[i];
 
         if(parameter.type === AST_NODE_TYPES.ArrayPattern){
