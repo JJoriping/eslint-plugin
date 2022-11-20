@@ -167,7 +167,7 @@ function getScore(node) {
                 R += 240 /* ScoreValue.PROPERTY */;
             break;
         case utils_1.AST_NODE_TYPES.StaticBlock:
-            R += 1110 /* ScoreValue.STATIC_BLOCK */;
+            R += 1000 /* ScoreValue.STATIC */ + 110 /* ScoreValue.STATIC_BLOCK */;
             break;
         case utils_1.AST_NODE_TYPES.TSIndexSignature:
             R += 210 /* ScoreValue.INDEX_SIGNATURE */;
@@ -209,10 +209,6 @@ function getScoreString(score) {
             R.push("private");
             break;
     }
-    if (rest >= 1110 /* ScoreValue.STATIC_BLOCK */) {
-        rest -= 1110 /* ScoreValue.STATIC_BLOCK */;
-        R.push("static block");
-    }
     if (rest >= 1000 /* ScoreValue.STATIC */) {
         rest -= 1000 /* ScoreValue.STATIC */;
         R.push("static");
@@ -245,6 +241,10 @@ function getScoreString(score) {
         case 120 /* ScoreValue.METHOD */:
             rest -= 120 /* ScoreValue.METHOD */;
             R.push("method");
+            break;
+        case 110 /* ScoreValue.STATIC_BLOCK */:
+            rest -= 110 /* ScoreValue.STATIC_BLOCK */;
+            R.push("static block");
             break;
     }
     if (rest) {

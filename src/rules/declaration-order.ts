@@ -16,7 +16,7 @@ const enum ScoreValue{
   CONSTRUCTOR = 140,
   ARROW_FUNCTION = 130,
   METHOD = 120,
-  STATIC_BLOCK = 1110,
+  STATIC_BLOCK = 110,
 
   IMPLICITLY_PUBLIC = 4,
   PUBLIC = 3,
@@ -139,7 +139,7 @@ function getScore(node:Node):number{
       else R += ScoreValue.PROPERTY;
       break;
     case AST_NODE_TYPES.StaticBlock:
-      R += ScoreValue.STATIC_BLOCK;
+      R += ScoreValue.STATIC + ScoreValue.STATIC_BLOCK;
       break;
     case AST_NODE_TYPES.TSIndexSignature:
       R += ScoreValue.INDEX_SIGNATURE;
@@ -163,10 +163,6 @@ function getScoreString(score:number):string{
     case ScoreValue.PROTECTED: rest -= ScoreValue.PROTECTED; R.push("protected"); break;
     case ScoreValue.PRIVATE: rest -= ScoreValue.PRIVATE; R.push("private"); break;
   }
-  if(rest >= ScoreValue.STATIC_BLOCK){
-    rest -= ScoreValue.STATIC_BLOCK;
-    R.push("static block");
-  }
   if(rest >= ScoreValue.STATIC){
     rest -= ScoreValue.STATIC;
     R.push("static");
@@ -179,6 +175,7 @@ function getScoreString(score:number):string{
     case ScoreValue.CONSTRUCTOR: rest -= ScoreValue.CONSTRUCTOR; R.push("constructor"); break;
     case ScoreValue.ARROW_FUNCTION: rest -= ScoreValue.ARROW_FUNCTION; R.push("arrow function"); break;
     case ScoreValue.METHOD: rest -= ScoreValue.METHOD; R.push("method"); break;
+    case ScoreValue.STATIC_BLOCK: rest -= ScoreValue.STATIC_BLOCK; R.push("static block"); break;
   }
   if(rest){
     throw Error(`Unhandled rest: ${rest}`);
