@@ -79,7 +79,6 @@ exports.default = {
         'no-useless-escape': "warn",
         'prefer-arrow-callback': "warn",
         'prefer-const': "warn",
-        'require-atomic-updates': "warn",
         'require-yield': "warn",
         'symbol-description': "warn",
         // ESLint rules - styles
@@ -271,7 +270,7 @@ exports.default = {
         'import/order': [
             "warn",
             {
-                'newlines-between': "always"
+                'newlines-between': "never"
             }
         ],
         // Unicorn rules

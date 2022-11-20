@@ -180,7 +180,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         checkCase('function', node.key);
       },
       PropertyDefinition: node => {
-        checkCase('variable', node.key);
+        checkCase(node.readonly ? 'const' : 'variable', node.key);
       },
       VariableDeclarator: node => {
         if(node.parent?.type !== AST_NODE_TYPES.VariableDeclaration){

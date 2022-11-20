@@ -103,14 +103,15 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 var comments = sourceCode.getCommentsBefore(target);
                 lastNode = target;
                 if (!isSortTarget(target)) {
-                    group.push([sourceCode.getText(target) + nextToken, comments]);
+                    var payload = sourceCode.getText(target) + nextToken;
+                    group.push([payload, payload, comments]);
                     return;
                 }
                 var continued = prevLine !== undefined && prevLine + comments.length + 1 >= target.loc.start.line;
                 if (!continued && group.length) {
                     flush();
                 }
-                group.push([sourceCode.getText(target) + nextToken, comments]);
+                group.push([sourceCode.getText(target.key), sourceCode.getText(target) + nextToken, comments]);
                 prevLine = target.loc.end.line;
             }
             function flush() {
@@ -119,7 +120,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                     var b = _b[0];
                     return compareString(a, b);
                 }).map(function (_a) {
-                    var payload = _a[0], comments = _a[1];
+                    var payload = _a[1], comments = _a[2];
                     if (comments === null || comments === void 0 ? void 0 : comments.length) {
                         return "".concat(comments.map(function (w) { return sourceCode.getText(w); }).join('\n'), "\n").concat(indentation).concat(payload);
                     }

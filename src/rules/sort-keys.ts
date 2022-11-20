@@ -50,7 +50,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       const R:string[] = [];
       const groups:string[][] = [];
       const indentation = getIndentation(sourceCode, node.loc.start.line) + "  ";
-      let group:Array<[payload:string, comments:Comment[]]> = [];
+      let group:Array<[keyName:string, payload:string, comments:Comment[]]> = [];
       let lastNode:Node|undefined;
       let prevLine:number|undefined;
 
@@ -84,7 +84,9 @@ export default ESLintUtils.RuleCreator.withoutDocs({
 
         lastNode = target;
         if(!isSortTarget(target)){
-          group.push([ sourceCode.getText(target) + nextToken, comments ]);
+          const payload = sourceCode.getText(target) + nextToken;
+
+          group.push([ payload, payload, comments ]);
           return;
         }
         const continued = prevLine !== undefined && prevLine + comments.length + 1 >= target.loc.start.line;
@@ -92,12 +94,12 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         if(!continued && group.length){
           flush();
         }
-        group.push([ sourceCode.getText(target) + nextToken, comments ]);
+        group.push([ sourceCode.getText(target.key), sourceCode.getText(target) + nextToken, comments ]);
         prevLine = target.loc.end.line;
       }
       function flush():void{
         groups.push(
-          group.sort(([ a ], [ b ]) => compareString(a, b)).map(([ payload, comments ]) => {
+          group.sort(([ a ], [ b ]) => compareString(a, b)).map(([ , payload, comments ]) => {
             if(comments?.length){
               return `${comments.map(w => sourceCode.getText(w)).join('\n')}\n${indentation}${payload}`;
             }

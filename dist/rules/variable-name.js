@@ -186,7 +186,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 checkCase('function', node.key);
             },
             PropertyDefinition: function (node) {
-                checkCase('variable', node.key);
+                checkCase(node.readonly ? 'const' : 'variable', node.key);
             },
             VariableDeclarator: function (node) {
                 var _a;

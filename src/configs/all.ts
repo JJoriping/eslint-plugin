@@ -79,7 +79,6 @@ export default {
     'no-useless-escape': "warn",
     'prefer-arrow-callback': "warn",
     'prefer-const': "warn",
-    'require-atomic-updates': "warn",
     'require-yield': "warn",
     'symbol-description': "warn",
 
@@ -278,7 +277,7 @@ export default {
     'import/order': [
       "warn",
       {
-        'newlines-between': "always"
+        'newlines-between': "never"
       }
     ],
 
