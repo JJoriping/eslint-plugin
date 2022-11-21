@@ -39,7 +39,6 @@ exports.default = {
         'no-inline-comments': "error",
         'no-invalid-regexp': "error",
         'no-lonely-if': "error",
-        'no-mixed-operators': "error",
         'no-negated-condition': "error",
         'no-new-wrappers': "error",
         'no-regex-spaces': "error",
@@ -157,7 +156,6 @@ exports.default = {
         '@typescript-eslint/no-throw-literal': "error",
         '@typescript-eslint/no-unused-expressions': ["error", { allowShortCircuit: true, enforceForJSX: true }],
         '@typescript-eslint/no-useless-constructor': "warn",
-        '@typescript-eslint/require-await': "warn",
         '@typescript-eslint/return-await': "error",
         '@typescript-eslint/semi': "warn",
         '@typescript-eslint/space-before-blocks': ["warn", "never"],
@@ -171,7 +169,6 @@ exports.default = {
         '@typescript-eslint/no-confusing-void-expression': ["error", { ignoreArrowShorthand: true, ignoreVoidOperator: true }],
         '@typescript-eslint/no-duplicate-enum-values': "error",
         '@typescript-eslint/no-extra-non-null-assertion': "error",
-        '@typescript-eslint/no-invalid-void-type': "error",
         '@typescript-eslint/no-meaningless-void-operator': "error",
         '@typescript-eslint/no-misused-new': "error",
         '@typescript-eslint/no-non-null-asserted-nullish-coalescing': "error",
@@ -310,6 +307,7 @@ exports.default = {
         'unicorn/prefer-query-selector': "warn",
         'unicorn/prevent-abbreviations': ["warn", {
                 replacements: {
+                    args: false,
                     db: false,
                     e: false,
                     i: false,
