@@ -63,7 +63,6 @@ export default {
     // ESLint rules - warnings
     'accessor-pairs': "warn",
     'arrow-body-style': "warn",
-    'class-methods-use-this': "warn",
     'logical-assignment-operators': [ "warn", "always", { enforceForIfStatements: true } ],
     'no-debugger': "warn",
     'no-else-return': [ "warn", { allowElseIf: false } ],
@@ -173,7 +172,6 @@ export default {
     '@typescript-eslint/no-confusing-void-expression': [ "error", { ignoreArrowShorthand: true, ignoreVoidOperator: true } ],
     '@typescript-eslint/no-duplicate-enum-values': "error",
     '@typescript-eslint/no-extra-non-null-assertion': "error",
-    '@typescript-eslint/no-meaningless-void-operator': "error",
     '@typescript-eslint/no-misused-new': "error",
     '@typescript-eslint/no-non-null-asserted-nullish-coalescing': "error",
     '@typescript-eslint/no-parameter-properties': "error",
@@ -213,7 +211,6 @@ export default {
     '@typescript-eslint/no-unnecessary-qualifier': "warn",
     '@typescript-eslint/no-unnecessary-type-arguments': "warn",
     '@typescript-eslint/no-unnecessary-type-assertion': "warn",
-    '@typescript-eslint/no-unsafe-argument': "warn",
     '@typescript-eslint/non-nullable-type-assertion-style': "warn",
     '@typescript-eslint/prefer-as-const': "warn",
     '@typescript-eslint/prefer-function-type': "warn",
@@ -280,7 +277,6 @@ export default {
     // Unicorn rules
     'unicorn/better-regex': "warn",
     'unicorn/catch-error-name': "error",
-    'unicorn/custom-error-definition': "warn",
     'unicorn/empty-brace-spaces': "warn",
     'unicorn/error-message': "warn",
     'unicorn/escape-case': "warn",
@@ -323,7 +319,8 @@ export default {
         props: false,
         ref: false,
         req: false,
-        res: false
+        res: false,
+        temp: false
       }
     }],
 
