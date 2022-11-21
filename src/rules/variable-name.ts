@@ -2,7 +2,6 @@ import type { FunctionLike, Identifier, Node } from "@typescript-eslint/types/di
 import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
 import type { JSONSchema4 } from "@typescript-eslint/utils/dist/json-schema";
 import type { Type } from "typescript";
-
 import { camelCasePattern, pascalCasePattern, upperSnakeCasePattern } from "../utils/patterns";
 import { getTSTypeByNode, isReactComponent, typeToString, useTypeChecker } from "../utils/type";
 
@@ -24,6 +23,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       'for-function': "Function name should follow {{list}}.",
       'for-generic': "Generic name should follow {{list}}.",
       'for-interface': "Interface name should follow {{list}}.",
+      'for-mappedKey': "Mapped key name should follow {{list}}.",
       'for-parameter': "Parameter name should follow {{list}}.",
       'for-reactComponent': "React component's name should follow {{list}}.",
       'for-typeAlias': "Type alias name should follow {{list}}.",
@@ -47,6 +47,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
             "typeAlias",
             "interface",
             "generic",
+            "mappedKey",
             "enum",
             "enumValue"
           ].reduce((pv, v) => {
@@ -75,6 +76,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       function: [ "camelCase" ] as typeof CASE_TABLE_KEYS,
       generic: [ "PascalCase" ] as typeof CASE_TABLE_KEYS,
       interface: [ "PascalCase" ] as typeof CASE_TABLE_KEYS,
+      mappedKey: [ "camelCase" ] as typeof CASE_TABLE_KEYS,
       parameter: [ "camelCase" ] as typeof CASE_TABLE_KEYS,
       reactComponent: [ "PascalCase" ] as typeof CASE_TABLE_KEYS,
       typeAlias: [ "PascalCase" ] as typeof CASE_TABLE_KEYS,
@@ -217,7 +219,11 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         checkCase('typeAlias', node.id);
       },
       TSTypeParameter: node => {
-        checkCase('generic', node.name);
+        if(node.parent?.type === AST_NODE_TYPES.TSMappedType){
+          checkCase('mappedKey', node.name);
+        }else{
+          checkCase('generic', node.name);
+        }
       }
     };
   }

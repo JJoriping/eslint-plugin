@@ -332,8 +332,8 @@ export default {
 
     // Custom rules
     '@jjoriping/declaration-order': "warn",
-    '@jjoriping/desirousness': "warn",
     '@jjoriping/function-type-annotation-style': "warn",
+    '@jjoriping/homing-instinct': "warn",
     '@jjoriping/iterator-name': "warn",
     '@jjoriping/jsx-expression-condition-type': "warn",
     '@jjoriping/jsx-indent': "warn",

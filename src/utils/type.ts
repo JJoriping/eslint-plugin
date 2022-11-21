@@ -1,4 +1,4 @@
-import type { CallExpression, NewExpression, Node, FunctionDeclaration } from "@typescript-eslint/types/dist/generated/ast-spec";
+import type { CallExpression, FunctionDeclaration, NewExpression, Node } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { ESLintUtils } from "@typescript-eslint/utils";
 import type { RuleContext } from "@typescript-eslint/utils/dist/ts-eslint";
 import type { Symbol, Type } from "typescript";

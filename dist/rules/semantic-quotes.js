@@ -30,7 +30,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var ast_spec_1 = require("@typescript-eslint/types/dist/generated/ast-spec");
 var utils_1 = require("@typescript-eslint/utils");
 var type_1 = require("../utils/type");
-var type_2 = require("../utils/type");
 var QUOTES = ["'", "\"", "`"];
 var quotePattern = /^["'`]|["'`]$/g;
 exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
@@ -43,7 +42,8 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             'from-keyish-type': "String literal constrained by a finite set of values should be quoted with `'`.",
             'from-valueish-type': "String literal not constrained by a finite set of values should be quoted with `\"`.",
             'from-keyish-usage': "String literal used as a key should be quoted with `'`.",
-            'from-valueish-usage': "String literal used as a value should be quoted with `\"`."
+            'from-valueish-usage': "String literal used as a value should be quoted with `\"`.",
+            'from-generic': "String literal used as a generic type should be quoted with `'`."
         },
         schema: [{
                 type: "object",
@@ -101,7 +101,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 assertStringLiteral(node, 'value', 'from-valueish-usage');
                 return;
             }
-            var type = (0, type_2.getTSTypeBySymbol)(context, symbol, node).getNonNullableType();
+            var type = (0, type_1.getTSTypeBySymbol)(context, symbol, node).getNonNullableType();
             var isKey = type.isUnion() && type.types.every(function (v) { return v.isStringLiteral(); });
             if (isKey) {
                 assertStringLiteral(node, 'key', 'from-keyish-type');
@@ -133,10 +133,10 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 }
             }
         };
-        (0, type_2.useTypeChecker)(context);
+        (0, type_1.useTypeChecker)(context);
         return {
             'CallExpression, NewExpression': function (node) {
-                var parameters = (0, type_2.getFunctionParameters)(context, node);
+                var parameters = (0, type_1.getFunctionParameters)(context, node);
                 if (!parameters) {
                     return;
                 }
@@ -158,7 +158,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                             }
                             break;
                         case ast_spec_1.AST_NODE_TYPES.ObjectExpression:
-                            checkObjectExpression((0, type_2.getTSTypeBySymbol)(context, parameter, node).getProperties(), argument.properties);
+                            checkObjectExpression((0, type_1.getTSTypeBySymbol)(context, parameter, node).getProperties(), argument.properties);
                             break;
                     }
                 }
@@ -170,15 +170,26 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 var _a;
                 switch ((_a = node.parent) === null || _a === void 0 ? void 0 : _a.type) {
                     case ast_spec_1.AST_NODE_TYPES.VariableDeclarator:
-                        checkObjectExpression((0, type_2.getObjectProperties)(context, node.parent.id), node.properties);
+                        checkObjectExpression((0, type_1.getObjectProperties)(context, node.parent.id), node.properties);
                         break;
                     case ast_spec_1.AST_NODE_TYPES.TSAsExpression:
-                        checkObjectExpression((0, type_2.getObjectProperties)(context, node.parent.typeAnnotation), node.properties);
+                        checkObjectExpression((0, type_1.getObjectProperties)(context, node.parent.typeAnnotation), node.properties);
                         break;
                 }
             },
             TSLiteralType: function (node) {
-                assertStringLiteral(node.literal, 'value', 'from-valueish-usage');
+                if (context.getAncestors().some(function (v) {
+                    if (v.type === ast_spec_1.AST_NODE_TYPES.TSTypeParameterInstantiation)
+                        return true;
+                    if (v.type === ast_spec_1.AST_NODE_TYPES.TSTypeParameter)
+                        return true;
+                    return false;
+                })) {
+                    assertStringLiteral(node.literal, 'key', 'from-generic');
+                }
+                else {
+                    assertStringLiteral(node.literal, 'value', 'from-valueish-usage');
+                }
             },
             TSPropertySignature: function (node) {
                 assertStringLiteral(node.key, 'key', 'from-keyish-usage');

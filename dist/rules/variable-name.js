@@ -20,6 +20,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             'for-function': "Function name should follow {{list}}.",
             'for-generic': "Generic name should follow {{list}}.",
             'for-interface': "Interface name should follow {{list}}.",
+            'for-mappedKey': "Mapped key name should follow {{list}}.",
             'for-parameter': "Parameter name should follow {{list}}.",
             'for-reactComponent': "React component's name should follow {{list}}.",
             'for-typeAlias': "Type alias name should follow {{list}}.",
@@ -42,6 +43,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                             "typeAlias",
                             "interface",
                             "generic",
+                            "mappedKey",
                             "enum",
                             "enumValue"
                         ].reduce(function (pv, v) {
@@ -70,6 +72,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 function: ["camelCase"],
                 generic: ["PascalCase"],
                 interface: ["PascalCase"],
+                mappedKey: ["camelCase"],
                 parameter: ["camelCase"],
                 reactComponent: ["PascalCase"],
                 typeAlias: ["PascalCase"],
@@ -226,7 +229,13 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 checkCase('typeAlias', node.id);
             },
             TSTypeParameter: function (node) {
-                checkCase('generic', node.name);
+                var _a;
+                if (((_a = node.parent) === null || _a === void 0 ? void 0 : _a.type) === utils_1.AST_NODE_TYPES.TSMappedType) {
+                    checkCase('mappedKey', node.name);
+                }
+                else {
+                    checkCase('generic', node.name);
+                }
             }
         };
     }

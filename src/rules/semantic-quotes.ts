@@ -1,11 +1,9 @@
-import type { CallExpression, Literal, NewExpression, Node, ObjectLiteralElement } from "@typescript-eslint/types/dist/generated/ast-spec";
+import type { CallExpression, Literal, NewExpression, Node, ObjectLiteralElement, TSLiteralType } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { AST_NODE_TYPES } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { ESLintUtils } from "@typescript-eslint/utils";
 import type { Symbol } from "typescript";
-
 import type { MessageIdOf } from "../utils/type";
-import { getTSTypeByNode } from "../utils/type";
-import { getFunctionParameters, getObjectProperties, getTSTypeBySymbol, useTypeChecker } from "../utils/type";
+import { getFunctionParameters, getObjectProperties, getTSTypeByNode, getTSTypeBySymbol, useTypeChecker } from "../utils/type";
 
 const QUOTES = [ "'", "\"", "`" ];
 const quotePattern = /^["'`]|["'`]$/g;
@@ -22,7 +20,9 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       'from-valueish-type': "String literal not constrained by a finite set of values should be quoted with `\"`.",
 
       'from-keyish-usage': "String literal used as a key should be quoted with `'`.",
-      'from-valueish-usage': "String literal used as a value should be quoted with `\"`."
+      'from-valueish-usage': "String literal used as a value should be quoted with `\"`.",
+
+      'from-generic': "String literal used as a generic type should be quoted with `'`."
     },
     schema: [{
       type: "object",
@@ -141,8 +141,16 @@ export default ESLintUtils.RuleCreator.withoutDocs({
             break;
         }
       },
-      TSLiteralType: node => {
-        assertStringLiteral(node.literal, 'value', 'from-valueish-usage');
+      TSLiteralType: (node:TSLiteralType) => {
+        if(context.getAncestors().some(v => {
+          if(v.type === AST_NODE_TYPES.TSTypeParameterInstantiation) return true;
+          if(v.type === AST_NODE_TYPES.TSTypeParameter) return true;
+          return false;
+        })){
+          assertStringLiteral(node.literal, 'key', 'from-generic');
+        }else{
+          assertStringLiteral(node.literal, 'value', 'from-valueish-usage');
+        }
       },
       TSPropertySignature: node => {
         assertStringLiteral(node.key, 'key', 'from-keyish-usage');
