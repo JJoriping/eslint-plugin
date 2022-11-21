@@ -183,7 +183,6 @@ export default {
     '@typescript-eslint/no-useless-empty-export': "error",
     '@typescript-eslint/prefer-literal-enum-member': "error",
     '@typescript-eslint/restrict-plus-operands': "error",
-    '@typescript-eslint/unbound-method': "error",
 
     // TSLint rules - warnings
     '@typescript-eslint/array-type': [ "warn", { default: "array-simple" } ],
@@ -329,7 +328,6 @@ export default {
     }],
 
     // Custom rules
-    '@jjoriping/declaration-order': "warn",
     '@jjoriping/function-type-annotation-style': "warn",
     '@jjoriping/homing-instinct': "warn",
     '@jjoriping/iterator-name': "warn",

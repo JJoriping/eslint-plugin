@@ -29,12 +29,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("@typescript-eslint/utils");
 var code_1 = require("../utils/code");
+var staticBlock = Symbol("static block");
+var indexSignature = Symbol("index signature");
 exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
     meta: {
-        type: "layout",
+        fixable: "whitespace",
         hasSuggestions: true,
+        type: "layout",
         messages: {
-            'default': "`{{current}}` should be prior to `{{prev}}`.",
+            'empty-line': "One empty line should appear between `{{base}}` and `{{target}}`.",
+            'interorder': "`{{target}}` node should appear prior to any `{{base}}` node.",
+            'intraorder': "`{{target}}` should appear prior to `{{base}}`.",
+            'no-literal-member': "Name of a class member cannot be a string literal.",
             'default/suggest/0': "Sort {{length}} keys",
             'default/suggest/1': "Sort {{length}} keys (⚠️ Be aware of spreads and comments!)"
         },
@@ -51,16 +57,88 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
     create: function (context, _a) {
         var minPropertyCount = _a[0].minPropertyCount;
         var sourceCode = context.getSourceCode();
-        var isSortTarget = function (node) {
-            switch (node.type) {
-                case utils_1.AST_NODE_TYPES.Property:
-                case utils_1.AST_NODE_TYPES.PropertyDefinition:
-                case utils_1.AST_NODE_TYPES.MethodDefinition:
-                case utils_1.AST_NODE_TYPES.TSPropertySignature:
-                case utils_1.AST_NODE_TYPES.TSMethodSignature:
-                    return node.key.type === utils_1.AST_NODE_TYPES.Identifier || node.key.type === utils_1.AST_NODE_TYPES.Literal;
+        var checkElements = function (list, checkEmptyLine) {
+            if (list.length < minPropertyCount) {
+                return;
             }
-            return false;
+            var orderTable = getDefinitionOrderTable(list);
+            var prevLine;
+            var prevScore;
+            var prevKey;
+            var _loop_1 = function (v) {
+                if (!v.parent)
+                    return "continue";
+                var key = getDefinitionIdentifier(v);
+                if (!key)
+                    return "continue";
+                var score = orderTable[key];
+                if (prevScore !== undefined) {
+                    if (prevScore < score) {
+                        context.report({
+                            node: v,
+                            messageId: "interorder",
+                            data: { target: getScoreString(score), base: getScoreString(prevScore) },
+                            suggest: suggest(list.length, v.parent)
+                        });
+                    }
+                    else if (checkEmptyLine && Math.floor(0.01 * prevScore) - Math.floor(0.01 * score) > 0) {
+                        if (!(0, code_1.hasEmptyLineBefore)(sourceCode, v)) {
+                            context.report({
+                                node: v,
+                                messageId: "empty-line",
+                                data: { target: getScoreString(score), base: getScoreString(prevScore) },
+                                fix: function (fixer) {
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, fixer.insertTextBefore(v, "\n")];
+                                            case 1:
+                                                _a.sent();
+                                                return [2 /*return*/];
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    }
+                }
+                if (typeof key !== "symbol") {
+                    var comments = sourceCode.getCommentsBefore(v);
+                    var isGroupHead = prevLine === undefined || prevLine + comments.length + 1 < v.loc.start.line;
+                    if (prevKey && !isGroupHead && prevScore === score && compareString(prevKey, key) > 0) {
+                        context.report({
+                            node: v,
+                            messageId: "intraorder",
+                            data: { target: key, base: prevKey },
+                            suggest: suggest(list.length, v.parent)
+                        });
+                    }
+                    prevKey = key;
+                }
+                prevLine = v.loc.end.line;
+                prevScore = score;
+            };
+            for (var _i = 0, list_1 = list; _i < list_1.length; _i++) {
+                var v = list_1[_i];
+                _loop_1(v);
+            }
+            function suggest(length, parent) {
+                var hasNontarget = list.some(function (v) { return !getDefinitionIdentifier(v); })
+                    || sourceCode.getCommentsInside(parent).length > 0;
+                return [{
+                        messageId: hasNontarget ? "default/suggest/1" : "default/suggest/0",
+                        data: { length: length },
+                        fix: function (fixer) {
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0: return [4 /*yield*/, fixer.replaceText(parent, sortKeys(parent))];
+                                    case 1:
+                                        _a.sent();
+                                        return [2 /*return*/];
+                                }
+                            });
+                        }
+                    }];
+            }
         };
         var sortKeys = function (node) {
             var R = [];
@@ -95,113 +173,223 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             if (lastNode) {
                 var comments = sourceCode.getCommentsAfter(lastNode);
                 if (comments.length)
-                    groups.push(comments.map(function (v) { return sourceCode.getText(v); }));
+                    groups.push([0, comments.map(function (v) { return sourceCode.getText(v); })]);
             }
-            R.push("{", groups.map(function (v) { return v.map(function (w) { return indentation + w; }).join('\n'); }).join('\n\n'), "}");
+            groups.sort(function (_a, _b) {
+                var a = _a[0];
+                var b = _b[0];
+                return b - a;
+            });
+            R.push("{", groups.map(function (_a) {
+                var v = _a[1];
+                return v.map(function (w) { return indentation + w; }).join('\n');
+            }).join('\n\n'), "}");
             return R.join('\n');
             function runner(target, nextToken) {
+                var _a, _b;
                 var comments = sourceCode.getCommentsBefore(target);
                 lastNode = target;
-                if (!isSortTarget(target)) {
+                if (!getDefinitionIdentifier(target) || !('key' in target)) {
                     var payload = sourceCode.getText(target) + nextToken;
-                    group.push([payload, payload, comments]);
+                    group.push([((_b = (_a = group.at(-1)) === null || _a === void 0 ? void 0 : _a[0]) !== null && _b !== void 0 ? _b : 0) + 0.001, payload, payload, comments]);
                     return;
                 }
                 var continued = prevLine !== undefined && prevLine + comments.length + 1 >= target.loc.start.line;
                 if (!continued && group.length) {
                     flush();
                 }
-                group.push([sourceCode.getText(target.key), sourceCode.getText(target) + nextToken, comments]);
+                group.push([getScore(target), sourceCode.getText(target.key), sourceCode.getText(target) + nextToken, comments]);
                 prevLine = target.loc.end.line;
             }
             function flush() {
-                groups.push(group.sort(function (_a, _b) {
-                    var a = _a[0];
-                    var b = _b[0];
-                    return compareString(a, b);
-                }).map(function (_a) {
-                    var payload = _a[1], comments = _a[2];
-                    if (comments === null || comments === void 0 ? void 0 : comments.length) {
-                        return "".concat(comments.map(function (w) { return sourceCode.getText(w); }).join('\n'), "\n").concat(indentation).concat(payload);
-                    }
-                    return payload;
-                }));
-                group = [];
-            }
-        };
-        var checkProperties = function (list) {
-            var prevLine;
-            var prevName;
-            var _loop_1 = function (v) {
-                if (!isSortTarget(v)) {
-                    return "continue";
-                }
-                var name_1 = v.key.type === utils_1.AST_NODE_TYPES.Literal ? String(v.key.value) : v.key.name;
-                var comments = sourceCode.getCommentsBefore(v);
-                if (prevLine !== undefined && prevLine + comments.length + 1 >= v.loc.start.line) {
-                    if (prevName.localeCompare(name_1, undefined, { numeric: true }) > 0) {
-                        var parent_1 = v.parent;
-                        if (parent_1) {
-                            var hasNontarget = list.some(function (w) { return !isSortTarget(w); })
-                                || sourceCode.getCommentsInside(parent_1).length > 0;
-                            context.report({
-                                node: v,
-                                messageId: "default",
-                                data: { prev: prevName, current: name_1 },
-                                suggest: [{
-                                        messageId: hasNontarget ? "default/suggest/1" : "default/suggest/0",
-                                        data: { length: list.length },
-                                        fix: function (fixer) {
-                                            return __generator(this, function (_a) {
-                                                switch (_a.label) {
-                                                    case 0: return [4 /*yield*/, fixer.replaceText(parent_1, sortKeys(parent_1))];
-                                                    case 1:
-                                                        _a.sent();
-                                                        return [2 /*return*/];
-                                                }
-                                            });
-                                        }
-                                    }]
-                            });
+                var sortedGroup = group
+                    .sort(function (_a, _b) {
+                    var aScore = _a[0], aKey = _a[1];
+                    var bScore = _b[0], bKey = _b[1];
+                    return bScore - aScore || compareString(aKey, bKey);
+                });
+                groups.push([
+                    sortedGroup[0][0],
+                    sortedGroup.map(function (_a) {
+                        var payload = _a[2], comments = _a[3];
+                        if (comments === null || comments === void 0 ? void 0 : comments.length) {
+                            return "".concat(comments.map(function (w) { return sourceCode.getText(w); }).join('\n'), "\n").concat(indentation).concat(payload);
                         }
-                    }
-                }
-                prevLine = v.loc.end.line;
-                prevName = name_1;
-            };
-            for (var _i = 0, list_1 = list; _i < list_1.length; _i++) {
-                var v = list_1[_i];
-                _loop_1(v);
+                        return payload;
+                    })
+                ]);
+                group = [];
             }
         };
         return {
             ClassBody: function (node) {
-                if (node.body.length < minPropertyCount) {
-                    return;
-                }
-                checkProperties(node.body);
+                checkElements(node.body, true);
             },
             TSTypeLiteral: function (node) {
-                if (node.members.length < minPropertyCount) {
-                    return;
-                }
-                checkProperties(node.members);
+                checkElements(node.members);
             },
-            TSInterfaceBody: function (node) {
-                if (node.body.length < minPropertyCount) {
-                    return;
-                }
-                checkProperties(node.body);
+            TSInterfaceDeclaration: function (node) {
+                checkElements(node.body.body, true);
             },
             ObjectExpression: function (node) {
-                if (node.properties.length < minPropertyCount) {
-                    return;
-                }
-                checkProperties(node.properties);
+                checkElements(node.properties);
             }
         };
     }
 });
+function getDefinitionOrderTable(items) {
+    var R = {};
+    for (var _i = 0, items_1 = items; _i < items_1.length; _i++) {
+        var v = items_1[_i];
+        var key = getDefinitionIdentifier(v);
+        if (!key)
+            continue;
+        R[key] = getScore(v);
+    }
+    return R;
+}
+function getDefinitionIdentifier(item) {
+    switch (item.type) {
+        case utils_1.AST_NODE_TYPES.Property:
+        case utils_1.AST_NODE_TYPES.PropertyDefinition:
+        case utils_1.AST_NODE_TYPES.MethodDefinition:
+        case utils_1.AST_NODE_TYPES.TSPropertySignature:
+        case utils_1.AST_NODE_TYPES.TSMethodSignature:
+            if (item.key.type === utils_1.AST_NODE_TYPES.Identifier) {
+                return item.key.name;
+            }
+            if (item.key.type === utils_1.AST_NODE_TYPES.Literal) {
+                return String(item.key.value);
+            }
+            return null;
+        case utils_1.AST_NODE_TYPES.StaticBlock:
+            return staticBlock;
+        case utils_1.AST_NODE_TYPES.TSIndexSignature:
+            return indexSignature;
+    }
+    return null;
+}
+// NOTE Node with higher score should appear first
+function getScore(node) {
+    var _a, _b;
+    var R = 0;
+    if ('static' in node && node.static)
+        R += 1000 /* ScoreValue.STATIC */;
+    switch (node.type) {
+        case utils_1.AST_NODE_TYPES.MethodDefinition:
+        case utils_1.AST_NODE_TYPES.TSMethodSignature:
+            switch (node.kind) {
+                case "get":
+                    R += 230 /* ScoreValue.GETTER */;
+                    break;
+                case "set":
+                    R += 220 /* ScoreValue.SETTER */;
+                    break;
+                case "constructor":
+                    R += 140 /* ScoreValue.CONSTRUCTOR */;
+                    break;
+                default: R += 120 /* ScoreValue.METHOD */;
+            }
+            break;
+        case utils_1.AST_NODE_TYPES.PropertyDefinition:
+            if (((_a = node.value) === null || _a === void 0 ? void 0 : _a.type) === utils_1.AST_NODE_TYPES.ArrowFunctionExpression)
+                R += 130 /* ScoreValue.ARROW_FUNCTION */;
+            else
+                R += 240 /* ScoreValue.PROPERTY */;
+            break;
+        case utils_1.AST_NODE_TYPES.TSPropertySignature:
+            if (((_b = node.typeAnnotation) === null || _b === void 0 ? void 0 : _b.typeAnnotation.type) === utils_1.AST_NODE_TYPES.TSFunctionType)
+                R += 130 /* ScoreValue.ARROW_FUNCTION */;
+            else
+                R += 240 /* ScoreValue.PROPERTY */;
+            break;
+        case utils_1.AST_NODE_TYPES.StaticBlock:
+            R += 1000 /* ScoreValue.STATIC */ + 110 /* ScoreValue.STATIC_BLOCK */;
+            break;
+        case utils_1.AST_NODE_TYPES.TSIndexSignature:
+            R += 210 /* ScoreValue.INDEX_SIGNATURE */;
+            break;
+    }
+    if ('accessibility' in node)
+        switch (node.accessibility) {
+            case "public":
+                R += 3 /* ScoreValue.PUBLIC */;
+                break;
+            case "protected":
+                R += 2 /* ScoreValue.PROTECTED */;
+                break;
+            case "private":
+                R += 1 /* ScoreValue.PRIVATE */;
+                break;
+        }
+    else
+        R += 4 /* ScoreValue.IMPLICITLY_PUBLIC */;
+    return R;
+}
+function getScoreString(score) {
+    var R = [];
+    var rest = score;
+    switch (rest % 10) {
+        case 4 /* ScoreValue.IMPLICITLY_PUBLIC */:
+            rest -= 4 /* ScoreValue.IMPLICITLY_PUBLIC */;
+            break;
+        case 3 /* ScoreValue.PUBLIC */:
+            rest -= 3 /* ScoreValue.PUBLIC */;
+            R.push("public");
+            break;
+        case 2 /* ScoreValue.PROTECTED */:
+            rest -= 2 /* ScoreValue.PROTECTED */;
+            R.push("protected");
+            break;
+        case 1 /* ScoreValue.PRIVATE */:
+            rest -= 1 /* ScoreValue.PRIVATE */;
+            R.push("private");
+            break;
+    }
+    if (rest >= 1000 /* ScoreValue.STATIC */) {
+        rest -= 1000 /* ScoreValue.STATIC */;
+        R.push("static");
+    }
+    switch (rest) {
+        case 240 /* ScoreValue.PROPERTY */:
+            rest -= 240 /* ScoreValue.PROPERTY */;
+            R.push("property");
+            break;
+        case 230 /* ScoreValue.GETTER */:
+            rest -= 230 /* ScoreValue.GETTER */;
+            R.push("getter");
+            break;
+        case 220 /* ScoreValue.SETTER */:
+            rest -= 220 /* ScoreValue.SETTER */;
+            R.push("setter");
+            break;
+        case 210 /* ScoreValue.INDEX_SIGNATURE */:
+            rest -= 210 /* ScoreValue.INDEX_SIGNATURE */;
+            R.push("index signature");
+            break;
+        case 140 /* ScoreValue.CONSTRUCTOR */:
+            rest -= 140 /* ScoreValue.CONSTRUCTOR */;
+            R.push("constructor");
+            break;
+        case 130 /* ScoreValue.ARROW_FUNCTION */:
+            rest -= 130 /* ScoreValue.ARROW_FUNCTION */;
+            R.push("arrow function");
+            break;
+        case 120 /* ScoreValue.METHOD */:
+            rest -= 120 /* ScoreValue.METHOD */;
+            R.push("method");
+            break;
+        case 110 /* ScoreValue.STATIC_BLOCK */:
+            rest -= 110 /* ScoreValue.STATIC_BLOCK */;
+            R.push("static block");
+            break;
+    }
+    if (rest) {
+        throw Error("Unhandled rest: ".concat(rest));
+    }
+    R[0] = R[0][0].toUpperCase() + R[0].slice(1);
+    return R.join(' ');
+}
 function compareString(a, b) {
     return a.localeCompare(b, undefined, { numeric: true });
 }
