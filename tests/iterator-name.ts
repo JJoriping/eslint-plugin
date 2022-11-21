@@ -5,6 +5,7 @@ for(const [ k, v ] of Object.entries({})){
 }
 for(const [ item ] of Array()) console.log(item);
 Object.entries(global).map(e => {});
+[].map(v => v).filter(v => v);
 
 // X
 [].map(item => {});
@@ -16,5 +17,6 @@ for(const i of []){
   return 1;
 });
 Object.entries(global).map(([ x, y ]) => []);
+[].map(v => [].filter(v => v));
 
 export {};

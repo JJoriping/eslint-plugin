@@ -114,11 +114,15 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             };
         };
         var getCurrentDepth = function () {
+            var ancestors = context.getAncestors();
             var R = 0;
-            for (var _i = 0, _a = context.getAncestors(); _i < _a.length; _i++) {
-                var v = _a[_i];
+            for (var i = 0; i < ancestors.length; i++) {
+                var v = ancestors[i];
                 switch (v.type) {
                     case utils_1.AST_NODE_TYPES.CallExpression:
+                        if (v.callee === ancestors[i + 1]) {
+                            continue;
+                        }
                         if (!getIterativeMethodParameters(v)) {
                             continue;
                         }

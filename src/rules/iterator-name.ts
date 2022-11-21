@@ -1,6 +1,5 @@
 import type { Identifier, CallExpression, Expression, ArrayPattern, Node } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
-
 import { toOrdinal } from "../utils/text";
 import { getTSTypeByNode, useTypeChecker } from "../utils/type";
 
@@ -114,11 +113,17 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       };
     };
     const getCurrentDepth = () => {
+      const ancestors = context.getAncestors();
       let R = 0;
 
-      for(const v of context.getAncestors()){
+      for(let i = 0; i < ancestors.length; i++){
+        const v = ancestors[i];
+
         switch(v.type){
           case AST_NODE_TYPES.CallExpression:
+            if(v.callee === ancestors[i + 1]){
+              continue;
+            }
             if(!getIterativeMethodParameters(v)){
               continue;
             }
