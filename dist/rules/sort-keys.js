@@ -52,7 +52,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             }]
     },
     defaultOptions: [{
-            minPropertyCount: 5
+            minPropertyCount: 10
         }],
     create: function (context, _a) {
         var minPropertyCount = _a[0].minPropertyCount;

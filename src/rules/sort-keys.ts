@@ -48,7 +48,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
     }]
   },
   defaultOptions: [{
-    minPropertyCount: 5
+    minPropertyCount: 10
   }],
   create(context, [{ minPropertyCount }]){
     const sourceCode = context.getSourceCode();

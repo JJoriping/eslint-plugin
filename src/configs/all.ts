@@ -56,7 +56,7 @@ export default {
     'operator-assignment': "error",
     'prefer-numeric-literals': "error",
     'prefer-regex-literals': "error",
-    'spaced-comment': "error",
+    'spaced-comment': [ "error", "always", { markers: [ "/" ] } ],
     'use-isnan': "error",
     'yoda': "error",
 
