@@ -8,6 +8,7 @@ var kindTable = {
     for: ["index"],
     forIn: ["key"],
     forOf: ["value"],
+    keyishForOf: ["key"],
     entries: ["entry", "index"],
     every: ["value", "index"],
     filter: ["value", "index"],
@@ -73,12 +74,18 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                         if (node.left.declarations.length !== 1) {
                             return null;
                         }
-                        var id = node.left.declarations[0].id;
-                        if (id.type !== utils_1.AST_NODE_TYPES.Identifier && id.type !== utils_1.AST_NODE_TYPES.ArrayPattern) {
+                        var leftNode = node.left.declarations[0];
+                        if (leftNode.id.type !== utils_1.AST_NODE_TYPES.Identifier && leftNode.id.type !== utils_1.AST_NODE_TYPES.ArrayPattern) {
                             return null;
                         }
                         name = node.type === utils_1.AST_NODE_TYPES.ForInStatement ? "forIn" : "forOf";
-                        list = [id];
+                        if (name === "forOf") {
+                            var iteratorType = (0, type_1.getTSTypeByNode)(context, leftNode);
+                            if (iteratorType.isUnion() && iteratorType.types.every(function (v) { return v.isStringLiteral(); })) {
+                                name = "keyishForOf";
+                            }
+                        }
+                        list = [leftNode.id];
                         calleeObject = node.right;
                     }
                     break;

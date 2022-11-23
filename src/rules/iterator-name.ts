@@ -4,10 +4,11 @@ import { toOrdinal } from "../utils/text";
 import { getTSTypeByNode, useTypeChecker } from "../utils/type";
 
 const iterativeMethods = [ "map", "reduce", "every", "some", "forEach", "filter", "find", "findIndex" ];
-const kindTable:Record<string, Array<"index"|"key"|"value"|"previousValue"|"entry">> = {
+const kindTable:Record<string, Array<'index'|'key'|'value'|'previousValue'|'entry'>> = {
   for: [ "index" ],
   forIn: [ "key" ],
   forOf: [ "value" ],
+  keyishForOf: [ "key" ],
 
   entries: [ "entry", "index" ],
   every: [ "value", "index" ],
@@ -74,12 +75,19 @@ export default ESLintUtils.RuleCreator.withoutDocs({
           if(node.left.declarations.length !== 1){
             return null;
           }
-          const { id } = node.left.declarations[0];
-          if(id.type !== AST_NODE_TYPES.Identifier && id.type !== AST_NODE_TYPES.ArrayPattern){
+          const leftNode = node.left.declarations[0];
+          if(leftNode.id.type !== AST_NODE_TYPES.Identifier && leftNode.id.type !== AST_NODE_TYPES.ArrayPattern){
             return null;
           }
           name = node.type === AST_NODE_TYPES.ForInStatement ? "forIn" : "forOf";
-          list = [ id ];
+          if(name === "forOf"){
+            const iteratorType = getTSTypeByNode(context, leftNode);
+
+            if(iteratorType.isUnion() && iteratorType.types.every(v => v.isStringLiteral())){
+              name = "keyishForOf";
+            }
+          }
+          list = [ leftNode.id ];
           calleeObject = node.right;
         } break;
         default: return null;

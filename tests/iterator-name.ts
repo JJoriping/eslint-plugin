@@ -6,6 +6,7 @@ for(const [ k, v ] of Object.entries({})){
 for(const [ item ] of Array()) console.log(item);
 Object.entries(global).map(e => {});
 [].map(v => v).filter(v => v);
+for(const k of [ "a", "b" ] as const) console.log(k);
 
 // X
 [].map(item => {});
@@ -18,5 +19,6 @@ for(const i of []){
 });
 Object.entries(global).map(([ x, y ]) => []);
 [].map(v => [].filter(v => v));
+for(const v of [ "a", "b" ] as const) console.log(v);
 
 export {};
