@@ -120,7 +120,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         list: node.arguments[0].params as Array<Identifier|ArrayPattern>
       };
     };
-    const getCurrentDepth = () => {
+    const getCurrentDepth = (me:Node) => {
       const ancestors = context.getAncestors();
       let R = 0;
 
@@ -129,7 +129,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
 
         switch(v.type){
           case AST_NODE_TYPES.CallExpression:
-            if(v.callee === ancestors[i + 1]){
+            if(v.callee === (ancestors[i + 1] || me)){
               continue;
             }
             if(!getIterativeMethodParameters(v)){
@@ -137,11 +137,14 @@ export default ESLintUtils.RuleCreator.withoutDocs({
             }
             R++;
             break;
+          case AST_NODE_TYPES.WhileStatement:
+          case AST_NODE_TYPES.DoWhileStatement:
+            if(v.test === (ancestors[i + 1] || me)){
+              continue;
+            }
           case AST_NODE_TYPES.ForStatement:
           case AST_NODE_TYPES.ForInStatement:
           case AST_NODE_TYPES.ForOfStatement:
-          case AST_NODE_TYPES.WhileStatement:
-          case AST_NODE_TYPES.DoWhileStatement:
             R++;
             break;
         }
@@ -222,7 +225,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         if(!parameters){
           return;
         }
-        const depth = getCurrentDepth();
+        const depth = getCurrentDepth(node);
 
         if(isObjectEntriesCall(parameters.calleeObject)){
           checkParameterNames(kindTable['entries'], parameters.list, depth);
@@ -235,7 +238,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         if(!parameters){
           return;
         }
-        const depth = getCurrentDepth();
+        const depth = getCurrentDepth(node);
 
         if(parameters.calleeObject && isObjectEntriesCall(parameters.calleeObject)){
           checkParameterNames(kindTable['entries'], parameters.list, depth);

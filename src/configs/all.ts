@@ -280,15 +280,6 @@ export default {
     'unicorn/empty-brace-spaces': "warn",
     'unicorn/error-message': "warn",
     'unicorn/escape-case': "warn",
-    'unicorn/filename-case': [
-      "error",
-      {
-        cases: {
-          pascalCase: true,
-          kebabCase: true
-        }
-      }
-    ],
     'unicorn/no-array-for-each': "warn",
     'unicorn/no-instanceof-array': "error",
     'unicorn/no-invalid-remove-event-listener': "warn",

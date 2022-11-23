@@ -120,14 +120,14 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 list: node.arguments[0].params
             };
         };
-        var getCurrentDepth = function () {
+        var getCurrentDepth = function (me) {
             var ancestors = context.getAncestors();
             var R = 0;
             for (var i = 0; i < ancestors.length; i++) {
                 var v = ancestors[i];
                 switch (v.type) {
                     case utils_1.AST_NODE_TYPES.CallExpression:
-                        if (v.callee === ancestors[i + 1]) {
+                        if (v.callee === (ancestors[i + 1] || me)) {
                             continue;
                         }
                         if (!getIterativeMethodParameters(v)) {
@@ -135,11 +135,14 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                         }
                         R++;
                         break;
+                    case utils_1.AST_NODE_TYPES.WhileStatement:
+                    case utils_1.AST_NODE_TYPES.DoWhileStatement:
+                        if (v.test === (ancestors[i + 1] || me)) {
+                            continue;
+                        }
                     case utils_1.AST_NODE_TYPES.ForStatement:
                     case utils_1.AST_NODE_TYPES.ForInStatement:
                     case utils_1.AST_NODE_TYPES.ForOfStatement:
-                    case utils_1.AST_NODE_TYPES.WhileStatement:
-                    case utils_1.AST_NODE_TYPES.DoWhileStatement:
                         R++;
                         break;
                 }
@@ -218,7 +221,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 if (!parameters) {
                     return;
                 }
-                var depth = getCurrentDepth();
+                var depth = getCurrentDepth(node);
                 if (isObjectEntriesCall(parameters.calleeObject)) {
                     checkParameterNames(kindTable['entries'], parameters.list, depth);
                 }
@@ -231,7 +234,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 if (!parameters) {
                     return;
                 }
-                var depth = getCurrentDepth();
+                var depth = getCurrentDepth(node);
                 if (parameters.calleeObject && isObjectEntriesCall(parameters.calleeObject)) {
                     checkParameterNames(kindTable['entries'], parameters.list, depth);
                 }

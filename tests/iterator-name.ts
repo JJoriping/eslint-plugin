@@ -7,6 +7,7 @@ for(const [ item ] of Array()) console.log(item);
 Object.entries(global).map(e => {});
 [].map(v => v).filter(v => v);
 for(const k of [ "a", "b" ] as const) console.log(k);
+while([].some(v => v)) console.log(1);
 
 // X
 [].map(item => {});
