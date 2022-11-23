@@ -29,8 +29,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var ast_spec_1 = require("@typescript-eslint/types/dist/generated/ast-spec");
 var utils_1 = require("@typescript-eslint/utils");
+var patterns_1 = require("../utils/patterns");
 var type_1 = require("../utils/type");
-var type_2 = require("../utils/type");
 var QUOTES = ["'", "\"", "`"];
 var quotePattern = /^["'`]|["'`]$/g;
 exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
@@ -55,8 +55,8 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             }]
     },
     defaultOptions: [{
-            keyishNamePattern: /^(id|key|index|separator|delimiter)$|(Id|Key|Index|Separator|Delimiter)$/.source,
-            valueishNamePattern: /^(value|name)$|(Value|Name)$/.source
+            keyishNamePattern: patterns_1.keyishNamePattern.source,
+            valueishNamePattern: patterns_1.valueishNamePattern.source
         }],
     create: function (context, _a) {
         var _b = _a[0], keyishNamePatternString = _b.keyishNamePattern, valueishNamePatternString = _b.valueishNamePattern;
@@ -102,7 +102,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 assertStringLiteral(node, 'value', 'from-valueish-usage');
                 return;
             }
-            var type = (0, type_2.getTSTypeBySymbol)(context, symbol, node).getNonNullableType();
+            var type = (0, type_1.getTSTypeBySymbol)(context, symbol, node).getNonNullableType();
             var isKey;
             if (isRest) {
                 var innerType = type.getNumberIndexType();
@@ -137,14 +137,14 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                     checkLiteral(keySymbol, v.value, true);
                 }
                 else if (v.value.type === ast_spec_1.AST_NODE_TYPES.ObjectExpression) {
-                    checkObjectExpression((0, type_2.getTSTypeByNode)(context, v.value).getNonNullableType().getProperties(), v.value.properties);
+                    checkObjectExpression((0, type_1.getTSTypeByNode)(context, v.value).getNonNullableType().getProperties(), v.value.properties);
                 }
             }
         };
-        (0, type_2.useTypeChecker)(context);
+        (0, type_1.useTypeChecker)(context);
         return {
             'CallExpression, NewExpression': function (node) {
-                var parameters = (0, type_2.getFunctionParameters)(context, node);
+                var parameters = (0, type_1.getFunctionParameters)(context, node);
                 if (!parameters) {
                     return;
                 }
@@ -168,7 +168,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                             }
                             break;
                         case ast_spec_1.AST_NODE_TYPES.ObjectExpression:
-                            checkObjectExpression((0, type_2.getTSTypeBySymbol)(context, parameter, node).getProperties(), argument.properties);
+                            checkObjectExpression((0, type_1.getTSTypeBySymbol)(context, parameter, node).getProperties(), argument.properties);
                             break;
                     }
                     if (!isRest) {
@@ -183,10 +183,10 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 var _a;
                 switch ((_a = node.parent) === null || _a === void 0 ? void 0 : _a.type) {
                     case ast_spec_1.AST_NODE_TYPES.VariableDeclarator:
-                        checkObjectExpression((0, type_2.getObjectProperties)(context, node.parent.id), node.properties);
+                        checkObjectExpression((0, type_1.getObjectProperties)(context, node.parent.id), node.properties);
                         break;
                     case ast_spec_1.AST_NODE_TYPES.TSAsExpression:
-                        checkObjectExpression((0, type_2.getObjectProperties)(context, node.parent.typeAnnotation), node.properties);
+                        checkObjectExpression((0, type_1.getObjectProperties)(context, node.parent.typeAnnotation), node.properties);
                         break;
                 }
             },

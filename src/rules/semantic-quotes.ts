@@ -2,10 +2,9 @@ import type { CallExpression, Literal, NewExpression, Node, ObjectLiteralElement
 import { AST_NODE_TYPES } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { ESLintUtils } from "@typescript-eslint/utils";
 import type { Symbol } from "typescript";
+import { keyishNamePattern as defaultKeyishNamePattern, valueishNamePattern as defaultValueishNamePattern } from "../utils/patterns";
 import type { MessageIdOf } from "../utils/type";
-import { typeToString } from "../utils/type";
-import { isRestParameter } from "../utils/type";
-import { getFunctionParameters, getObjectProperties, getTSTypeByNode, getTSTypeBySymbol, useTypeChecker } from "../utils/type";
+import { getFunctionParameters, getObjectProperties, getTSTypeByNode, getTSTypeBySymbol, isRestParameter, useTypeChecker } from "../utils/type";
 
 const QUOTES = [ "'", "\"", "`" ];
 const quotePattern = /^["'`]|["'`]$/g;
@@ -35,8 +34,8 @@ export default ESLintUtils.RuleCreator.withoutDocs({
     }]
   },
   defaultOptions: [{
-    keyishNamePattern: /^(id|key|index|separator|delimiter)$|(Id|Key|Index|Separator|Delimiter)$/.source,
-    valueishNamePattern: /^(value|name)$|(Value|Name)$/.source
+    keyishNamePattern: defaultKeyishNamePattern.source,
+    valueishNamePattern: defaultValueishNamePattern.source
   }],
   create(context, [{ keyishNamePattern: keyishNamePatternString, valueishNamePattern: valueishNamePatternString }]){
     const keyishNamePattern = new RegExp(keyishNamePatternString);

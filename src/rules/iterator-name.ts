@@ -1,14 +1,14 @@
-import type { Identifier, CallExpression, Expression, ArrayPattern, Node } from "@typescript-eslint/types/dist/generated/ast-spec";
+import type { ArrayPattern, CallExpression, Expression, Identifier, Node } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
+import { keyListLikeNamePattern as defaultKeyListLikeNamePattern } from "../utils/patterns";
 import { toOrdinal } from "../utils/text";
 import { getTSTypeByNode, useTypeChecker } from "../utils/type";
 
 const iterativeMethods = [ "map", "reduce", "every", "some", "forEach", "filter", "find", "findIndex" ];
-const kindTable:Record<string, Array<'index'|'key'|'value'|'previousValue'|'entry'>> = {
+const kindTable:Record<string, Array<'index'|'key'|'value'|'previousKey'|'previousValue'|'entry'>> = {
   for: [ "index" ],
   forIn: [ "key" ],
   forOf: [ "value" ],
-  keyishForOf: [ "key" ],
 
   entries: [ "entry", "index" ],
   every: [ "value", "index" ],
@@ -34,6 +34,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
           entry: { type: "array", items: { type: "string" } },
           index: { type: "array", items: { type: "string" } },
           key: { type: "array", items: { type: "string" } },
+          previousKey: { type: "array", items: { type: "string" } },
           previousValue: { type: "array", items: { type: "string" } },
           value: { type: "array", items: { type: "string" } }
         }
@@ -41,6 +42,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       {
         type: "object",
         properties: {
+          keyListLikeNamePattern: { type: "string" },
           exceptions: { type: "array", items: { type: "string" } }
         }
       }
@@ -51,20 +53,24 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       entry: [ "e", "f", "g", "h", "i" ],
       index: [ "i", "j", "k", "l", "m" ],
       key: [ "k", "l", "m", "n", "o" ],
+      previousKey: [ "pk", "pl", "pm", "pn", "po" ],
       previousValue: [ "pv", "pw", "px", "py", "pz" ],
       value: [ "v", "w", "x", "y", "z" ]
     },
     {
+      keyListLikeNamePattern: defaultKeyListLikeNamePattern.source,
       exceptions: [ "_", "__" ]
     }
   ],
-  create(context, [ options, { exceptions } ]){
+  create(context, [ options, { keyListLikeNamePattern: keyListLikeNamePatternString, exceptions } ]){
+    const keyListLikeNamePattern = new RegExp(keyListLikeNamePatternString!);
     const sourceCode = context.getSourceCode();
 
     const getIterativeStatementParameters = (node:Node) => {
       let name:string;
       let list:Array<Identifier|ArrayPattern>;
       let calleeObject:Expression|undefined = undefined;
+      let keyish = false;
 
       switch(node.type){
         case AST_NODE_TYPES.ForStatement:
@@ -94,10 +100,14 @@ export default ESLintUtils.RuleCreator.withoutDocs({
           }
           name = node.type === AST_NODE_TYPES.ForInStatement ? "forIn" : "forOf";
           if(name === "forOf"){
-            const iteratorType = getTSTypeByNode(context, leftNode);
+            if(isKeyListLikeName(node.right)){
+              keyish = true;
+            }else{
+              const iteratorType = getTSTypeByNode(context, leftNode);
 
-            if(iteratorType.isUnion() && iteratorType.types.every(v => v.isStringLiteral())){
-              name = "keyishForOf";
+              if(iteratorType.isUnion() && iteratorType.types.every(v => v.isStringLiteral())){
+                keyish = true;
+              }
             }
           }
           list = [ leftNode.id ];
@@ -105,7 +115,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         } break;
         default: return null;
       }
-      return { name, list, calleeObject };
+      return { name, keyish, list, calleeObject };
     };
     const getIterativeMethodParameters = (node:CallExpression) => {
       if(node.callee.type !== AST_NODE_TYPES.MemberExpression){
@@ -129,6 +139,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       }
       return {
         name: node.callee.property.name,
+        keyish: isKeyListLikeName(node.callee.object),
         calleeObject: node.callee.object,
         list: node.arguments[0].params as Array<Identifier|ArrayPattern>
       };
@@ -232,6 +243,9 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       }
       return true;
     };
+    const isKeyListLikeName = (node:Node) => node.type === AST_NODE_TYPES.Identifier
+      && keyListLikeNamePattern.test(node.name)
+    ;
 
     useTypeChecker(context);
 
@@ -244,9 +258,9 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         const depth = getCurrentDepth(node);
 
         if(isObjectEntriesCall(parameters.calleeObject)){
-          checkParameterNames(kindTable['entries'], parameters.list, depth);
+          checkParameterNames(resolveKindTable('entries', parameters.keyish), parameters.list, depth);
         }else{
-          checkParameterNames(kindTable[parameters.name], parameters.list, depth);
+          checkParameterNames(resolveKindTable(parameters.name, parameters.keyish), parameters.list, depth);
         }
       },
       'ForStatement, ForInStatement, ForOfStatement': node => {
@@ -257,11 +271,25 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         const depth = getCurrentDepth(node);
 
         if(parameters.calleeObject && isObjectEntriesCall(parameters.calleeObject)){
-          checkParameterNames(kindTable['entries'], parameters.list, depth);
+          checkParameterNames(resolveKindTable('entries', parameters.keyish), parameters.list, depth);
         }else{
-          checkParameterNames(kindTable[parameters.name], parameters.list, depth);
+          checkParameterNames(resolveKindTable(parameters.name, parameters.keyish), parameters.list, depth);
         }
       }
     };
   }
 });
+function resolveKindTable(key:string, keyish:boolean):(typeof kindTable)[string]{
+  let R = [ ...kindTable[key] ];
+
+  if(keyish){
+    R = R.map(v => {
+      switch(v){
+        case "value": return "key";
+        case "previousValue": return "previousKey";
+      }
+      return v;
+    });
+  }
+  return R;
+}
