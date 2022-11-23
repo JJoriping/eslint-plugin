@@ -30,6 +30,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var ast_spec_1 = require("@typescript-eslint/types/dist/generated/ast-spec");
 var utils_1 = require("@typescript-eslint/utils");
 var type_1 = require("../utils/type");
+var type_2 = require("../utils/type");
 var QUOTES = ["'", "\"", "`"];
 var quotePattern = /^["'`]|["'`]$/g;
 exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
@@ -88,7 +89,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 }
             });
         };
-        var checkLiteral = function (symbol, node, ignoreKeyishUnion) {
+        var checkLiteral = function (symbol, node, ignoreKeyishUnion, isRest) {
             if (keyishNamePattern.test(symbol.name)) {
                 assertStringLiteral(node, 'key', 'from-keyish-name');
                 return;
@@ -101,8 +102,15 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 assertStringLiteral(node, 'value', 'from-valueish-usage');
                 return;
             }
-            var type = (0, type_1.getTSTypeBySymbol)(context, symbol, node).getNonNullableType();
-            var isKey = type.isUnion() && type.types.every(function (v) { return v.isStringLiteral(); });
+            var type = (0, type_2.getTSTypeBySymbol)(context, symbol, node).getNonNullableType();
+            var isKey;
+            if (isRest) {
+                var innerType = type.getNumberIndexType();
+                isKey = (innerType === null || innerType === void 0 ? void 0 : innerType.isUnion()) && innerType.types.every(function (v) { return v.isStringLiteral(); });
+            }
+            else {
+                isKey = type.isUnion() && type.types.every(function (v) { return v.isStringLiteral(); });
+            }
             if (isKey) {
                 assertStringLiteral(node, 'key', 'from-keyish-type');
             }
@@ -129,25 +137,27 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                     checkLiteral(keySymbol, v.value, true);
                 }
                 else if (v.value.type === ast_spec_1.AST_NODE_TYPES.ObjectExpression) {
-                    checkObjectExpression((0, type_1.getTSTypeByNode)(context, v.value).getNonNullableType().getProperties(), v.value.properties);
+                    checkObjectExpression((0, type_2.getTSTypeByNode)(context, v.value).getNonNullableType().getProperties(), v.value.properties);
                 }
             }
         };
-        (0, type_1.useTypeChecker)(context);
+        (0, type_2.useTypeChecker)(context);
         return {
             'CallExpression, NewExpression': function (node) {
-                var parameters = (0, type_1.getFunctionParameters)(context, node);
+                var parameters = (0, type_2.getFunctionParameters)(context, node);
                 if (!parameters) {
                     return;
                 }
-                for (var i = 0; i < parameters.length; i++) {
-                    var parameter = parameters[i];
+                var parameterIndex = 0;
+                for (var i = 0; i < node.arguments.length; i++) {
+                    var parameter = parameters[parameterIndex];
+                    if (!parameter)
+                        break;
                     var argument = node.arguments[i];
-                    if (!argument)
-                        continue;
+                    var isRest = (0, type_1.isRestParameter)(context, parameter);
                     switch (argument.type) {
                         case ast_spec_1.AST_NODE_TYPES.Literal:
-                            checkLiteral(parameter, argument);
+                            checkLiteral(parameter, argument, false, isRest);
                             break;
                         case ast_spec_1.AST_NODE_TYPES.ConditionalExpression:
                             for (var _i = 0, _a = [argument.consequent, argument.alternate]; _i < _a.length; _i++) {
@@ -158,8 +168,11 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                             }
                             break;
                         case ast_spec_1.AST_NODE_TYPES.ObjectExpression:
-                            checkObjectExpression((0, type_1.getTSTypeBySymbol)(context, parameter, node).getProperties(), argument.properties);
+                            checkObjectExpression((0, type_2.getTSTypeBySymbol)(context, parameter, node).getProperties(), argument.properties);
                             break;
+                    }
+                    if (!isRest) {
+                        parameterIndex++;
                     }
                 }
             },
@@ -170,10 +183,10 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 var _a;
                 switch ((_a = node.parent) === null || _a === void 0 ? void 0 : _a.type) {
                     case ast_spec_1.AST_NODE_TYPES.VariableDeclarator:
-                        checkObjectExpression((0, type_1.getObjectProperties)(context, node.parent.id), node.properties);
+                        checkObjectExpression((0, type_2.getObjectProperties)(context, node.parent.id), node.properties);
                         break;
                     case ast_spec_1.AST_NODE_TYPES.TSAsExpression:
-                        checkObjectExpression((0, type_1.getObjectProperties)(context, node.parent.typeAnnotation), node.properties);
+                        checkObjectExpression((0, type_2.getObjectProperties)(context, node.parent.typeAnnotation), node.properties);
                         break;
                 }
             },

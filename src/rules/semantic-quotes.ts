@@ -3,6 +3,8 @@ import { AST_NODE_TYPES } from "@typescript-eslint/types/dist/generated/ast-spec
 import { ESLintUtils } from "@typescript-eslint/utils";
 import type { Symbol } from "typescript";
 import type { MessageIdOf } from "../utils/type";
+import { typeToString } from "../utils/type";
+import { isRestParameter } from "../utils/type";
 import { getFunctionParameters, getObjectProperties, getTSTypeByNode, getTSTypeBySymbol, useTypeChecker } from "../utils/type";
 
 const QUOTES = [ "'", "\"", "`" ];
@@ -59,7 +61,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         }
       });
     };
-    const checkLiteral = (symbol:Symbol, node:Literal, ignoreKeyishUnion?:boolean) => {
+    const checkLiteral = (symbol:Symbol, node:Literal, ignoreKeyishUnion?:boolean, isRest?:boolean) => {
       if(keyishNamePattern.test(symbol.name)){
         assertStringLiteral(node, 'key', 'from-keyish-name');
         return;
@@ -73,8 +75,15 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         return;
       }
       const type = getTSTypeBySymbol(context, symbol, node).getNonNullableType();
-      const isKey = type.isUnion() && type.types.every(v => v.isStringLiteral());
+      let isKey:boolean|undefined;
 
+      if(isRest){
+        const innerType = type.getNumberIndexType();
+
+        isKey = innerType?.isUnion() && innerType.types.every(v => v.isStringLiteral());
+      }else{
+        isKey = type.isUnion() && type.types.every(v => v.isStringLiteral());
+      }
       if(isKey){
         assertStringLiteral(node, 'key', 'from-keyish-type');
       }else{
@@ -108,13 +117,17 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         if(!parameters){
           return;
         }
-        for(let i = 0; i < parameters.length; i++){
-          const parameter = parameters[i];
+        let parameterIndex = 0;
+
+        for(let i = 0; i < node.arguments.length; i++){
+          const parameter = parameters[parameterIndex];
+          if(!parameter) break;
           const argument = node.arguments[i];
-          if(!argument) continue;
+          const isRest = isRestParameter(context, parameter);
+
           switch(argument.type){
             case AST_NODE_TYPES.Literal:
-              checkLiteral(parameter, argument);
+              checkLiteral(parameter, argument, false, isRest);
               break;
             case AST_NODE_TYPES.ConditionalExpression:
               for(const w of [ argument.consequent, argument.alternate ]){
@@ -125,6 +138,9 @@ export default ESLintUtils.RuleCreator.withoutDocs({
             case AST_NODE_TYPES.ObjectExpression:
               checkObjectExpression(getTSTypeBySymbol(context, parameter, node).getProperties(), argument.properties);
               break;
+          }
+          if(!isRest){
+            parameterIndex++;
           }
         }
       },

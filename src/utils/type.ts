@@ -78,3 +78,9 @@ export function isReactComponent(context:Context, type:Type):boolean{
 
   return returnTypeName === "React.ReactElement";
 }
+export function isRestParameter(context:Context, symbol:Symbol):boolean{
+  const { typeChecker } = context.settings;
+  const parameterDeclaration = typeChecker.symbolToParameterDeclaration(symbol, undefined, undefined);
+
+  return Boolean(parameterDeclaration?.dotDotDotToken);
+}

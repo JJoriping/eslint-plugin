@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isReactComponent = exports.getObjectProperties = exports.getFunctionReturnType = exports.getFunctionParameters = exports.typeToString = exports.getTSTypeBySymbol = exports.getTSSymbolByNode = exports.getTSTypeByNode = exports.useTypeChecker = void 0;
+exports.isRestParameter = exports.isReactComponent = exports.getObjectProperties = exports.getFunctionReturnType = exports.getFunctionParameters = exports.typeToString = exports.getTSTypeBySymbol = exports.getTSSymbolByNode = exports.getTSTypeByNode = exports.useTypeChecker = void 0;
 var utils_1 = require("@typescript-eslint/utils");
 function useTypeChecker(context) {
     context.settings.service = utils_1.ESLintUtils.getParserServices(context);
@@ -72,3 +72,9 @@ function isReactComponent(context, type) {
     return returnTypeName === "React.ReactElement";
 }
 exports.isReactComponent = isReactComponent;
+function isRestParameter(context, symbol) {
+    var typeChecker = context.settings.typeChecker;
+    var parameterDeclaration = typeChecker.symbolToParameterDeclaration(symbol, undefined, undefined);
+    return Boolean(parameterDeclaration === null || parameterDeclaration === void 0 ? void 0 : parameterDeclaration.dotDotDotToken);
+}
+exports.isRestParameter = isRestParameter;
