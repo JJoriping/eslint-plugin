@@ -27,25 +27,38 @@ export default ESLintUtils.RuleCreator.withoutDocs({
     messages: {
       'default': "{{index}} iterator name of {{depth}} `{{kind}}` should be `{{criterion}}`."
     },
-    schema: [{
-      type: "object",
-      properties: {
-        entry: { type: "array", items: { type: "string" } },
-        index: { type: "array", items: { type: "string" } },
-        key: { type: "array", items: { type: "string" } },
-        previousValue: { type: "array", items: { type: "string" } },
-        value: { type: "array", items: { type: "string" } }
+    schema: [
+      {
+        type: "object",
+        properties: {
+          entry: { type: "array", items: { type: "string" } },
+          index: { type: "array", items: { type: "string" } },
+          key: { type: "array", items: { type: "string" } },
+          previousValue: { type: "array", items: { type: "string" } },
+          value: { type: "array", items: { type: "string" } }
+        }
+      },
+      {
+        type: "object",
+        properties: {
+          exceptions: { type: "array", items: { type: "string" } }
+        }
       }
-    }]
+    ]
   },
-  defaultOptions: [{
-    entry: [ "e", "f", "g", "h", "i" ],
-    index: [ "i", "j", "k", "l", "m" ],
-    key: [ "k", "l", "m", "n", "o" ],
-    previousValue: [ "pv", "pw", "px", "py", "pz" ],
-    value: [ "v", "w", "x", "y", "z" ]
-  }],
-  create(context, [ options ]){
+  defaultOptions: [
+    {
+      entry: [ "e", "f", "g", "h", "i" ],
+      index: [ "i", "j", "k", "l", "m" ],
+      key: [ "k", "l", "m", "n", "o" ],
+      previousValue: [ "pv", "pw", "px", "py", "pz" ],
+      value: [ "v", "w", "x", "y", "z" ]
+    },
+    {
+      exceptions: [ "_", "__" ]
+    }
+  ],
+  create(context, [ options, { exceptions } ]){
     const sourceCode = context.getSourceCode();
 
     const getIterativeStatementParameters = (node:Node) => {
@@ -173,7 +186,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
           if(parameter.elements[1]?.type !== AST_NODE_TYPES.Identifier){
             continue;
           }
-          if(getActualName(parameter.elements[0].name) === options.key[depth] && getActualName(parameter.elements[1].name) === options.value[depth]){
+          if(getActualName(parameter.elements[0].name) === options.key![depth] && getActualName(parameter.elements[1].name) === options.value![depth]){
             continue;
           }
           context.report({
@@ -183,12 +196,15 @@ export default ESLintUtils.RuleCreator.withoutDocs({
               index: "Destructured",
               depth: toOrdinal(depth + 1),
               kind: kind[i],
-              criterion: `[ ${options.key[depth]}, ${options.value[depth]} ]`
+              criterion: `[ ${options.key![depth]}, ${options.value![depth]} ]`
             }
           });
         }else{
-          const criterion = options[kind[i]][depth];
+          const criterion = options[kind[i]]![depth];
           if(!criterion){
+            continue;
+          }
+          if(exceptions!.includes(parameter.name)){
             continue;
           }
           if(getActualName(parameter.name) === criterion){

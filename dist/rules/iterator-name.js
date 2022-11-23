@@ -25,7 +25,8 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
         messages: {
             'default': "{{index}} iterator name of {{depth}} `{{kind}}` should be `{{criterion}}`."
         },
-        schema: [{
+        schema: [
+            {
                 type: "object",
                 properties: {
                     entry: { type: "array", items: { type: "string" } },
@@ -34,17 +35,29 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                     previousValue: { type: "array", items: { type: "string" } },
                     value: { type: "array", items: { type: "string" } }
                 }
-            }]
+            },
+            {
+                type: "object",
+                properties: {
+                    exceptions: { type: "array", items: { type: "string" } }
+                }
+            }
+        ]
     },
-    defaultOptions: [{
+    defaultOptions: [
+        {
             entry: ["e", "f", "g", "h", "i"],
             index: ["i", "j", "k", "l", "m"],
             key: ["k", "l", "m", "n", "o"],
             previousValue: ["pv", "pw", "px", "py", "pz"],
             value: ["v", "w", "x", "y", "z"]
-        }],
+        },
+        {
+            exceptions: ["_", "__"]
+        }
+    ],
     create: function (context, _a) {
-        var options = _a[0];
+        var options = _a[0], exceptions = _a[1].exceptions;
         var sourceCode = context.getSourceCode();
         var getIterativeStatementParameters = function (node) {
             var _a;
@@ -187,6 +200,9 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 else {
                     var criterion = options[kind[i]][depth];
                     if (!criterion) {
+                        continue;
+                    }
+                    if (exceptions.includes(parameter.name)) {
                         continue;
                     }
                     if (getActualName(parameter.name) === criterion) {
