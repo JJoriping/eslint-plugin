@@ -142,7 +142,9 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         }
       },
       TSLiteralType: (node:TSLiteralType) => {
-        if(context.getAncestors().some(v => {
+        if(node.parent?.type === AST_NODE_TYPES.TSIndexedAccessType){
+          assertStringLiteral(node.literal, 'key', 'from-keyish-name');
+        }else if(context.getAncestors().some(v => {
           if(v.type === AST_NODE_TYPES.TSTypeParameterInstantiation) return true;
           if(v.type === AST_NODE_TYPES.TSTypeParameter) return true;
           return false;

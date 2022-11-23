@@ -178,7 +178,11 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 }
             },
             TSLiteralType: function (node) {
-                if (context.getAncestors().some(function (v) {
+                var _a;
+                if (((_a = node.parent) === null || _a === void 0 ? void 0 : _a.type) === ast_spec_1.AST_NODE_TYPES.TSIndexedAccessType) {
+                    assertStringLiteral(node.literal, 'key', 'from-keyish-name');
+                }
+                else if (context.getAncestors().some(function (v) {
                     if (v.type === ast_spec_1.AST_NODE_TYPES.TSTypeParameterInstantiation)
                         return true;
                     if (v.type === ast_spec_1.AST_NODE_TYPES.TSTypeParameter)

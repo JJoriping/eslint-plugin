@@ -199,7 +199,7 @@ exports.default = {
             }],
         '@typescript-eslint/no-base-to-string': "warn",
         '@typescript-eslint/no-empty-interface': "warn",
-        '@typescript-eslint/no-misused-promises': "warn",
+        '@typescript-eslint/no-misused-promises': ["warn", { checksVoidReturn: false }],
         '@typescript-eslint/no-non-null-asserted-optional-chain': "warn",
         '@typescript-eslint/no-redundant-type-constituents': "warn",
         '@typescript-eslint/no-unnecessary-boolean-literal-compare': "warn",
@@ -282,7 +282,6 @@ exports.default = {
             }
         ],
         'unicorn/no-array-for-each': "warn",
-        'unicorn/no-array-method-this-argument': "error",
         'unicorn/no-instanceof-array': "error",
         'unicorn/no-invalid-remove-event-listener': "warn",
         'unicorn/no-thenable': "error",
