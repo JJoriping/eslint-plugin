@@ -160,11 +160,22 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       TSLiteralType: (node:TSLiteralType) => {
         if(node.parent?.type === AST_NODE_TYPES.TSIndexedAccessType){
           assertStringLiteral(node.literal, 'key', 'from-keyish-name');
-        }else if(context.getAncestors().some(v => {
-          if(v.type === AST_NODE_TYPES.TSTypeParameterInstantiation) return true;
-          if(v.type === AST_NODE_TYPES.TSTypeParameter) return true;
-          return false;
-        })){
+          return;
+        }
+        let fromGeneric = false;
+
+        v: for(const v of context.getAncestors().reverse()){
+          switch(v.type){
+            case AST_NODE_TYPES.TSPropertySignature:
+              fromGeneric = false;
+              break v;
+            case AST_NODE_TYPES.TSTypeParameter:
+            case AST_NODE_TYPES.TSTypeParameterInstantiation:
+              fromGeneric = true;
+              break v;
+          }
+        }
+        if(fromGeneric){
           assertStringLiteral(node.literal, 'key', 'from-generic');
         }else{
           assertStringLiteral(node.literal, 'value', 'from-valueish-usage');

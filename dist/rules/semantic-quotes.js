@@ -194,14 +194,22 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 var _a;
                 if (((_a = node.parent) === null || _a === void 0 ? void 0 : _a.type) === ast_spec_1.AST_NODE_TYPES.TSIndexedAccessType) {
                     assertStringLiteral(node.literal, 'key', 'from-keyish-name');
+                    return;
                 }
-                else if (context.getAncestors().some(function (v) {
-                    if (v.type === ast_spec_1.AST_NODE_TYPES.TSTypeParameterInstantiation)
-                        return true;
-                    if (v.type === ast_spec_1.AST_NODE_TYPES.TSTypeParameter)
-                        return true;
-                    return false;
-                })) {
+                var fromGeneric = false;
+                v: for (var _i = 0, _b = context.getAncestors().reverse(); _i < _b.length; _i++) {
+                    var v = _b[_i];
+                    switch (v.type) {
+                        case ast_spec_1.AST_NODE_TYPES.TSPropertySignature:
+                            fromGeneric = false;
+                            break v;
+                        case ast_spec_1.AST_NODE_TYPES.TSTypeParameter:
+                        case ast_spec_1.AST_NODE_TYPES.TSTypeParameterInstantiation:
+                            fromGeneric = true;
+                            break v;
+                    }
+                }
+                if (fromGeneric) {
                     assertStringLiteral(node.literal, 'key', 'from-generic');
                 }
                 else {
