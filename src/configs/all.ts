@@ -24,7 +24,6 @@ export default {
     'default-case-last': "error",
     'eqeqeq': "error",
     'grouped-accessor-pairs': [ "error", "getBeforeSet" ],
-    'multiline-comment-style': "error",
     'no-async-promise-executor': "error",
     'no-case-declarations': "error",
     'no-compare-neg-zero': "error",
@@ -74,7 +73,6 @@ export default {
     'no-useless-concat': "warn",
     'no-useless-escape': "warn",
     'prefer-arrow-callback': "warn",
-    'prefer-const': "warn",
     'require-yield': "warn",
     'symbol-description': "warn",
 
@@ -325,6 +323,7 @@ export default {
     '@jjoriping/no-useless-template-literal': "warn",
     '@jjoriping/one-exported-react-component': "warn",
     '@jjoriping/parenthesis-spacing': "warn",
+    '@jjoriping/prefer-const': "warn",
     '@jjoriping/return-type': "warn",
     '@jjoriping/semantic-quotes': "warn",
     '@jjoriping/sort-keys': "warn",
