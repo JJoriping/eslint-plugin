@@ -6,7 +6,8 @@ import { keyishNamePattern as defaultKeyishNamePattern, valueishNamePattern as d
 import type { MessageIdOf } from "../utils/type";
 import { getFunctionParameters, getObjectProperties, getTSTypeByNode, getTSTypeBySymbol, isRestParameter, useTypeChecker } from "../utils/type";
 
-const QUOTES = [ "'", "\"", "`" ];
+const quotes = [ "'", "\"", "`" ];
+const eventMethodNames = [ "on", "once", "off" ];
 const quotePattern = /^["'`]|["'`]$/g;
 
 export default ESLintUtils.RuleCreator.withoutDocs({
@@ -23,6 +24,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       'from-keyish-usage': "String literal used as a key should be quoted with `'`.",
       'from-valueish-usage': "String literal used as a value should be quoted with `\"`.",
 
+      'from-event': "String literal used as an event name should be quoted with `'`.",
       'from-generic': "String literal used as a generic type should be quoted with `'`."
     },
     schema: [{
@@ -45,7 +47,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       if(node.type !== AST_NODE_TYPES.Literal){
         return;
       }
-      if(!QUOTES.includes(node.raw[0])){
+      if(!quotes.includes(node.raw[0])){
         return;
       }
       const target = as === "key" ? "'" : "\"";
@@ -126,7 +128,11 @@ export default ESLintUtils.RuleCreator.withoutDocs({
 
           switch(argument.type){
             case AST_NODE_TYPES.Literal:
-              checkLiteral(parameter, argument, false, isRest);
+              if(!parameterIndex && isCallingEventMethod(node)){
+                assertStringLiteral(argument, 'key', 'from-event');
+              }else{
+                checkLiteral(parameter, argument, false, isRest);
+              }
               break;
             case AST_NODE_TYPES.ConditionalExpression:
               for(const w of [ argument.consequent, argument.alternate ]){
@@ -186,3 +192,9 @@ export default ESLintUtils.RuleCreator.withoutDocs({
     };
   }
 });
+function isCallingEventMethod(node:CallExpression|NewExpression):boolean{
+  if(node.type !== AST_NODE_TYPES.CallExpression) return false;
+  if(node.callee.type !== AST_NODE_TYPES.MemberExpression) return false;
+  if(node.callee.property.type !== AST_NODE_TYPES.Identifier) return false;
+  return eventMethodNames.includes(node.callee.property.name);
+}

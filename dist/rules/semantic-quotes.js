@@ -31,7 +31,8 @@ var ast_spec_1 = require("@typescript-eslint/types/dist/generated/ast-spec");
 var utils_1 = require("@typescript-eslint/utils");
 var patterns_1 = require("../utils/patterns");
 var type_1 = require("../utils/type");
-var QUOTES = ["'", "\"", "`"];
+var quotes = ["'", "\"", "`"];
+var eventMethodNames = ["on", "once", "off"];
 var quotePattern = /^["'`]|["'`]$/g;
 exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
     meta: {
@@ -44,6 +45,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             'from-valueish-type': "String literal not constrained by a finite set of values should be quoted with `\"`.",
             'from-keyish-usage': "String literal used as a key should be quoted with `'`.",
             'from-valueish-usage': "String literal used as a value should be quoted with `\"`.",
+            'from-event': "String literal used as an event name should be quoted with `'`.",
             'from-generic': "String literal used as a generic type should be quoted with `'`."
         },
         schema: [{
@@ -67,7 +69,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             if (node.type !== ast_spec_1.AST_NODE_TYPES.Literal) {
                 return;
             }
-            if (!QUOTES.includes(node.raw[0])) {
+            if (!quotes.includes(node.raw[0])) {
                 return;
             }
             var target = as === "key" ? "'" : "\"";
@@ -157,7 +159,12 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                     var isRest = (0, type_1.isRestParameter)(context, parameter);
                     switch (argument.type) {
                         case ast_spec_1.AST_NODE_TYPES.Literal:
-                            checkLiteral(parameter, argument, false, isRest);
+                            if (!parameterIndex && isCallingEventMethod(node)) {
+                                assertStringLiteral(argument, 'key', 'from-event');
+                            }
+                            else {
+                                checkLiteral(parameter, argument, false, isRest);
+                            }
                             break;
                         case ast_spec_1.AST_NODE_TYPES.ConditionalExpression:
                             for (var _i = 0, _a = [argument.consequent, argument.alternate]; _i < _a.length; _i++) {
@@ -222,3 +229,12 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
         };
     }
 });
+function isCallingEventMethod(node) {
+    if (node.type !== ast_spec_1.AST_NODE_TYPES.CallExpression)
+        return false;
+    if (node.callee.type !== ast_spec_1.AST_NODE_TYPES.MemberExpression)
+        return false;
+    if (node.callee.property.type !== ast_spec_1.AST_NODE_TYPES.Identifier)
+        return false;
+    return eventMethodNames.includes(node.callee.property.name);
+}
