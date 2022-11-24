@@ -43,9 +43,9 @@ class O1{
   public o20 = () => {};
   protected o21 = () => {};
   private o22 = () => {};
-  public o23():any{}
+  private o23():any{}
   protected o24():any{}
-  private o25():any{}
+  public o25():any{}
 }
 type O2 = {
   'o13': any,

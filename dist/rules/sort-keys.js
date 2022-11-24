@@ -273,6 +273,8 @@ function getDefinitionIdentifier(item) {
 function getScore(node) {
     var _a, _b;
     var R = 0;
+    var accessModifierScore;
+    var invertedAccessModifierOrder = false;
     if ('static' in node && node.static)
         R += 1000 /* ScoreValue.STATIC */;
     switch (node.type) {
@@ -288,7 +290,9 @@ function getScore(node) {
                 case "constructor":
                     R += 140 /* ScoreValue.CONSTRUCTOR */;
                     break;
-                default: R += 120 /* ScoreValue.METHOD */;
+                default:
+                    invertedAccessModifierOrder = node.static ? false : true;
+                    R += 120 /* ScoreValue.METHOD */;
             }
             break;
         case utils_1.AST_NODE_TYPES.PropertyDefinition:
@@ -313,17 +317,24 @@ function getScore(node) {
     if ('accessibility' in node)
         switch (node.accessibility) {
             case "public":
-                R += 3 /* ScoreValue.PUBLIC */;
+                accessModifierScore = 3 /* ScoreValue.PUBLIC */;
                 break;
             case "protected":
-                R += 2 /* ScoreValue.PROTECTED */;
+                accessModifierScore = 2 /* ScoreValue.PROTECTED */;
                 break;
             case "private":
-                R += 1 /* ScoreValue.PRIVATE */;
+                accessModifierScore = 1 /* ScoreValue.PRIVATE */;
                 break;
+            default: throw Error("Unhandled accessibility: ".concat(node.accessibility));
         }
     else
-        R += 4 /* ScoreValue.IMPLICITLY_PUBLIC */;
+        accessModifierScore = 4 /* ScoreValue.IMPLICITLY_PUBLIC */;
+    if (invertedAccessModifierOrder) {
+        R += 4 /* ScoreValue.IMPLICITLY_PUBLIC */ + 1 - accessModifierScore;
+    }
+    else {
+        R += accessModifierScore;
+    }
     return R;
 }
 function getScoreString(score) {

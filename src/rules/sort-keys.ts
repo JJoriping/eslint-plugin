@@ -241,6 +241,8 @@ function getDefinitionIdentifier(item:Node):string|symbol|null{
 // NOTE Node with higher score should appear first
 function getScore(node:Node):number{
   let R = 0;
+  let accessModifierScore:number;
+  let invertedAccessModifierOrder = false;
 
   if('static' in node && node.static) R += ScoreValue.STATIC;
   switch(node.type){
@@ -250,7 +252,9 @@ function getScore(node:Node):number{
         case "get": R += ScoreValue.GETTER; break;
         case "set": R += ScoreValue.SETTER; break;
         case "constructor": R += ScoreValue.CONSTRUCTOR; break;
-        default: R += ScoreValue.METHOD;
+        default:
+          invertedAccessModifierOrder = node.static ? false : true;
+          R += ScoreValue.METHOD;
       }
       break;
     case AST_NODE_TYPES.PropertyDefinition:
@@ -269,11 +273,16 @@ function getScore(node:Node):number{
       break;
   }
   if('accessibility' in node) switch(node.accessibility){
-    case "public": R += ScoreValue.PUBLIC; break;
-    case "protected": R += ScoreValue.PROTECTED; break;
-    case "private": R += ScoreValue.PRIVATE; break;
-  }else R += ScoreValue.IMPLICITLY_PUBLIC;
-
+    case "public": accessModifierScore = ScoreValue.PUBLIC; break;
+    case "protected": accessModifierScore = ScoreValue.PROTECTED; break;
+    case "private": accessModifierScore = ScoreValue.PRIVATE; break;
+    default: throw Error(`Unhandled accessibility: ${node.accessibility}`);
+  }else accessModifierScore = ScoreValue.IMPLICITLY_PUBLIC;
+  if(invertedAccessModifierOrder){
+    R += ScoreValue.IMPLICITLY_PUBLIC + 1 - accessModifierScore;
+  }else{
+    R += accessModifierScore;
+  }
   return R;
 }
 function getScoreString(score:number):string{
