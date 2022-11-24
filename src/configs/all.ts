@@ -226,7 +226,6 @@ export default {
     'react/hook-use-state': "warn",
     'react/jsx-boolean-value': "warn",
     'react/jsx-curly-brace-presence': [ "warn", { props: "never", children: "never", propElementValues: "always" } ],
-    'react/jsx-curly-newline': "warn",
     'react/jsx-curly-spacing': [ "warn", { when: "never", attributes: true, children: true } ],
     'react/jsx-equals-spacing': "warn",
     'react/jsx-fragments': "warn",
