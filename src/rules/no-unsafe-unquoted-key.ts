@@ -1,5 +1,4 @@
 import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
-
 import { getTSTypeByNode, useTypeChecker } from "../utils/type";
 
 const propertyPattern = /\.\s*(\w+)$/;

@@ -19,6 +19,7 @@ var kindTable = {
     forIn: ["key"],
     forOf: ["value"],
     entries: ["entry", "index"],
+    entriesReduce: ["previousValue", "entry", "index"],
     every: ["value", "index"],
     filter: ["value", "index"],
     find: ["value", "index"],
@@ -71,6 +72,8 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
     ],
     create: function (context, _a) {
         var options = _a[0], _b = _a[1], keyListLikeNamePatternString = _b.keyListLikeNamePattern, exceptions = _b.exceptions;
+        if (!keyListLikeNamePatternString)
+            throw Error("Unhandled keyListLikeNamePatternString: ".concat(keyListLikeNamePatternString));
         var keyListLikeNamePattern = new RegExp(keyListLikeNamePatternString);
         var sourceCode = context.getSourceCode();
         var getIterativeStatementParameters = function (node) {
@@ -262,7 +265,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 }
                 var depth = getCurrentDepth(node);
                 if (isObjectEntriesCall(parameters.calleeObject)) {
-                    checkParameterNames(resolveKindTable('entries', parameters.keyish), parameters.list, depth);
+                    checkParameterNames(resolveKindTable(parameters.name === "reduce" ? 'entriesReduce' : 'entries', parameters.keyish), parameters.list, depth);
                 }
                 else {
                     checkParameterNames(resolveKindTable(parameters.name, parameters.keyish), parameters.list, depth);
