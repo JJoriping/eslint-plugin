@@ -21,7 +21,6 @@ export default {
 
   rules: {
     // ESLint rules - errors
-    'capitalized-comments': "error",
     'default-case-last': "error",
     'eqeqeq': "error",
     'grouped-accessor-pairs': [ "error", "getBeforeSet" ],
@@ -35,7 +34,6 @@ export default {
     'no-ex-assign': "error",
     'no-floating-decimal': "error",
     'no-implicit-coercion': "error",
-    'no-inline-comments': "error",
     'no-invalid-regexp': "error",
     'no-lonely-if': "error",
     'no-negated-condition': "error",
