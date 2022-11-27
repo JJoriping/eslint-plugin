@@ -87,7 +87,18 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 }
                 checkExpression(node, 'for-member-expression');
             },
-            'BinaryExpression, LogicalExpression, TSUnionType, TSIntersectionType': function (node) {
+            'BinaryExpression, LogicalExpression': function (node) {
+                var leftEnd = sourceCode.getLastToken(node.left);
+                var rightStart = sourceCode.getFirstToken(node.right);
+                if (!leftEnd || !rightStart) {
+                    return;
+                }
+                if (leftEnd.loc.end.line === rightStart.loc.start.line) {
+                    return;
+                }
+                checkExpression(node, 'for-binary-expression');
+            },
+            'TSUnionType, TSIntersectionType': function (node) {
                 checkExpression(node, 'for-binary-expression');
             }
         };

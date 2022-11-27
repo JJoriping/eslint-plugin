@@ -28,7 +28,8 @@ console.log(
     z: true
   },
   Math.random() > 0.5
-    ? 1 : 2
+    ? 1
+    : 2
   , 3
 );
 const o2 = [ 1 ]
@@ -60,7 +61,8 @@ console.log(
     z: true
   },
   Math.random() > 0.5
-    ? 1 : 2,
+    ? 1
+    : 2,
   3
 );
 const x2 = [ 1 ]

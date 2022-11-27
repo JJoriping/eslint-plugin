@@ -1,6 +1,5 @@
-import type { Node } from "@typescript-eslint/types/dist/generated/ast-spec";
+import type { Node, BinaryExpression, LogicalExpression } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
-
 import { closingLinePattern } from "../utils/patterns";
 import { getIndentation } from "../utils/code";
 import type { MessageIdOf } from "../utils/type";
@@ -56,7 +55,18 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         }
         checkExpression(node, 'for-member-expression');
       },
-      'BinaryExpression, LogicalExpression, TSUnionType, TSIntersectionType': (node:Node) => {
+      'BinaryExpression, LogicalExpression': (node:BinaryExpression|LogicalExpression) => {
+        const leftEnd = sourceCode.getLastToken(node.left);
+        const rightStart = sourceCode.getFirstToken(node.right);
+        if(!leftEnd || !rightStart){
+          return;
+        }
+        if(leftEnd.loc.end.line === rightStart.loc.start.line){
+          return;
+        }
+        checkExpression(node, 'for-binary-expression');
+      },
+      'TSUnionType, TSIntersectionType': (node:Node) => {
         checkExpression(node, 'for-binary-expression');
       }
     };
