@@ -132,6 +132,8 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 }
                 var indentation = (0, code_1.getIndentation)(sourceCode, first.loc.start.line);
                 var _loop_1 = function (i) {
+                    if (!sourceCode.lines[i - 1].trim())
+                        return "continue";
                     var currentIndentation = (0, code_1.getIndentation)(sourceCode, i);
                     if (indentation.length < currentIndentation.length)
                         return "continue";

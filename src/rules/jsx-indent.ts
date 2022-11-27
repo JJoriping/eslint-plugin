@@ -1,6 +1,5 @@
 import type { JSXClosingElement, JSXOpeningElement, Token } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
-
 import { getIndentation } from "../utils/code";
 
 export default ESLintUtils.RuleCreator.withoutDocs({
@@ -84,6 +83,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         const indentation = getIndentation(sourceCode, first.loc.start.line);
 
         for(let i = openingTagRear.loc.end.line + 1; i < closingTagFront.loc.start.line; i++){
+          if(!sourceCode.lines[i - 1].trim()) continue;
           const currentIndentation = getIndentation(sourceCode, i);
           if(indentation.length < currentIndentation.length) continue;
           const start = sourceCode.getLocFromIndex(sourceCode.lineStartIndices[i - 1]);
