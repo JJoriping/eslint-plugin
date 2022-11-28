@@ -170,7 +170,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         if(!continued && group.length){
           flush();
         }
-        group.push([ getScore(target), sourceCode.getText(target.key), sourceCode.getText(target) + nextToken, comments ]);
+        group.push([ getScore(target), unescape(sourceCode.getText(target.key)), sourceCode.getText(target) + nextToken, comments ]);
         prevLine = target.loc.end.line;
       }
       function flush():void{
@@ -315,4 +315,7 @@ function getScoreString(score:number):string{
 }
 function compareString(a:string, b:string):number{
   return a.localeCompare(b, undefined, { numeric: true });
+}
+function unescape(text:string):string{
+  return text.replace(/^'"|'"$/g, "");
 }
