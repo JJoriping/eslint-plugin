@@ -10,7 +10,7 @@ Object.entries(global).map(e => {});
 [].map(v => v).filter(v => v);
 for(const k of [ "a", "b" ] as const) console.log(k);
 while([].some(v => v)) console.log(1);
-keys.map(k => console.log(k));
+keys.filter(k => k).map(k => console.log(k));
 
 // X
 [].map(item => {});

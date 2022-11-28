@@ -254,8 +254,15 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             }
             return true;
         };
-        var isKeyListLikeName = function (node) { return node.type === utils_1.AST_NODE_TYPES.Identifier
-            && keyListLikeNamePattern.test(node.name); };
+        var isKeyListLikeName = function (node) {
+            switch (node.type) {
+                case utils_1.AST_NODE_TYPES.Identifier: return keyListLikeNamePattern.test(node.name);
+                case utils_1.AST_NODE_TYPES.CallExpression:
+                    return node.callee.type === utils_1.AST_NODE_TYPES.MemberExpression
+                        && isKeyListLikeName(node.callee.object);
+            }
+            return false;
+        };
         (0, type_1.useTypeChecker)(context);
         return {
             CallExpression: function (node) {

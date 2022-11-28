@@ -246,9 +246,16 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       }
       return true;
     };
-    const isKeyListLikeName = (node:Node) => node.type === AST_NODE_TYPES.Identifier
-      && keyListLikeNamePattern.test(node.name)
-    ;
+    const isKeyListLikeName = (node:Node):boolean => {
+      switch(node.type){
+        case AST_NODE_TYPES.Identifier: return keyListLikeNamePattern.test(node.name);
+        case AST_NODE_TYPES.CallExpression:
+          return node.callee.type === AST_NODE_TYPES.MemberExpression
+            && isKeyListLikeName(node.callee.object)
+          ;
+      }
+      return false;
+    };
 
     useTypeChecker(context);
 
