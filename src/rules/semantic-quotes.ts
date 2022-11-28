@@ -7,7 +7,7 @@ import type { MessageIdOf } from "../utils/type";
 import { getFunctionParameters, getObjectProperties, getTSTypeByNode, getTSTypeBySymbol, isRestParameter, useTypeChecker } from "../utils/type";
 
 const quotes = [ "'", "\"", "`" ];
-const eventMethodNames = [ "on", "once", "off" ];
+const eventMethodNames = [ "on", "once", "off", "emit" ];
 const quotePattern = /^["'`]|["'`]$/g;
 
 export default ESLintUtils.RuleCreator.withoutDocs({

@@ -28,7 +28,7 @@ export default {
     'no-case-declarations': "error",
     'no-compare-neg-zero': "error",
     'no-constant-binary-expression': "error",
-    'no-constant-condition': "error",
+    'no-constant-condition': [ "error", { checkLoops: false } ],
     'no-empty-pattern': "error",
     'no-ex-assign': "error",
     'no-floating-decimal': "error",
