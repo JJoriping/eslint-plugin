@@ -150,7 +150,7 @@ export default {
       { ignoreJSX: "all", nestedBinaryExpressions: false }
     ],
     '@typescript-eslint/no-extra-semi': "error",
-    '@typescript-eslint/no-shadow': "warn",
+    '@typescript-eslint/no-shadow': [ "warn", { allow: [ "_" ] } ],
     '@typescript-eslint/no-throw-literal': "error",
     '@typescript-eslint/no-unused-expressions': [ "error", { allowShortCircuit: true, enforceForJSX: true } ],
     '@typescript-eslint/no-useless-constructor': "warn",

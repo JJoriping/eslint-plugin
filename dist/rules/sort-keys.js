@@ -282,10 +282,8 @@ function getScore(node) {
         case utils_1.AST_NODE_TYPES.TSMethodSignature:
             switch (node.kind) {
                 case "get":
-                    R += 230 /* ScoreValue.GETTER */;
-                    break;
                 case "set":
-                    R += 220 /* ScoreValue.SETTER */;
+                    R += 220 /* ScoreValue.GETTER_SETTER */;
                     break;
                 case "constructor":
                     R += 140 /* ScoreValue.CONSTRUCTOR */;
@@ -299,13 +297,13 @@ function getScore(node) {
             if (((_a = node.value) === null || _a === void 0 ? void 0 : _a.type) === utils_1.AST_NODE_TYPES.ArrowFunctionExpression)
                 R += 130 /* ScoreValue.ARROW_FUNCTION */;
             else
-                R += 240 /* ScoreValue.PROPERTY */;
+                R += 230 /* ScoreValue.PROPERTY */;
             break;
         case utils_1.AST_NODE_TYPES.TSPropertySignature:
             if (((_b = node.typeAnnotation) === null || _b === void 0 ? void 0 : _b.typeAnnotation.type) === utils_1.AST_NODE_TYPES.TSFunctionType)
                 R += 130 /* ScoreValue.ARROW_FUNCTION */;
             else
-                R += 240 /* ScoreValue.PROPERTY */;
+                R += 230 /* ScoreValue.PROPERTY */;
             break;
         case utils_1.AST_NODE_TYPES.StaticBlock:
             R += 1000 /* ScoreValue.STATIC */ + 110 /* ScoreValue.STATIC_BLOCK */;
@@ -362,17 +360,13 @@ function getScoreString(score) {
         R.push("static");
     }
     switch (rest) {
-        case 240 /* ScoreValue.PROPERTY */:
-            rest -= 240 /* ScoreValue.PROPERTY */;
+        case 230 /* ScoreValue.PROPERTY */:
+            rest -= 230 /* ScoreValue.PROPERTY */;
             R.push("property");
             break;
-        case 230 /* ScoreValue.GETTER */:
-            rest -= 230 /* ScoreValue.GETTER */;
-            R.push("getter");
-            break;
-        case 220 /* ScoreValue.SETTER */:
-            rest -= 220 /* ScoreValue.SETTER */;
-            R.push("setter");
+        case 220 /* ScoreValue.GETTER_SETTER */:
+            rest -= 220 /* ScoreValue.GETTER_SETTER */;
+            R.push("getter or setter");
             break;
         case 210 /* ScoreValue.INDEX_SIGNATURE */:
             rest -= 210 /* ScoreValue.INDEX_SIGNATURE */;

@@ -59,6 +59,9 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 if (node.kind === "constructor") {
                     return;
                 }
+                if (node.kind === "set") {
+                    return;
+                }
                 context.report({ node: node, messageId: 'for-method' });
             },
             FunctionDeclaration: function (node) {

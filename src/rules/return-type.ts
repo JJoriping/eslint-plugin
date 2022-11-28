@@ -1,5 +1,4 @@
 import { ESLintUtils } from "@typescript-eslint/utils";
-
 import { getFunctionReturnType, typeToString, useTypeChecker } from "../utils/type";
 
 export default ESLintUtils.RuleCreator.withoutDocs({
@@ -30,6 +29,9 @@ export default ESLintUtils.RuleCreator.withoutDocs({
           return;
         }
         if(node.kind === "constructor"){
+          return;
+        }
+        if(node.kind === "set"){
           return;
         }
         context.report({ node, messageId: 'for-method' });

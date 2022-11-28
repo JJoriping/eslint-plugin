@@ -9,9 +9,8 @@ const indexSignature = Symbol("index signature");
 const enum ScoreValue{
   STATIC = 1000,
 
-  PROPERTY = 240,
-  GETTER = 230,
-  SETTER = 220,
+  PROPERTY = 230,
+  GETTER_SETTER = 220,
   INDEX_SIGNATURE = 210,
 
   CONSTRUCTOR = 140,
@@ -249,8 +248,7 @@ function getScore(node:Node):number{
     case AST_NODE_TYPES.MethodDefinition:
     case AST_NODE_TYPES.TSMethodSignature:
       switch(node.kind){
-        case "get": R += ScoreValue.GETTER; break;
-        case "set": R += ScoreValue.SETTER; break;
+        case "get": case "set": R += ScoreValue.GETTER_SETTER; break;
         case "constructor": R += ScoreValue.CONSTRUCTOR; break;
         default:
           invertedAccessModifierOrder = node.static ? false : true;
@@ -301,8 +299,7 @@ function getScoreString(score:number):string{
   }
   switch(rest){
     case ScoreValue.PROPERTY: rest -= ScoreValue.PROPERTY; R.push("property"); break;
-    case ScoreValue.GETTER: rest -= ScoreValue.GETTER; R.push("getter"); break;
-    case ScoreValue.SETTER: rest -= ScoreValue.SETTER; R.push("setter"); break;
+    case ScoreValue.GETTER_SETTER: rest -= ScoreValue.GETTER_SETTER; R.push("getter or setter"); break;
     case ScoreValue.INDEX_SIGNATURE: rest -= ScoreValue.INDEX_SIGNATURE; R.push("index signature"); break;
     case ScoreValue.CONSTRUCTOR: rest -= ScoreValue.CONSTRUCTOR; R.push("constructor"); break;
     case ScoreValue.ARROW_FUNCTION: rest -= ScoreValue.ARROW_FUNCTION; R.push("arrow function"); break;
