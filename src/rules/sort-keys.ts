@@ -18,6 +18,7 @@ const enum ScoreValue{
   METHOD = 120,
   STATIC_BLOCK = 110,
 
+  READONLY = 5,
   IMPLICITLY_PUBLIC = 4,
   PUBLIC = 3,
   PROTECTED = 2,
@@ -277,22 +278,21 @@ function getScore(node:Node):number{
     default: throw Error(`Unhandled accessibility: ${node.accessibility}`);
   }else accessModifierScore = ScoreValue.IMPLICITLY_PUBLIC;
   if(invertedAccessModifierOrder){
-    R += ScoreValue.IMPLICITLY_PUBLIC + 1 - accessModifierScore;
+    R += 5 - accessModifierScore;
   }else{
     R += accessModifierScore;
+  }
+  if('readonly' in node && node.readonly){
+    R += ScoreValue.READONLY;
   }
   return R;
 }
 function getScoreString(score:number):string{
   const R:string[] = [];
   let rest = score;
+  let accessModifierScore = rest % 10;
 
-  switch(rest % 10){
-    case ScoreValue.IMPLICITLY_PUBLIC: rest -= ScoreValue.IMPLICITLY_PUBLIC; break;
-    case ScoreValue.PUBLIC: rest -= ScoreValue.PUBLIC; R.push("public"); break;
-    case ScoreValue.PROTECTED: rest -= ScoreValue.PROTECTED; R.push("protected"); break;
-    case ScoreValue.PRIVATE: rest -= ScoreValue.PRIVATE; R.push("private"); break;
-  }
+  rest -= accessModifierScore;
   if(rest >= ScoreValue.STATIC){
     rest -= ScoreValue.STATIC;
     R.push("static");
@@ -305,6 +305,19 @@ function getScoreString(score:number):string{
     case ScoreValue.ARROW_FUNCTION: rest -= ScoreValue.ARROW_FUNCTION; R.push("arrow function"); break;
     case ScoreValue.METHOD: rest -= ScoreValue.METHOD; R.push("method"); break;
     case ScoreValue.STATIC_BLOCK: rest -= ScoreValue.STATIC_BLOCK; R.push("static block"); break;
+  }
+  if(accessModifierScore >= ScoreValue.READONLY){
+    accessModifierScore -= ScoreValue.READONLY;
+    R.push("readonly");
+  }
+  if(R.join(' ').startsWith("static method")){
+    accessModifierScore = 5 - accessModifierScore;
+  }
+  switch(accessModifierScore){
+    case ScoreValue.IMPLICITLY_PUBLIC: break;
+    case ScoreValue.PUBLIC: R.push("public"); break;
+    case ScoreValue.PROTECTED: R.push("protected"); break;
+    case ScoreValue.PRIVATE: R.push("private"); break;
   }
   if(rest){
     throw Error(`Unhandled rest: ${rest}`);

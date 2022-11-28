@@ -25,6 +25,7 @@ class O1{
     console.log(1);
   }
 
+  protected readonly o13r:any;
   public o13:any;
   protected o14:any;
   private o15:any;

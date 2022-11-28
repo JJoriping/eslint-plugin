@@ -328,33 +328,21 @@ function getScore(node) {
     else
         accessModifierScore = 4 /* ScoreValue.IMPLICITLY_PUBLIC */;
     if (invertedAccessModifierOrder) {
-        R += 4 /* ScoreValue.IMPLICITLY_PUBLIC */ + 1 - accessModifierScore;
+        R += 5 - accessModifierScore;
     }
     else {
         R += accessModifierScore;
+    }
+    if ('readonly' in node && node.readonly) {
+        R += 5 /* ScoreValue.READONLY */;
     }
     return R;
 }
 function getScoreString(score) {
     var R = [];
     var rest = score;
-    switch (rest % 10) {
-        case 4 /* ScoreValue.IMPLICITLY_PUBLIC */:
-            rest -= 4 /* ScoreValue.IMPLICITLY_PUBLIC */;
-            break;
-        case 3 /* ScoreValue.PUBLIC */:
-            rest -= 3 /* ScoreValue.PUBLIC */;
-            R.push("public");
-            break;
-        case 2 /* ScoreValue.PROTECTED */:
-            rest -= 2 /* ScoreValue.PROTECTED */;
-            R.push("protected");
-            break;
-        case 1 /* ScoreValue.PRIVATE */:
-            rest -= 1 /* ScoreValue.PRIVATE */;
-            R.push("private");
-            break;
-    }
+    var accessModifierScore = rest % 10;
+    rest -= accessModifierScore;
     if (rest >= 1000 /* ScoreValue.STATIC */) {
         rest -= 1000 /* ScoreValue.STATIC */;
         R.push("static");
@@ -387,6 +375,25 @@ function getScoreString(score) {
         case 110 /* ScoreValue.STATIC_BLOCK */:
             rest -= 110 /* ScoreValue.STATIC_BLOCK */;
             R.push("static block");
+            break;
+    }
+    if (accessModifierScore >= 5 /* ScoreValue.READONLY */) {
+        accessModifierScore -= 5 /* ScoreValue.READONLY */;
+        R.push("readonly");
+    }
+    if (R.join(' ').startsWith("static method")) {
+        accessModifierScore = 5 - accessModifierScore;
+    }
+    switch (accessModifierScore) {
+        case 4 /* ScoreValue.IMPLICITLY_PUBLIC */: break;
+        case 3 /* ScoreValue.PUBLIC */:
+            R.push("public");
+            break;
+        case 2 /* ScoreValue.PROTECTED */:
+            R.push("protected");
+            break;
+        case 1 /* ScoreValue.PRIVATE */:
+            R.push("private");
             break;
     }
     if (rest) {
