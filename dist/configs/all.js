@@ -121,7 +121,8 @@ exports.default = {
                     "TSUnionType",
                     "TSIntersectionType",
                     "TSTypeParameterInstantiation",
-                    "ConditionalExpression"
+                    "ConditionalExpression",
+                    "PropertyDefinition"
                 ]
             }
         ],
