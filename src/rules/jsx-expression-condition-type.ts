@@ -2,7 +2,6 @@ import type { LogicalExpression } from "@typescript-eslint/types/dist/generated/
 import { ESLintUtils } from "@typescript-eslint/utils";
 import type { Type } from "typescript";
 import { TypeFlags } from "typescript";
-
 import { getTSTypeByNode, useTypeChecker } from "../utils/type";
 
 export default ESLintUtils.RuleCreator.withoutDocs({
@@ -16,6 +15,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
   },
   defaultOptions: [],
   create(context){
+    const sourceCode = context.getSourceCode();
     const hasStringOrNumber = (type:Type):boolean => {
       if(type.isUnionOrIntersection()){
         return type.types.some(v => hasStringOrNumber(v));
@@ -34,7 +34,13 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         if(!hasStringOrNumber(tsType)){
           return;
         }
-        context.report({ node: node.left, messageId: "default" });
+        context.report({
+          node: node.left,
+          messageId: "default",
+          *fix(fixer){
+            yield fixer.replaceText(node.left, `Boolean(${sourceCode.getText(node.left)})`);
+          }
+        });
       }
     };
   }
