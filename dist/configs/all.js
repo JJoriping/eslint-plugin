@@ -228,18 +228,6 @@ exports.default = {
         'react/jsx-no-script-url': "error",
         'react/jsx-no-target-blank': "warn",
         'react/jsx-no-useless-fragment': "warn",
-        'react/jsx-wrap-multilines': [
-            "warn",
-            {
-                arrow: "parens-new-line",
-                assignment: "ignore",
-                condition: "ignore",
-                declaration: "ignore",
-                logical: "ignore",
-                prop: "ignore",
-                return: "parens-new-line"
-            }
-        ],
         'react/no-access-state-in-setstate': "warn",
         'react/no-arrow-function-lifecycle': "error",
         'react/no-children-prop': "error",
