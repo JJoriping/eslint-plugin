@@ -2,8 +2,8 @@ import type { FunctionLike, Identifier, Node } from "@typescript-eslint/types/di
 import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
 import type { JSONSchema4 } from "@typescript-eslint/utils/dist/json-schema";
 import type { Type } from "typescript";
-import { camelCasePattern, pascalCasePattern, upperSnakeCasePattern } from "../utils/patterns";
-import { getTSTypeByNode, isReactComponent, typeToString, useTypeChecker } from "../utils/type";
+import { camelCasePattern, domTypePatterns as defaultDOMTypePatterns, pascalCasePattern, upperSnakeCasePattern } from "../utils/patterns";
+import { getTSTypeByNode, isDOMReturningFunction, typeToString, useTypeChecker } from "../utils/type";
 
 const CASE_TABLE = {
   camelCase: camelCasePattern,
@@ -87,10 +87,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       domVariable: /^\$/.source,
       catchParameter: /^error$/.source
     },
-    domTypePatterns: [
-      /\b(?:HTML\w*|SVG\w*)?Element\b/.source,
-      /\b(?:Mutable)?RefObject\b/.source
-    ],
+    domTypePatterns: defaultDOMTypePatterns.map(v => v.source),
     exceptions: [ "_", "R", "$R" ]
   }],
   create(context, [{ cases, names, domTypePatterns: domTypePatternStrings, exceptions }]){
@@ -113,7 +110,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       const tsType = getTSTypeByNode(context, node).getNonNullableType();
 
       if(isConstructible(tsType)) return [ 'cases', 'constructible' ];
-      if(isReactComponent(context, tsType)) return [ 'cases', 'reactComponent' ];
+      if(isDOMReturningFunction(context, tsType, domTypePatterns)) return [ 'cases', 'reactComponent' ];
       if(node.parent?.type !== AST_NODE_TYPES.TSTypeAliasDeclaration && isDOMObject(tsType)){
         return [ 'names', 'domVariable' ];
       }

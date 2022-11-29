@@ -1,6 +1,6 @@
 import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
-
-import { getTSTypeByNode, isReactComponent, useTypeChecker } from "../utils/type";
+import { domTypePatterns } from "../utils/patterns";
+import { getTSTypeByNode, isDOMReturningFunction, useTypeChecker } from "../utils/type";
 
 export default ESLintUtils.RuleCreator.withoutDocs({
   meta: {
@@ -24,7 +24,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         for(const v of node.declaration.declarations){
           const tsType = getTSTypeByNode(context, v.id);
 
-          if(!isReactComponent(context, tsType)){
+          if(!isDOMReturningFunction(context, tsType, domTypePatterns)){
             continue;
           }
           if(!alreadyExported){
@@ -37,7 +37,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       ExportSpecifier: node => {
         const tsType = getTSTypeByNode(context, node.local);
 
-        if(!isReactComponent(context, tsType)){
+        if(!isDOMReturningFunction(context, tsType, domTypePatterns)){
           return;
         }
         if(!alreadyExported){

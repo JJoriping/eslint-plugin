@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const, @typescript-eslint/no-useless-empty-export, @typescript-eslint/no-empty-interface, react-hooks/rules-of-hooks */
-import React, { type FC, forwardRef, useRef } from "react";
+import React, { type FC, forwardRef, useRef, ForwardedRef } from "react";
 
 // O
 const O0 = 0;
@@ -27,6 +27,8 @@ const $o13 = [ new Image(), <b key="1" /> ];
 const $o14 = useRef<HTMLElement>(null);
 for(const $v of $o13) console.log($v);
 $o13.map($v => $v);
+const OFifteen = forwardRef((props, ref) => null);
+const OSixteen = <T,>() => <a />;
 
 // X
 const XOne = 1;

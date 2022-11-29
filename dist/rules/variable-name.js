@@ -83,10 +83,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 domVariable: /^\$/.source,
                 catchParameter: /^error$/.source
             },
-            domTypePatterns: [
-                /\b(?:HTML\w*|SVG\w*)?Element\b/.source,
-                /\b(?:Mutable)?RefObject\b/.source
-            ],
+            domTypePatterns: patterns_1.domTypePatterns.map(function (v) { return v.source; }),
             exceptions: ["_", "R", "$R"]
         }],
     create: function (context, _a) {
@@ -110,7 +107,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             var tsType = (0, type_1.getTSTypeByNode)(context, node).getNonNullableType();
             if (isConstructible(tsType))
                 return ['cases', 'constructible'];
-            if ((0, type_1.isReactComponent)(context, tsType))
+            if ((0, type_1.isDOMReturningFunction)(context, tsType, domTypePatterns))
                 return ['cases', 'reactComponent'];
             if (((_b = node.parent) === null || _b === void 0 ? void 0 : _b.type) !== utils_1.AST_NODE_TYPES.TSTypeAliasDeclaration && isDOMObject(tsType)) {
                 return ['names', 'domVariable'];

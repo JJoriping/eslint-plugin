@@ -68,7 +68,7 @@ export function getObjectProperties(context:Context, node:Node):readonly Symbol[
   return getTSTypeByNode(context, node).getProperties();
 }
 
-export function isReactComponent(context:Context, type:Type):boolean{
+export function isDOMReturningFunction(context:Context, type:Type, domTypePatterns:RegExp[]):boolean{
   const callSignatures = type.getCallSignatures();
   if(!callSignatures.length) return false;
   const returnType = context.settings.typeChecker.getReturnTypeOfSignature(callSignatures[0]).getNonNullableType();
@@ -76,7 +76,7 @@ export function isReactComponent(context:Context, type:Type):boolean{
   if(!returnTypeSymbol) return false;
   const returnTypeName = context.settings.typeChecker.getFullyQualifiedName(returnTypeSymbol);
 
-  return returnTypeName === "React.ReactElement";
+  return domTypePatterns.some(v => v.test(returnTypeName));
 }
 export function isRestParameter(context:Context, symbol:Symbol):boolean{
   const { typeChecker } = context.settings;

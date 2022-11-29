@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isRestParameter = exports.isReactComponent = exports.getObjectProperties = exports.getFunctionReturnType = exports.getFunctionParameters = exports.typeToString = exports.getTSTypeBySymbol = exports.getTSSymbolByNode = exports.getTSTypeByNode = exports.useTypeChecker = void 0;
+exports.isRestParameter = exports.isDOMReturningFunction = exports.getObjectProperties = exports.getFunctionReturnType = exports.getFunctionParameters = exports.typeToString = exports.getTSTypeBySymbol = exports.getTSSymbolByNode = exports.getTSTypeByNode = exports.useTypeChecker = void 0;
 var utils_1 = require("@typescript-eslint/utils");
 function useTypeChecker(context) {
     context.settings.service = utils_1.ESLintUtils.getParserServices(context);
@@ -60,7 +60,7 @@ function getObjectProperties(context, node) {
     return getTSTypeByNode(context, node).getProperties();
 }
 exports.getObjectProperties = getObjectProperties;
-function isReactComponent(context, type) {
+function isDOMReturningFunction(context, type, domTypePatterns) {
     var callSignatures = type.getCallSignatures();
     if (!callSignatures.length)
         return false;
@@ -69,9 +69,9 @@ function isReactComponent(context, type) {
     if (!returnTypeSymbol)
         return false;
     var returnTypeName = context.settings.typeChecker.getFullyQualifiedName(returnTypeSymbol);
-    return returnTypeName === "React.ReactElement";
+    return domTypePatterns.some(function (v) { return v.test(returnTypeName); });
 }
-exports.isReactComponent = isReactComponent;
+exports.isDOMReturningFunction = isDOMReturningFunction;
 function isRestParameter(context, symbol) {
     var typeChecker = context.settings.typeChecker;
     var parameterDeclaration = typeChecker.symbolToParameterDeclaration(symbol, undefined, undefined);

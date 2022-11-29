@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("@typescript-eslint/utils");
+var patterns_1 = require("../utils/patterns");
 var type_1 = require("../utils/type");
 exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
     meta: {
@@ -23,7 +24,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 for (var _i = 0, _b = node.declaration.declarations; _i < _b.length; _i++) {
                     var v = _b[_i];
                     var tsType = (0, type_1.getTSTypeByNode)(context, v.id);
-                    if (!(0, type_1.isReactComponent)(context, tsType)) {
+                    if (!(0, type_1.isDOMReturningFunction)(context, tsType, patterns_1.domTypePatterns)) {
                         continue;
                     }
                     if (!alreadyExported) {
@@ -35,7 +36,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             },
             ExportSpecifier: function (node) {
                 var tsType = (0, type_1.getTSTypeByNode)(context, node.local);
-                if (!(0, type_1.isReactComponent)(context, tsType)) {
+                if (!(0, type_1.isDOMReturningFunction)(context, tsType, patterns_1.domTypePatterns)) {
                     return;
                 }
                 if (!alreadyExported) {
