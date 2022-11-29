@@ -11,6 +11,7 @@ const CASE_TABLE = {
   UPPER_SNAKE_CASE: upperSnakeCasePattern
 };
 const CASE_TABLE_KEYS = Object.keys(CASE_TABLE) as Array<keyof typeof CASE_TABLE>;
+const allGenericsPattern = /<.+?>/g;
 
 export default ESLintUtils.RuleCreator.withoutDocs({
   meta: {
@@ -101,7 +102,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
 
     const isConstructible = (type:Type) => type.getConstructSignatures().length > 0;
     const isDOMObject = (type:Type):boolean => {
-      const typeString = typeToString(context, type);
+      const typeString = typeToString(context, type).replace(allGenericsPattern, "");
 
       return domTypePatterns.some(v => v.test(typeString));
     };

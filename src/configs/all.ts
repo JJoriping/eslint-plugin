@@ -110,7 +110,11 @@ export default {
 
     // TSLint rules - extensions
     '@typescript-eslint/brace-style': "warn",
-    '@typescript-eslint/comma-dangle': [ "warn", "never" ],
+    '@typescript-eslint/comma-dangle': [
+      "warn",
+      // NOTE Problem with `<T,>() => ...`
+      { generics: "ignore" }
+    ],
     '@typescript-eslint/comma-spacing': "warn",
     '@typescript-eslint/func-call-spacing': [ "warn", "never" ],
     '@typescript-eslint/indent': [

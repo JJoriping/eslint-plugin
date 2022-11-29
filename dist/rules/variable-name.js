@@ -9,6 +9,7 @@ var CASE_TABLE = {
     UPPER_SNAKE_CASE: patterns_1.upperSnakeCasePattern
 };
 var CASE_TABLE_KEYS = Object.keys(CASE_TABLE);
+var allGenericsPattern = /<.+?>/g;
 exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
     meta: {
         type: "layout",
@@ -97,7 +98,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
         var domTypePatterns = domTypePatternStrings.map(function (v) { return new RegExp(v); });
         var isConstructible = function (type) { return type.getConstructSignatures().length > 0; };
         var isDOMObject = function (type) {
-            var typeString = (0, type_1.typeToString)(context, type);
+            var typeString = (0, type_1.typeToString)(context, type).replace(allGenericsPattern, "");
             return domTypePatterns.some(function (v) { return v.test(typeString); });
         };
         var getSemanticType = function (node) {
