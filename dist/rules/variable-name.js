@@ -104,7 +104,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             return domTypePatterns.some(function (v) { return v.test(typeString); });
         };
         var getSemanticType = function (node) {
-            var _a;
+            var _a, _b;
             if (((_a = node.parent) === null || _a === void 0 ? void 0 : _a.type) === utils_1.AST_NODE_TYPES.CatchClause)
                 return ['names', 'catchParameter'];
             var tsType = (0, type_1.getTSTypeByNode)(context, node).getNonNullableType();
@@ -112,8 +112,9 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 return ['cases', 'constructible'];
             if ((0, type_1.isReactComponent)(context, tsType))
                 return ['cases', 'reactComponent'];
-            if (isDOMObject(tsType))
+            if (((_b = node.parent) === null || _b === void 0 ? void 0 : _b.type) !== utils_1.AST_NODE_TYPES.TSTypeAliasDeclaration && isDOMObject(tsType)) {
                 return ['names', 'domVariable'];
+            }
             return null;
         };
         var checkCase = function (type, node) {

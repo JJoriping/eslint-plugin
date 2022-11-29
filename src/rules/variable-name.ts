@@ -114,7 +114,9 @@ export default ESLintUtils.RuleCreator.withoutDocs({
 
       if(isConstructible(tsType)) return [ 'cases', 'constructible' ];
       if(isReactComponent(context, tsType)) return [ 'cases', 'reactComponent' ];
-      if(isDOMObject(tsType)) return [ 'names', 'domVariable' ];
+      if(node.parent?.type !== AST_NODE_TYPES.TSTypeAliasDeclaration && isDOMObject(tsType)){
+        return [ 'names', 'domVariable' ];
+      }
       return null;
     };
     const checkCase = (type:keyof typeof cases, node:Node) => {
