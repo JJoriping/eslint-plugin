@@ -108,10 +108,10 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             var isKey;
             if (isRest) {
                 var innerType = type.getNumberIndexType();
-                isKey = (innerType === null || innerType === void 0 ? void 0 : innerType.isUnion()) && innerType.types.every(function (v) { return v.isStringLiteral(); });
+                isKey = (innerType === null || innerType === void 0 ? void 0 : innerType.isStringLiteral()) || ((innerType === null || innerType === void 0 ? void 0 : innerType.isUnion()) && innerType.types.every(function (v) { return v.isStringLiteral(); }));
             }
             else {
-                isKey = type.isUnion() && type.types.every(function (v) { return v.isStringLiteral(); });
+                isKey = type.isStringLiteral() || (type.isUnion() && type.types.every(function (v) { return v.isStringLiteral(); }));
             }
             if (isKey) {
                 assertStringLiteral(node, 'key', 'from-keyish-type');

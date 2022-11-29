@@ -4,6 +4,7 @@ import { ESLintUtils } from "@typescript-eslint/utils";
 import type { Symbol } from "typescript";
 import { keyishNamePattern as defaultKeyishNamePattern, valueishNamePattern as defaultValueishNamePattern } from "../utils/patterns";
 import type { MessageIdOf } from "../utils/type";
+import { typeToString } from "../utils/type";
 import { getFunctionParameters, getObjectProperties, getTSTypeByNode, getTSTypeBySymbol, isRestParameter, useTypeChecker } from "../utils/type";
 
 const quotes = [ "'", "\"", "`" ];
@@ -81,9 +82,9 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       if(isRest){
         const innerType = type.getNumberIndexType();
 
-        isKey = innerType?.isUnion() && innerType.types.every(v => v.isStringLiteral());
+        isKey = innerType?.isStringLiteral() || (innerType?.isUnion() && innerType.types.every(v => v.isStringLiteral()));
       }else{
-        isKey = type.isUnion() && type.types.every(v => v.isStringLiteral());
+        isKey = type.isStringLiteral() || (type.isUnion() && type.types.every(v => v.isStringLiteral()));
       }
       if(isKey){
         assertStringLiteral(node, 'key', 'from-keyish-type');
