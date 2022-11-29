@@ -237,11 +237,11 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         }
       }
     };
-    const isObjectEntriesCall = (node:Expression|undefined):node is CallExpression => {
+    const isStaticObjectCall = (node:Expression|undefined, name:string):boolean => {
       if(node?.type !== AST_NODE_TYPES.CallExpression){
         return false;
       }
-      if(sourceCode.getText(node.callee) !== "Object.entries"){
+      if(sourceCode.getText(node.callee) !== `Object.${name}`){
         return false;
       }
       return true;
@@ -250,9 +250,8 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       switch(node.type){
         case AST_NODE_TYPES.Identifier: return keyListLikeNamePattern.test(node.name);
         case AST_NODE_TYPES.CallExpression:
-          return node.callee.type === AST_NODE_TYPES.MemberExpression
-            && isKeyListLikeName(node.callee.object)
-          ;
+          if(isStaticObjectCall(node, "keys")) return true;
+          return node.callee.type === AST_NODE_TYPES.MemberExpression && isKeyListLikeName(node.callee.object);
       }
       return false;
     };
@@ -267,7 +266,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         }
         const depth = getCurrentDepth(node);
 
-        if(isObjectEntriesCall(parameters.calleeObject)){
+        if(isStaticObjectCall(parameters.calleeObject, "entries")){
           checkParameterNames(resolveKindTable(parameters.name === "reduce" ? 'entriesReduce' : 'entries', parameters.keyish), parameters.list, depth);
         }else{
           checkParameterNames(resolveKindTable(parameters.name, parameters.keyish), parameters.list, depth);
@@ -280,7 +279,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         }
         const depth = getCurrentDepth(node);
 
-        if(parameters.calleeObject && isObjectEntriesCall(parameters.calleeObject)){
+        if(parameters.calleeObject && isStaticObjectCall(parameters.calleeObject, "entries")){
           checkParameterNames(resolveKindTable('entries', parameters.keyish), parameters.list, depth);
         }else{
           checkParameterNames(resolveKindTable(parameters.name, parameters.keyish), parameters.list, depth);

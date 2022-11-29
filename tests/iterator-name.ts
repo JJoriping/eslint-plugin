@@ -11,6 +11,7 @@ Object.entries(global).map(e => {});
 for(const k of [ "a", "b" ] as const) console.log(k);
 while([].some(v => v)) console.log(1);
 keys.filter(k => k).map(k => console.log(k));
+Object.keys(global).filter(k => k);
 
 // X
 [].map(item => {});

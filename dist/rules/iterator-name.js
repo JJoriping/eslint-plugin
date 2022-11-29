@@ -245,11 +245,11 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 }
             }
         };
-        var isObjectEntriesCall = function (node) {
+        var isStaticObjectCall = function (node, name) {
             if ((node === null || node === void 0 ? void 0 : node.type) !== utils_1.AST_NODE_TYPES.CallExpression) {
                 return false;
             }
-            if (sourceCode.getText(node.callee) !== "Object.entries") {
+            if (sourceCode.getText(node.callee) !== "Object.".concat(name)) {
                 return false;
             }
             return true;
@@ -258,8 +258,9 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             switch (node.type) {
                 case utils_1.AST_NODE_TYPES.Identifier: return keyListLikeNamePattern.test(node.name);
                 case utils_1.AST_NODE_TYPES.CallExpression:
-                    return node.callee.type === utils_1.AST_NODE_TYPES.MemberExpression
-                        && isKeyListLikeName(node.callee.object);
+                    if (isStaticObjectCall(node, "keys"))
+                        return true;
+                    return node.callee.type === utils_1.AST_NODE_TYPES.MemberExpression && isKeyListLikeName(node.callee.object);
             }
             return false;
         };
@@ -271,7 +272,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                     return;
                 }
                 var depth = getCurrentDepth(node);
-                if (isObjectEntriesCall(parameters.calleeObject)) {
+                if (isStaticObjectCall(parameters.calleeObject, "entries")) {
                     checkParameterNames(resolveKindTable(parameters.name === "reduce" ? 'entriesReduce' : 'entries', parameters.keyish), parameters.list, depth);
                 }
                 else {
@@ -284,7 +285,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                     return;
                 }
                 var depth = getCurrentDepth(node);
-                if (parameters.calleeObject && isObjectEntriesCall(parameters.calleeObject)) {
+                if (parameters.calleeObject && isStaticObjectCall(parameters.calleeObject, "entries")) {
                     checkParameterNames(resolveKindTable('entries', parameters.keyish), parameters.list, depth);
                 }
                 else {
