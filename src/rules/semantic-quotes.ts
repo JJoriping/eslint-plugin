@@ -4,11 +4,10 @@ import { ESLintUtils } from "@typescript-eslint/utils";
 import type { Symbol } from "typescript";
 import { keyishNamePattern as defaultKeyishNamePattern, valueishNamePattern as defaultValueishNamePattern } from "../utils/patterns";
 import type { MessageIdOf } from "../utils/type";
-import { typeToString } from "../utils/type";
 import { getFunctionParameters, getObjectProperties, getTSTypeByNode, getTSTypeBySymbol, isRestParameter, useTypeChecker } from "../utils/type";
 
 const quotes = [ "'", "\"", "`" ];
-const eventMethodNames = [ "on", "once", "off", "emit" ];
+const eventMethodNames = [ "on", "once", "off", "emit", "addEventListener", "removeEventListener" ];
 const quotePattern = /^["'`]|["'`]$/g;
 
 export default ESLintUtils.RuleCreator.withoutDocs({

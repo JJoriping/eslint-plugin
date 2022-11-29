@@ -99,7 +99,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
         var isConstructible = function (type) { return type.getConstructSignatures().length > 0; };
         var isDOMObject = function (type) {
             var typeString = (0, type_1.typeToString)(context, type).replace(allGenericsPattern, "");
-            if (typeString.startsWith("("))
+            if (typeString.startsWith("(") || typeString.startsWith("{"))
                 return false;
             return domTypePatterns.some(function (v) { return v.test(typeString); });
         };

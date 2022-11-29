@@ -104,7 +104,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
     const isDOMObject = (type:Type):boolean => {
       const typeString = typeToString(context, type).replace(allGenericsPattern, "");
 
-      if(typeString.startsWith("(")) return false;
+      if(typeString.startsWith("(") || typeString.startsWith("{")) return false;
       return domTypePatterns.some(v => v.test(typeString));
     };
 

@@ -32,7 +32,7 @@ var utils_1 = require("@typescript-eslint/utils");
 var patterns_1 = require("../utils/patterns");
 var type_1 = require("../utils/type");
 var quotes = ["'", "\"", "`"];
-var eventMethodNames = ["on", "once", "off", "emit"];
+var eventMethodNames = ["on", "once", "off", "emit", "addEventListener", "removeEventListener"];
 var quotePattern = /^["'`]|["'`]$/g;
 exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
     meta: {
