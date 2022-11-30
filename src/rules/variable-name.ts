@@ -150,6 +150,9 @@ export default ESLintUtils.RuleCreator.withoutDocs({
           data = { list: cases[actualType[1]].map(v => `\`${v}\``).join(' or ') };
           break;
         case "names":
+          if(node.parent?.type === AST_NODE_TYPES.Property && node.parent.shorthand){
+            return;
+          }
           if(NAME_TABLE[actualType[1]].test(name)){
             return;
           }

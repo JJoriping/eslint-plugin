@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const, @typescript-eslint/no-useless-empty-export, @typescript-eslint/no-empty-interface, react-hooks/rules-of-hooks */
-import React, { type FC, forwardRef, useRef, ForwardedRef } from "react";
+import React, { FC, forwardRef, useRef, ReactNode } from "react";
 
 // O
 const O0 = 0;
@@ -7,7 +7,7 @@ const o1 = 1;
 const [ o2 ] = Array();
 let { o3 } = document.body.dataset;
 let { WebSocket: O4, ...o5 } = window;
-const O6:FC = props => null;
+const O6:FC<{ 'foo': ReactNode }> = ({ foo }) => null;
 function o7(foo:(o:number) => void):void{}
 class O8{
   public foo:number;

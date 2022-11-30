@@ -115,22 +115,23 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             return null;
         };
         var checkCase = function (type, node) {
+            var _a;
             var name;
             switch (node.type) {
                 case utils_1.AST_NODE_TYPES.Identifier:
                     name = node.name;
                     break;
                 case utils_1.AST_NODE_TYPES.ArrayPattern:
-                    for (var _i = 0, _a = node.elements; _i < _a.length; _i++) {
-                        var v = _a[_i];
+                    for (var _i = 0, _b = node.elements; _i < _b.length; _i++) {
+                        var v = _b[_i];
                         if (!v)
                             continue;
                         checkCase(type, v);
                     }
                     return;
                 case utils_1.AST_NODE_TYPES.ObjectPattern:
-                    for (var _b = 0, _c = node.properties; _b < _c.length; _b++) {
-                        var v = _c[_b];
+                    for (var _c = 0, _d = node.properties; _c < _d.length; _c++) {
+                        var v = _d[_c];
                         checkCase(type, v);
                     }
                     return;
@@ -158,6 +159,9 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                     data = { list: cases[actualType[1]].map(function (v) { return "`".concat(v, "`"); }).join(' or ') };
                     break;
                 case "names":
+                    if (((_a = node.parent) === null || _a === void 0 ? void 0 : _a.type) === utils_1.AST_NODE_TYPES.Property && node.parent.shorthand) {
+                        return;
+                    }
                     if (NAME_TABLE[actualType[1]].test(name)) {
                         return;
                     }
