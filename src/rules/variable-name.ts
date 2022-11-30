@@ -12,6 +12,7 @@ const CASE_TABLE = {
 };
 const CASE_TABLE_KEYS = Object.keys(CASE_TABLE) as Array<keyof typeof CASE_TABLE>;
 const allGenericsPattern = /<.+?>/g;
+const reactComponentTypePattern = /^(ComponentType|ComponentClass|FunctionComponent|NextPage)\b/;
 
 export default ESLintUtils.RuleCreator.withoutDocs({
   meta: {
@@ -110,7 +111,9 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       const tsType = getTSTypeByNode(context, node).getNonNullableType();
 
       if(isConstructible(tsType)) return [ 'cases', 'constructible' ];
-      if(isDOMReturningFunction(context, tsType, domTypePatterns)) return [ 'cases', 'reactComponent' ];
+      if(isDOMReturningFunction(context, tsType, domTypePatterns)
+        || reactComponentTypePattern.test(typeToString(context, tsType))
+      ) return [ 'cases', 'reactComponent' ];
       if(node.parent?.type !== AST_NODE_TYPES.TSTypeAliasDeclaration && isDOMObject(tsType)){
         return [ 'names', 'domVariable' ];
       }

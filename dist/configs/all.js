@@ -184,7 +184,7 @@ exports.default = {
         '@typescript-eslint/consistent-generic-constructors': "warn",
         '@typescript-eslint/consistent-type-assertions': ["warn", {
                 assertionStyle: "as",
-                objectLiteralTypeAssertions: "allow-as-parameter"
+                objectLiteralTypeAssertions: "allow"
             }],
         '@typescript-eslint/member-delimiter-style': ["warn", {
                 overrides: {
