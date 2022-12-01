@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const, @typescript-eslint/no-useless-empty-export, @typescript-eslint/no-empty-interface, react-hooks/rules-of-hooks */
-import React, { FC, forwardRef, useRef, ReactNode, ComponentType } from "react";
+import React, { FC, forwardRef, useRef, ReactNode, ComponentType, ReactElement } from "react";
 
 // O
 const O0 = 0;
@@ -29,6 +29,9 @@ for(const $v of $o13) console.log($v);
 $o13.map($v => $v);
 const OFifteen = forwardRef((props, ref) => null);
 const OSixteen = <T,>() => <a />;
+function o17<T>():Array<ReactElement<{ 'foo': T }>>{
+  return [];
+}
 
 // X
 const XOne = 1;

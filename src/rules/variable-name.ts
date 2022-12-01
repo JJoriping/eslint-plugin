@@ -11,7 +11,7 @@ const CASE_TABLE = {
   UPPER_SNAKE_CASE: upperSnakeCasePattern
 };
 const CASE_TABLE_KEYS = Object.keys(CASE_TABLE) as Array<keyof typeof CASE_TABLE>;
-const allGenericsPattern = /<.+?>/g;
+const allGenericsPattern = /<.+>/g;
 const reactComponentTypePattern = /^(ComponentType|ComponentClass|FunctionComponent|NextPage)\b/;
 
 export default ESLintUtils.RuleCreator.withoutDocs({
@@ -100,10 +100,16 @@ export default ESLintUtils.RuleCreator.withoutDocs({
 
     const isConstructible = (type:Type) => type.getConstructSignatures().length > 0;
     const isDOMObject = (type:Type):boolean => {
-      const typeString = typeToString(context, type).replace(allGenericsPattern, "");
+      const typeString = typeToString(context, type);
+      if(typeString.startsWith("(")
+        || typeString.startsWith("{")
+        || typeString.startsWith("<")
+      ){
+        return false;
+      }
+      const filteredTypeString = typeString.replace(allGenericsPattern, "");
 
-      if(typeString.startsWith("(") || typeString.startsWith("{")) return false;
-      return domTypePatterns.some(v => v.test(typeString));
+      return domTypePatterns.some(v => v.test(filteredTypeString));
     };
 
     const getSemanticType = (node:Identifier):null|["cases", keyof typeof cases]|["names", keyof typeof names] => {

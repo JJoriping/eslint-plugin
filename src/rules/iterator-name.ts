@@ -2,7 +2,7 @@ import type { ArrayPattern, ObjectPattern, CallExpression, Expression, Identifie
 import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
 import { keyListLikeNamePattern as defaultKeyListLikeNamePattern } from "../utils/patterns";
 import { toOrdinal } from "../utils/text";
-import { getTSTypeByNode, typeToString, useTypeChecker } from "../utils/type";
+import { getTSTypeByNode, useTypeChecker } from "../utils/type";
 
 const iterativeMethods = [ "map", "reduce", "every", "some", "forEach", "filter", "find", "findIndex" ];
 const kindTable:Record<string, Array<'index'|'key'|'value'|'previousKey'|'previousValue'|'entry'>> = {
