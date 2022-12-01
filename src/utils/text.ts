@@ -6,6 +6,7 @@ const suffixes:Record<string, string> = {
   other: "th"
 };
 
+export const INDENTATION_UNIT = "  ";
 export function toOrdinal(value:number):string{
   return `${value}${suffixes[pluralRules.select(value)]}`;
 }

@@ -29,6 +29,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("@typescript-eslint/utils");
 var code_1 = require("../utils/code");
+var text_1 = require("../utils/text");
 exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
     meta: {
         type: "layout",
@@ -60,7 +61,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                         fix: function (fixer) {
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
-                                    case 0: return [4 /*yield*/, fixer.insertTextBefore(questionMark, "\n" + indentation + "  ")];
+                                    case 0: return [4 /*yield*/, fixer.insertTextBefore(questionMark, "\n" + indentation + text_1.INDENTATION_UNIT)];
                                     case 1:
                                         _a.sent();
                                         return [2 /*return*/];
@@ -100,7 +101,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                                         case 0: return [4 /*yield*/, fixer.replaceTextRange([
                                                 sourceCode.lineStartIndices[questionMark.loc.start.line - 1],
                                                 questionMark.range[0]
-                                            ], aIndentation + "  ")];
+                                            ], aIndentation + text_1.INDENTATION_UNIT)];
                                         case 1:
                                             _a.sent();
                                             return [2 /*return*/];
@@ -117,7 +118,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                         fix: function (fixer) {
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
-                                    case 0: return [4 /*yield*/, fixer.insertTextBefore(colon, "\n" + indentation + "  ")];
+                                    case 0: return [4 /*yield*/, fixer.insertTextBefore(colon, "\n" + indentation + text_1.INDENTATION_UNIT)];
                                     case 1:
                                         _a.sent();
                                         return [2 /*return*/];

@@ -309,6 +309,7 @@ export default {
     '@jjoriping/jsx-expression-condition-type': "warn",
     '@jjoriping/jsx-indent': "warn",
     '@jjoriping/key-quotation-style': "warn",
+    '@jjoriping/lone-semicolon-indent': "warn",
     '@jjoriping/multiline-expression-spacing': "warn",
     '@jjoriping/no-class-expression': "warn",
     '@jjoriping/no-type-name-affix': "warn",

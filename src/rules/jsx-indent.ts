@@ -1,6 +1,7 @@
 import type { JSXClosingElement, JSXOpeningElement, Token } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
 import { getIndentation } from "../utils/code";
+import { INDENTATION_UNIT } from "../utils/text";
 
 export default ESLintUtils.RuleCreator.withoutDocs({
   meta: {
@@ -94,7 +95,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
             loc: { start, end },
             messageId: "in-children-indentation",
             *fix(fixer){
-              yield fixer.replaceTextRange([ sourceCode.lineStartIndices[i - 1], endIndex ], indentation + "  ");
+              yield fixer.replaceTextRange([ sourceCode.lineStartIndices[i - 1], endIndex ], indentation + INDENTATION_UNIT);
             }
           });
         }

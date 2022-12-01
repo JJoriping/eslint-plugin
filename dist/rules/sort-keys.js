@@ -29,6 +29,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("@typescript-eslint/utils");
 var code_1 = require("../utils/code");
+var text_1 = require("../utils/text");
 var staticBlock = Symbol("static block");
 var indexSignature = Symbol("index signature");
 exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
@@ -143,7 +144,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
         var sortKeys = function (node) {
             var R = [];
             var groups = [];
-            var indentation = (0, code_1.getIndentation)(sourceCode, node.loc.start.line) + "  ";
+            var indentation = (0, code_1.getIndentation)(sourceCode, node.loc.start.line) + text_1.INDENTATION_UNIT;
             var group = [];
             var lastNode;
             var prevLine;

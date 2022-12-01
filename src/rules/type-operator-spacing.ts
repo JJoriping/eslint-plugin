@@ -1,7 +1,7 @@
 import type { TSUnionType, TSIntersectionType } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { ESLintUtils } from "@typescript-eslint/utils";
-
 import { getIndentation } from "../utils/code";
+import { INDENTATION_UNIT } from "../utils/text";
 
 export default ESLintUtils.RuleCreator.withoutDocs({
   meta: {
@@ -84,7 +84,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
                   yield fixer.replaceTextRange([
                     sourceCode.lineStartIndices[bFirst.loc.start.line - 1],
                     operator.range[0]
-                  ], aLineIndentation + "  ");
+                  ], aLineIndentation + INDENTATION_UNIT);
                 }
               });
             }

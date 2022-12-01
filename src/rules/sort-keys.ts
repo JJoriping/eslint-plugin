@@ -3,6 +3,7 @@ import type { Node, Comment } from "@typescript-eslint/types/dist/generated/ast-
 import type { ReportSuggestionArray } from "@typescript-eslint/utils/dist/ts-eslint";
 import { getIndentation, hasEmptyLineBefore } from "../utils/code";
 import type { MessageIdOf } from "../utils/type";
+import { INDENTATION_UNIT } from "../utils/text";
 
 const staticBlock = Symbol("static block");
 const indexSignature = Symbol("index signature");
@@ -125,7 +126,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
     const sortKeys = (node:Node) => {
       const R:string[] = [];
       const groups:Array<[minScore:number, payload:string[]]> = [];
-      const indentation = getIndentation(sourceCode, node.loc.start.line) + "  ";
+      const indentation = getIndentation(sourceCode, node.loc.start.line) + INDENTATION_UNIT;
       let group:Array<[score:number, keyName:string, payload:string, comments:Comment[]]> = [];
       let lastNode:Node|undefined;
       let prevLine:number|undefined;

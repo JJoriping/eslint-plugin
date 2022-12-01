@@ -29,6 +29,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("@typescript-eslint/utils");
 var code_1 = require("../utils/code");
+var text_1 = require("../utils/text");
 exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
     meta: {
         type: "layout",
@@ -142,7 +143,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                                             case 0: return [4 /*yield*/, fixer.replaceTextRange([
                                                     sourceCode.lineStartIndices[bFirst.loc.start.line - 1],
                                                     operator.range[0]
-                                                ], aLineIndentation_1 + "  ")];
+                                                ], aLineIndentation_1 + text_1.INDENTATION_UNIT)];
                                             case 1:
                                                 _a.sent();
                                                 return [2 /*return*/];

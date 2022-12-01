@@ -1,6 +1,6 @@
 import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
-
 import { getIndentation } from "../utils/code";
+import { INDENTATION_UNIT } from "../utils/text";
 
 export default ESLintUtils.RuleCreator.withoutDocs({
   meta: {
@@ -32,7 +32,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
             node: questionMark,
             messageId: "default",
             *fix(fixer){
-              yield fixer.insertTextBefore(questionMark, "\n" + indentation + "  ");
+              yield fixer.insertTextBefore(questionMark, "\n" + indentation + INDENTATION_UNIT);
             }
           });
         }else{
@@ -58,7 +58,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
                 yield fixer.replaceTextRange([
                   sourceCode.lineStartIndices[questionMark.loc.start.line - 1],
                   questionMark.range[0]
-                ], aIndentation + "  ");
+                ], aIndentation + INDENTATION_UNIT);
               }
             });
           }
@@ -68,7 +68,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
             node: colon,
             messageId: "default",
             *fix(fixer){
-              yield fixer.insertTextBefore(colon, "\n" + indentation + "  ");
+              yield fixer.insertTextBefore(colon, "\n" + indentation + INDENTATION_UNIT);
             }
           });
         }else{
