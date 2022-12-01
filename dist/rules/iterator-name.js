@@ -140,11 +140,12 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             if (((_a = node.arguments[0]) === null || _a === void 0 ? void 0 : _a.type) !== utils_1.AST_NODE_TYPES.ArrowFunctionExpression) {
                 return null;
             }
-            if (!node.arguments[0].params.every(function (v) { return v.type === utils_1.AST_NODE_TYPES.Identifier || v.type === utils_1.AST_NODE_TYPES.ArrayPattern; })) {
+            if (!node.arguments[0].params.every(function (v) { return v.type === utils_1.AST_NODE_TYPES.Identifier
+                || v.type === utils_1.AST_NODE_TYPES.ArrayPattern
+                || v.type === utils_1.AST_NODE_TYPES.ObjectPattern; })) {
                 return null;
             }
-            var symbol = (0, type_1.getTSTypeByNode)(context, node.callee.object).getSymbol();
-            if ((symbol === null || symbol === void 0 ? void 0 : symbol.name) !== "Array") {
+            if (!(0, type_1.getTSTypeByNode)(context, node.callee.object).getNumberIndexType()) {
                 return null;
             }
             if (!iterativeMethods.includes(node.callee.property.name)) {
@@ -197,51 +198,55 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             var max = Math.min(kind.length, parameters.length);
             for (var i = 0; i < max; i++) {
                 var parameter = parameters[i];
-                if (parameter.type === utils_1.AST_NODE_TYPES.ArrayPattern) {
-                    if (kind[i] !== "entry") {
+                switch (parameter.type) {
+                    case utils_1.AST_NODE_TYPES.ObjectPattern:
                         continue;
-                    }
-                    if (((_a = parameter.elements[0]) === null || _a === void 0 ? void 0 : _a.type) !== utils_1.AST_NODE_TYPES.Identifier) {
-                        continue;
-                    }
-                    if (((_b = parameter.elements[1]) === null || _b === void 0 ? void 0 : _b.type) !== utils_1.AST_NODE_TYPES.Identifier) {
-                        continue;
-                    }
-                    if (getActualName(parameter.elements[0].name) === options.key[depth] && getActualName(parameter.elements[1].name) === options.value[depth]) {
-                        continue;
-                    }
-                    context.report({
-                        node: parameter,
-                        messageId: "default",
-                        data: {
-                            index: "Destructured",
-                            depth: (0, text_1.toOrdinal)(depth + 1),
-                            kind: kind[i],
-                            criterion: "[ ".concat(options.key[depth], ", ").concat(options.value[depth], " ]")
+                    case utils_1.AST_NODE_TYPES.ArrayPattern:
+                        if (kind[i] !== "entry") {
+                            continue;
                         }
-                    });
-                }
-                else {
-                    var criterion = options[kind[i]][depth];
-                    if (!criterion) {
-                        continue;
-                    }
-                    if (exceptions.includes(parameter.name)) {
-                        continue;
-                    }
-                    if (getActualName(parameter.name) === criterion) {
-                        continue;
-                    }
-                    context.report({
-                        node: parameter,
-                        messageId: "default",
-                        data: {
-                            index: (0, text_1.toOrdinal)(i + 1),
-                            depth: (0, text_1.toOrdinal)(depth + 1),
-                            kind: kind[i],
-                            criterion: criterion
+                        if (((_a = parameter.elements[0]) === null || _a === void 0 ? void 0 : _a.type) !== utils_1.AST_NODE_TYPES.Identifier) {
+                            continue;
                         }
-                    });
+                        if (((_b = parameter.elements[1]) === null || _b === void 0 ? void 0 : _b.type) !== utils_1.AST_NODE_TYPES.Identifier) {
+                            continue;
+                        }
+                        if (getActualName(parameter.elements[0].name) === options.key[depth] && getActualName(parameter.elements[1].name) === options.value[depth]) {
+                            continue;
+                        }
+                        context.report({
+                            node: parameter,
+                            messageId: "default",
+                            data: {
+                                index: "Destructured",
+                                depth: (0, text_1.toOrdinal)(depth + 1),
+                                kind: kind[i],
+                                criterion: "[ ".concat(options.key[depth], ", ").concat(options.value[depth], " ]")
+                            }
+                        });
+                        break;
+                    default: {
+                        var criterion = options[kind[i]][depth];
+                        if (!criterion) {
+                            continue;
+                        }
+                        if (exceptions.includes(parameter.name)) {
+                            continue;
+                        }
+                        if (getActualName(parameter.name) === criterion) {
+                            continue;
+                        }
+                        context.report({
+                            node: parameter,
+                            messageId: "default",
+                            data: {
+                                index: (0, text_1.toOrdinal)(i + 1),
+                                depth: (0, text_1.toOrdinal)(depth + 1),
+                                kind: kind[i],
+                                criterion: criterion
+                            }
+                        });
+                    }
                 }
             }
         };

@@ -1,8 +1,8 @@
-import type { ArrayPattern, CallExpression, Expression, Identifier, Node } from "@typescript-eslint/types/dist/generated/ast-spec";
+import type { ArrayPattern, ObjectPattern, CallExpression, Expression, Identifier, Node } from "@typescript-eslint/types/dist/generated/ast-spec";
 import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
 import { keyListLikeNamePattern as defaultKeyListLikeNamePattern } from "../utils/patterns";
 import { toOrdinal } from "../utils/text";
-import { getTSTypeByNode, useTypeChecker } from "../utils/type";
+import { getTSTypeByNode, typeToString, useTypeChecker } from "../utils/type";
 
 const iterativeMethods = [ "map", "reduce", "every", "some", "forEach", "filter", "find", "findIndex" ];
 const kindTable:Record<string, Array<'index'|'key'|'value'|'previousKey'|'previousValue'|'entry'>> = {
@@ -130,11 +130,13 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       if(node.arguments[0]?.type !== AST_NODE_TYPES.ArrowFunctionExpression){
         return null;
       }
-      if(!node.arguments[0].params.every(v => v.type === AST_NODE_TYPES.Identifier || v.type === AST_NODE_TYPES.ArrayPattern)){
+      if(!node.arguments[0].params.every(v => v.type === AST_NODE_TYPES.Identifier
+        || v.type === AST_NODE_TYPES.ArrayPattern
+        || v.type === AST_NODE_TYPES.ObjectPattern
+      )){
         return null;
       }
-      const symbol = getTSTypeByNode(context, node.callee.object).getSymbol();
-      if(symbol?.name !== "Array"){
+      if(!getTSTypeByNode(context, node.callee.object).getNumberIndexType()){
         return null;
       }
       if(!iterativeMethods.includes(node.callee.property.name)){
@@ -184,56 +186,61 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       }
       return value;
     };
-    const checkParameterNames = (kind:(typeof kindTable)[string], parameters:Array<Identifier|ArrayPattern>, depth:number) => {
+    const checkParameterNames = (kind:(typeof kindTable)[string], parameters:Array<Identifier|ArrayPattern|ObjectPattern>, depth:number) => {
       const max = Math.min(kind.length, parameters.length);
 
       for(let i = 0; i < max; i++){
         const parameter = parameters[i];
 
-        if(parameter.type === AST_NODE_TYPES.ArrayPattern){
-          if(kind[i] !== "entry"){
+        switch(parameter.type){
+          case AST_NODE_TYPES.ObjectPattern:
             continue;
-          }
-          if(parameter.elements[0]?.type !== AST_NODE_TYPES.Identifier){
-            continue;
-          }
-          if(parameter.elements[1]?.type !== AST_NODE_TYPES.Identifier){
-            continue;
-          }
-          if(getActualName(parameter.elements[0].name) === options.key![depth] && getActualName(parameter.elements[1].name) === options.value![depth]){
-            continue;
-          }
-          context.report({
-            node: parameter,
-            messageId: "default",
-            data: {
-              index: "Destructured",
-              depth: toOrdinal(depth + 1),
-              kind: kind[i],
-              criterion: `[ ${options.key![depth]}, ${options.value![depth]} ]`
+          case AST_NODE_TYPES.ArrayPattern:
+            if(kind[i] !== "entry"){
+              continue;
             }
-          });
-        }else{
-          const criterion = options[kind[i]]![depth];
-          if(!criterion){
-            continue;
-          }
-          if(exceptions!.includes(parameter.name)){
-            continue;
-          }
-          if(getActualName(parameter.name) === criterion){
-            continue;
-          }
-          context.report({
-            node: parameter,
-            messageId: "default",
-            data: {
-              index: toOrdinal(i + 1),
-              depth: toOrdinal(depth + 1),
-              kind: kind[i],
-              criterion
+            if(parameter.elements[0]?.type !== AST_NODE_TYPES.Identifier){
+              continue;
             }
-          });
+            if(parameter.elements[1]?.type !== AST_NODE_TYPES.Identifier){
+              continue;
+            }
+            if(getActualName(parameter.elements[0].name) === options.key![depth] && getActualName(parameter.elements[1].name) === options.value![depth]){
+              continue;
+            }
+            context.report({
+              node: parameter,
+              messageId: "default",
+              data: {
+                index: "Destructured",
+                depth: toOrdinal(depth + 1),
+                kind: kind[i],
+                criterion: `[ ${options.key![depth]}, ${options.value![depth]} ]`
+              }
+            });
+            break;
+          default: {
+            const criterion = options[kind[i]]![depth];
+            if(!criterion){
+              continue;
+            }
+            if(exceptions!.includes(parameter.name)){
+              continue;
+            }
+            if(getActualName(parameter.name) === criterion){
+              continue;
+            }
+            context.report({
+              node: parameter,
+              messageId: "default",
+              data: {
+                index: toOrdinal(i + 1),
+                depth: toOrdinal(depth + 1),
+                kind: kind[i],
+                criterion
+              }
+            });
+          }
         }
       }
     };

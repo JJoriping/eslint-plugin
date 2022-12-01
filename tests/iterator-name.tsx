@@ -1,4 +1,7 @@
+import React from "react";
+
 declare const keys:string[];
+declare const list:[null]|string[];
 
 // O
 [].map(v => {});
@@ -12,6 +15,15 @@ for(const k of [ "a", "b" ] as const) console.log(k);
 while([].some(v => v)) console.log(1);
 keys.filter(k => k).map(k => console.log(k));
 Object.keys(global).filter(k => k);
+console.log(<>
+  {list.map((v, i) => (
+    <a key={i}>
+      {[].map((w, j) => (
+        <b key={j} />
+      ))}
+    </a>
+  ))}
+</>);
 
 // X
 [].map(item => {});
