@@ -33,10 +33,11 @@ var code_1 = require("../utils/code");
 exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
     meta: {
         type: "layout",
-        fixable: "code",
+        fixable: "whitespace",
         messages: {
             'for-conditional-expression': "Multiline conditional expression should finish the line.",
             'for-call-expression': "Multiline function call should finish the line.",
+            'for-call-expression-consistency': "Both the parentheses of a function call should be indented equally.",
             'for-member-expression': "Multiline property access should finish the line.",
             'for-binary-expression': "Multiline binary expression should finish the line."
         },
@@ -78,7 +79,30 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 checkExpression(node, 'for-conditional-expression');
             },
             CallExpression: function (node) {
+                var openingParenthesis = sourceCode.getTokenAfter(node.callee);
+                var closingParenthesis = sourceCode.getLastToken(node);
+                if (!openingParenthesis || !closingParenthesis) {
+                    return;
+                }
+                var openingLineIndentation = (0, code_1.getIndentation)(sourceCode, openingParenthesis.loc.start.line);
+                var closingLineIndentation = (0, code_1.getIndentation)(sourceCode, closingParenthesis.loc.end.line);
                 checkExpression(node, 'for-call-expression');
+                if (openingLineIndentation !== closingLineIndentation) {
+                    context.report({
+                        node: closingParenthesis,
+                        messageId: "for-call-expression-consistency",
+                        fix: function (fixer) {
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0: return [4 /*yield*/, fixer.insertTextBefore(closingParenthesis, "\n" + openingLineIndentation)];
+                                    case 1:
+                                        _a.sent();
+                                        return [2 /*return*/];
+                                }
+                            });
+                        }
+                    });
+                }
             },
             MemberExpression: function (node) {
                 var _a;

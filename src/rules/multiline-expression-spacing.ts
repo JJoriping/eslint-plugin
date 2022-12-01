@@ -7,10 +7,11 @@ import type { MessageIdOf } from "../utils/type";
 export default ESLintUtils.RuleCreator.withoutDocs({
   meta: {
     type: "layout",
-    fixable: "code",
+    fixable: "whitespace",
     messages: {
       'for-conditional-expression': "Multiline conditional expression should finish the line.",
       'for-call-expression': "Multiline function call should finish the line.",
+      'for-call-expression-consistency': "Both the parentheses of a function call should be indented equally.",
       'for-member-expression': "Multiline property access should finish the line.",
       'for-binary-expression': "Multiline binary expression should finish the line."
     },
@@ -47,7 +48,24 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         checkExpression(node, 'for-conditional-expression');
       },
       CallExpression: node => {
+        const openingParenthesis = sourceCode.getTokenAfter(node.callee);
+        const closingParenthesis = sourceCode.getLastToken(node);
+        if(!openingParenthesis || !closingParenthesis){
+          return;
+        }
+        const openingLineIndentation = getIndentation(sourceCode, openingParenthesis.loc.start.line);
+        const closingLineIndentation = getIndentation(sourceCode, closingParenthesis.loc.end.line);
+
         checkExpression(node, 'for-call-expression');
+        if(openingLineIndentation !== closingLineIndentation){
+          context.report({
+            node: closingParenthesis,
+            messageId: "for-call-expression-consistency",
+            *fix(fixer){
+              yield fixer.insertTextBefore(closingParenthesis, "\n" + openingLineIndentation);
+            }
+          });
+        }
       },
       MemberExpression: node => {
         if(node.parent?.type === AST_NODE_TYPES.CallExpression){

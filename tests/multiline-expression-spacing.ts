@@ -72,6 +72,10 @@ if([].length
   && [].length){
   console.log(1);
 }
+const x3 = void console.log(
+  1,
+  [])
+;
 type X = 1
   | 2
   | 3;
