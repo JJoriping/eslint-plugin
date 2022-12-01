@@ -27,6 +27,9 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         if(node.expressions.length){
           return;
         }
+        if(node.loc.start.line !== node.loc.end.line){
+          return;
+        }
         context.report({
           node,
           messageId: "default",

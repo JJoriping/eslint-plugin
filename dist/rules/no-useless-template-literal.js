@@ -54,6 +54,9 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 if (node.expressions.length) {
                     return;
                 }
+                if (node.loc.start.line !== node.loc.end.line) {
+                    return;
+                }
                 context.report({
                     node: node,
                     messageId: "default",
