@@ -32,6 +32,7 @@ const OSixteen = <T,>() => <a />;
 function o17<T>():Array<ReactElement<{ 'foo': T }>>{
   return [];
 }
+const O17:FC = () => <b />;
 
 // X
 const XOne = 1;

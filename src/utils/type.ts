@@ -72,11 +72,14 @@ export function isDOMReturningFunction(context:Context, type:Type, domTypePatter
   const callSignatures = type.getCallSignatures();
   if(!callSignatures.length) return false;
   const returnType = context.settings.typeChecker.getReturnTypeOfSignature(callSignatures[0]).getNonNullableType();
-  const returnTypeSymbol = returnType.getSymbol();
-  if(!returnTypeSymbol) return false;
-  const returnTypeName = context.settings.typeChecker.getFullyQualifiedName(returnTypeSymbol);
+  const actualReturnTypes = returnType.isUnion() ? returnType.types : [ returnType ];
 
-  return domTypePatterns.some(v => v.test(returnTypeName));
+  return actualReturnTypes.some(v => {
+    const returnTypeSymbol = v.getSymbol();
+    if(!returnTypeSymbol) return false;
+    const returnTypeName = context.settings.typeChecker.getFullyQualifiedName(returnTypeSymbol);
+    return domTypePatterns.some(w => w.test(returnTypeName));
+  });
 }
 export function isRestParameter(context:Context, symbol:Symbol):boolean{
   const { typeChecker } = context.settings;

@@ -10,7 +10,7 @@ var CASE_TABLE = {
 };
 var CASE_TABLE_KEYS = Object.keys(CASE_TABLE);
 var allGenericsPattern = /<.+>/g;
-var reactComponentTypePattern = /^(ComponentType|ComponentClass|FunctionComponent|NextPage)\b/;
+var reactComponentTypePattern = /^(ComponentType|ComponentClass|FunctionComponent|ForwardRefExoticComponent|NextPage)\b/;
 exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
     meta: {
         type: "layout",
@@ -112,6 +112,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             var tsType = (0, type_1.getTSTypeByNode)(context, node).getNonNullableType();
             if (isConstructible(tsType))
                 return ['cases', 'constructible'];
+            console.log(node.name, "▼▼▼");
             if ((0, type_1.isDOMReturningFunction)(context, tsType, domTypePatterns)
                 || reactComponentTypePattern.test((0, type_1.typeToString)(context, tsType)))
                 return ['cases', 'reactComponent'];

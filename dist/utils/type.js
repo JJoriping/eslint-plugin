@@ -65,11 +65,14 @@ function isDOMReturningFunction(context, type, domTypePatterns) {
     if (!callSignatures.length)
         return false;
     var returnType = context.settings.typeChecker.getReturnTypeOfSignature(callSignatures[0]).getNonNullableType();
-    var returnTypeSymbol = returnType.getSymbol();
-    if (!returnTypeSymbol)
-        return false;
-    var returnTypeName = context.settings.typeChecker.getFullyQualifiedName(returnTypeSymbol);
-    return domTypePatterns.some(function (v) { return v.test(returnTypeName); });
+    var actualReturnTypes = returnType.isUnion() ? returnType.types : [returnType];
+    return actualReturnTypes.some(function (v) {
+        var returnTypeSymbol = v.getSymbol();
+        if (!returnTypeSymbol)
+            return false;
+        var returnTypeName = context.settings.typeChecker.getFullyQualifiedName(returnTypeSymbol);
+        return domTypePatterns.some(function (w) { return w.test(returnTypeName); });
+    });
 }
 exports.isDOMReturningFunction = isDOMReturningFunction;
 function isRestParameter(context, symbol) {
