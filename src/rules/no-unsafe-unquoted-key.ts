@@ -6,7 +6,7 @@ const propertyPattern = /\.\s*(\w+)$/;
 export default ESLintUtils.RuleCreator.withoutDocs({
   meta: {
     type: "layout",
-    fixable: "code",
+    hasSuggestions: true,
     messages: {
       'default': "Access to the unsafe key `{{key}}` should use a string literal."
     },
@@ -35,9 +35,12 @@ export default ESLintUtils.RuleCreator.withoutDocs({
           node: node.property,
           messageId: 'default',
           data: { key: node.property.name },
-          *fix(fixer){
-            yield fixer.replaceText(node, sourceCode.getText(node).replace(propertyPattern, "['$1']"));
-          }
+          suggest: [{
+            messageId: 'default',
+            *fix(fixer){
+              yield fixer.replaceText(node, sourceCode.getText(node).replace(propertyPattern, "['$1']"));
+            }
+          }]
         });
       }
     };

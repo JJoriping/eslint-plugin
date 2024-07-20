@@ -117,7 +117,6 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       const tsType = getTSTypeByNode(context, node).getNonNullableType();
 
       if(isConstructible(tsType)) return [ 'cases', 'constructible' ];
-      console.log(node.name, "▼▼▼");
       if(isDOMReturningFunction(context, tsType, domTypePatterns)
         || reactComponentTypePattern.test(typeToString(context, tsType))
       ) return [ 'cases', 'reactComponent' ];

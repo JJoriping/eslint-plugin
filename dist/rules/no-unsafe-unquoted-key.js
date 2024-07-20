@@ -33,7 +33,7 @@ var propertyPattern = /\.\s*(\w+)$/;
 exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
     meta: {
         type: "layout",
-        fixable: "code",
+        hasSuggestions: true,
         messages: {
             'default': "Access to the unsafe key `{{key}}` should use a string literal."
         },
@@ -60,16 +60,19 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                     node: node.property,
                     messageId: 'default',
                     data: { key: node.property.name },
-                    fix: function (fixer) {
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4 /*yield*/, fixer.replaceText(node, sourceCode.getText(node).replace(propertyPattern, "['$1']"))];
-                                case 1:
-                                    _a.sent();
-                                    return [2 /*return*/];
+                    suggest: [{
+                            messageId: 'default',
+                            fix: function (fixer) {
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0: return [4 /*yield*/, fixer.replaceText(node, sourceCode.getText(node).replace(propertyPattern, "['$1']"))];
+                                        case 1:
+                                            _a.sent();
+                                            return [2 /*return*/];
+                                    }
+                                });
                             }
-                        });
-                    }
+                        }]
                 });
             }
         };
