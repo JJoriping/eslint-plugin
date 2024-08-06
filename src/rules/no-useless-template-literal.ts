@@ -1,4 +1,4 @@
-import { ESLintUtils } from "@typescript-eslint/utils";
+import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
 
 const backtickPattern = /^`|`$/g;
 
@@ -24,6 +24,9 @@ export default ESLintUtils.RuleCreator.withoutDocs({
 
     return {
       TemplateLiteral: node => {
+        if(node.parent?.type === AST_NODE_TYPES.TaggedTemplateExpression){
+          return;
+        }
         if(node.expressions.length){
           return;
         }

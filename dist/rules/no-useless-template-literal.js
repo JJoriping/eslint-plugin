@@ -51,6 +51,10 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
         var sourceCode = context.getSourceCode();
         return {
             TemplateLiteral: function (node) {
+                var _a;
+                if (((_a = node.parent) === null || _a === void 0 ? void 0 : _a.type) === utils_1.AST_NODE_TYPES.TaggedTemplateExpression) {
+                    return;
+                }
                 if (node.expressions.length) {
                     return;
                 }
