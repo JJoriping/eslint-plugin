@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.hasEmptyLineBefore = exports.getIndentation = void 0;
+exports.getIndentation = getIndentation;
+exports.hasEmptyLineBefore = hasEmptyLineBefore;
 var patterns_1 = require("./patterns");
 function getIndentation(sourceCode, line) {
     return sourceCode.lines[line - 1].match(patterns_1.indentationPattern)[0];
 }
-exports.getIndentation = getIndentation;
 function hasEmptyLineBefore(sourceCode, node) {
     var prevToken = sourceCode.getTokenBefore(node);
     var token = sourceCode.getFirstToken(node);
@@ -19,4 +19,3 @@ function hasEmptyLineBefore(sourceCode, node) {
     }
     return false;
 }
-exports.hasEmptyLineBefore = hasEmptyLineBefore;

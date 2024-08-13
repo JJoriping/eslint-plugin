@@ -1,27 +1,33 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isRestParameter = exports.isDOMReturningFunction = exports.getObjectProperties = exports.getFunctionReturnType = exports.getFunctionParameters = exports.typeToString = exports.getTSTypeBySymbol = exports.getTSSymbolByNode = exports.getTSTypeByNode = exports.useTypeChecker = void 0;
+exports.useTypeChecker = useTypeChecker;
+exports.getTSTypeByNode = getTSTypeByNode;
+exports.getTSSymbolByNode = getTSSymbolByNode;
+exports.getTSTypeBySymbol = getTSTypeBySymbol;
+exports.typeToString = typeToString;
+exports.getFunctionParameters = getFunctionParameters;
+exports.getFunctionReturnType = getFunctionReturnType;
+exports.getObjectProperties = getObjectProperties;
+exports.isDOMReturningFunction = isDOMReturningFunction;
+exports.isRestParameter = isRestParameter;
 var utils_1 = require("@typescript-eslint/utils");
 function useTypeChecker(context) {
     context.settings.service = utils_1.ESLintUtils.getParserServices(context);
     context.settings.typeChecker = context.settings.service.program.getTypeChecker();
     return { service: context.settings.service, typeChecker: context.settings.typeChecker };
 }
-exports.useTypeChecker = useTypeChecker;
 function getTSTypeByNode(context, target) {
     var _a = context.settings, service = _a.service, typeChecker = _a.typeChecker;
     var tsNode = service.esTreeNodeToTSNodeMap.get(target);
     var type = typeChecker.getTypeAtLocation(tsNode);
     return type;
 }
-exports.getTSTypeByNode = getTSTypeByNode;
 function getTSSymbolByNode(context, target) {
     var _a = context.settings, service = _a.service, typeChecker = _a.typeChecker;
     var tsNode = service.esTreeNodeToTSNodeMap.get(target);
     var symbol = typeChecker.getSymbolAtLocation(tsNode);
     return symbol;
 }
-exports.getTSSymbolByNode = getTSSymbolByNode;
 function getTSTypeBySymbol(context, target, location) {
     var _a = context.settings, service = _a.service, typeChecker = _a.typeChecker;
     var tsNode = service.esTreeNodeToTSNodeMap.get(location);
@@ -31,11 +37,9 @@ function getTSTypeBySymbol(context, target, location) {
     }
     return type;
 }
-exports.getTSTypeBySymbol = getTSTypeBySymbol;
 function typeToString(context, type) {
     return context.settings.typeChecker.typeToString(type);
 }
-exports.typeToString = typeToString;
 function getFunctionParameters(context, callLikeExpression) {
     var _a = context.settings, service = _a.service, typeChecker = _a.typeChecker;
     var tsNode = service.esTreeNodeToTSNodeMap.get(callLikeExpression);
@@ -44,7 +48,6 @@ function getFunctionParameters(context, callLikeExpression) {
         return null;
     return signature.parameters;
 }
-exports.getFunctionParameters = getFunctionParameters;
 function getFunctionReturnType(context, declaration) {
     var _a;
     var _b = context.settings, service = _b.service, typeChecker = _b.typeChecker;
@@ -55,11 +58,9 @@ function getFunctionReturnType(context, declaration) {
     }
     return typeChecker.getReturnTypeOfSignature(signature);
 }
-exports.getFunctionReturnType = getFunctionReturnType;
 function getObjectProperties(context, node) {
     return getTSTypeByNode(context, node).getProperties();
 }
-exports.getObjectProperties = getObjectProperties;
 function isDOMReturningFunction(context, type, domTypePatterns) {
     var callSignatures = type.getCallSignatures();
     if (!callSignatures.length)
@@ -74,10 +75,8 @@ function isDOMReturningFunction(context, type, domTypePatterns) {
         return domTypePatterns.some(function (w) { return w.test(returnTypeName); });
     });
 }
-exports.isDOMReturningFunction = isDOMReturningFunction;
 function isRestParameter(context, symbol) {
     var typeChecker = context.settings.typeChecker;
     var parameterDeclaration = typeChecker.symbolToParameterDeclaration(symbol, undefined, undefined);
     return Boolean(parameterDeclaration === null || parameterDeclaration === void 0 ? void 0 : parameterDeclaration.dotDotDotToken);
 }
-exports.isRestParameter = isRestParameter;

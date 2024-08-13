@@ -1,9 +1,9 @@
 {
   "plugins": [
-    "@jjoriping/eslint-plugin"
+    "@daldalso/eslint-plugin"
   ],
   "extends": [
-    "plugin:@jjoriping/eslint-plugin/all"
+    "plugin:@daldalso/eslint-plugin/all"
   ],
   "rules": {
     "react-hooks/rules-of-hooks": "off"
