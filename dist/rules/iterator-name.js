@@ -159,7 +159,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             };
         };
         var getCurrentDepth = function (me) {
-            var ancestors = context.getAncestors();
+            var ancestors = sourceCode.getAncestors(me);
             var R = 0;
             for (var i = 0; i < ancestors.length; i++) {
                 var v = ancestors[i];

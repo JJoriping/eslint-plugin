@@ -1,6 +1,5 @@
 import type { CallExpression, Literal, NewExpression, Node, ObjectLiteralElement, TSLiteralType } from "@typescript-eslint/types/dist/generated/ast-spec";
-import { AST_NODE_TYPES } from "@typescript-eslint/types/dist/generated/ast-spec";
-import { ESLintUtils } from "@typescript-eslint/utils";
+import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
 import type { Symbol } from "typescript";
 import { keyishNamePattern as defaultKeyishNamePattern, valueishNamePattern as defaultValueishNamePattern } from "../utils/patterns";
 import type { MessageIdOf } from "../utils/type";

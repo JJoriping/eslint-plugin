@@ -57,8 +57,8 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             return "".concat(scope.block.range[0], ",").concat(scope.block.range[1], "/").concat(name);
         };
         return {
-            Program: function () {
-                var variables = getReassignedVariables(context.getScope());
+            Program: function (node) {
+                var variables = getReassignedVariables(sourceCode.getScope(node));
                 for (var _i = 0, variables_1 = variables; _i < variables_1.length; _i++) {
                     var v = variables_1[_i];
                     reassignedIdentifierTable[getKey(v)] = true;
@@ -68,7 +68,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 if (node.kind !== "let") {
                     return;
                 }
-                var scope = context.getScope();
+                var scope = sourceCode.getScope(node);
                 var kindToken = sourceCode.getFirstToken(node);
                 for (var _i = 0, _a = node.declarations; _i < _a.length; _i++) {
                     var v = _a[_i];

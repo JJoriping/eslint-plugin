@@ -150,7 +150,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
       };
     };
     const getCurrentDepth = (me:Node) => {
-      const ancestors = context.getAncestors();
+      const ancestors = sourceCode.getAncestors(me);
       let R = 0;
 
       for(let i = 0; i < ancestors.length; i++){

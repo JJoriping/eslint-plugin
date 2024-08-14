@@ -38,7 +38,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var ast_spec_1 = require("@typescript-eslint/types/dist/generated/ast-spec");
 var utils_1 = require("@typescript-eslint/utils");
 var patterns_1 = require("../utils/patterns");
 var OBJECT_OR_ARRAY_TYPES = [
@@ -89,7 +88,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             if (shouldBeSpaced === void 0) { shouldBeSpaced = false; }
             var opener;
             var payload;
-            if (from.type in ast_spec_1.AST_TOKEN_TYPES) {
+            if (from.type in utils_1.AST_TOKEN_TYPES) {
                 _a = [from, sourceCode.getTokenAfter(from)], opener = _a[0], payload = _a[1];
             }
             else {
@@ -125,7 +124,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             if (shouldBeSpaced === void 0) { shouldBeSpaced = false; }
             var payload;
             var closer;
-            if (from.type in ast_spec_1.AST_TOKEN_TYPES) {
+            if (from.type in utils_1.AST_TOKEN_TYPES) {
                 _a = [sourceCode.getTokenBefore(from), from], payload = _a[0], closer = _a[1];
             }
             else if ('typeAnnotation' in from && from.typeAnnotation) {

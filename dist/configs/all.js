@@ -1,20 +1,35 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var stylisticPlugin = require("@stylistic/eslint-plugin-ts");
+var compat_1 = require("@eslint/compat");
+var importPlugin = require("eslint-plugin-import");
+var tsLintParser = require("@typescript-eslint/parser");
+var tsLintPlugin = require("@typescript-eslint/eslint-plugin");
+var reactPlugin = require("eslint-plugin-react");
+var reactHooksPlugin = require("eslint-plugin-react-hooks");
+var unicornPlugin = require("eslint-plugin-unicorn");
 exports.default = {
-    parser: "@typescript-eslint/parser",
-    parserOptions: {
-        sourceType: "module",
-        ecmaFeatures: {
-            "jsx": true
-        }
-    },
-    plugins: [
-        "@typescript-eslint",
-        "import",
-        "react",
-        "react-hooks",
-        "unicorn"
+    files: [
+        "**/*.{ts,tsx}"
     ],
+    languageOptions: {
+        parserOptions: {
+            project: "./tsconfig.json",
+            ecmaFeatures: {
+                "jsx": true
+            }
+        },
+        parser: tsLintParser,
+        sourceType: "module"
+    },
+    plugins: {
+        '@stylistic': stylisticPlugin,
+        '@typescript-eslint': tsLintPlugin,
+        'import': (0, compat_1.fixupPluginRules)(importPlugin),
+        'react': reactPlugin,
+        'react-hooks': reactHooksPlugin,
+        'unicorn': unicornPlugin
+    },
     settings: {
         react: {
             version: "detect"
@@ -106,16 +121,16 @@ exports.default = {
         'template-curly-spacing': "warn",
         'template-tag-spacing': "warn",
         'yield-star-spacing': ["warn", "before"],
-        // TSLint rules - extensions
-        '@typescript-eslint/brace-style': "warn",
-        '@typescript-eslint/comma-dangle': [
+        // Stylistic rules
+        '@stylistic/brace-style': "warn",
+        '@stylistic/comma-dangle': [
             "warn",
             // NOTE Problem with `<T,>() => ...`
             { generics: "ignore" }
         ],
-        '@typescript-eslint/comma-spacing': "warn",
-        '@typescript-eslint/func-call-spacing': ["warn", "never"],
-        '@typescript-eslint/indent': [
+        '@stylistic/comma-spacing': "warn",
+        '@stylistic/func-call-spacing': ["warn", "never"],
+        '@stylistic/indent': [
             "warn",
             2,
             {
@@ -130,7 +145,7 @@ exports.default = {
                 ]
             }
         ],
-        '@typescript-eslint/keyword-spacing': ["warn", {
+        '@stylistic/keyword-spacing': ["warn", {
                 overrides: {
                     catch: { before: false, after: false },
                     do: { before: true, after: false },
@@ -146,20 +161,33 @@ exports.default = {
                     with: { before: true, after: false }
                 }
             }],
-        '@typescript-eslint/no-extra-parens': [
+        '@stylistic/member-delimiter-style': ["warn", {
+                overrides: {
+                    interface: {
+                        singleline: { delimiter: "semi", requireLast: true },
+                        multiline: { delimiter: "semi", requireLast: true }
+                    },
+                    typeLiteral: {
+                        singleline: { delimiter: "comma", requireLast: false },
+                        multiline: { delimiter: "comma", requireLast: false }
+                    }
+                }
+            }],
+        '@stylistic/no-extra-parens': [
             "warn",
             "all",
             { ignoreJSX: "all", nestedBinaryExpressions: false }
         ],
-        '@typescript-eslint/no-extra-semi': "error",
+        '@stylistic/no-extra-semi': "error",
+        '@stylistic/semi': "warn",
+        '@stylistic/space-before-blocks': ["warn", "never"],
+        '@stylistic/space-before-function-paren': ["warn", { anonymous: "never", named: "never", asyncArrow: "always" }],
+        // TSLint rules - extensions
         '@typescript-eslint/no-shadow': ["warn", { allow: ["_"] }],
-        '@typescript-eslint/no-throw-literal': "error",
         '@typescript-eslint/no-unused-expressions': ["error", { allowShortCircuit: true, enforceForJSX: true }],
         '@typescript-eslint/no-useless-constructor': "warn",
+        '@typescript-eslint/only-throw-error': "error",
         '@typescript-eslint/return-await': "error",
-        '@typescript-eslint/semi': "warn",
-        '@typescript-eslint/space-before-blocks': ["warn", "never"],
-        '@typescript-eslint/space-before-function-paren': ["warn", { anonymous: "never", named: "never", asyncArrow: "always" }],
         // TSLint rules - errors
         '@typescript-eslint/adjacent-overload-signatures': "error",
         '@typescript-eslint/consistent-indexed-object-style': "error",
@@ -171,11 +199,11 @@ exports.default = {
         '@typescript-eslint/no-extra-non-null-assertion': "error",
         '@typescript-eslint/no-misused-new': "error",
         '@typescript-eslint/no-non-null-asserted-nullish-coalescing': "error",
-        '@typescript-eslint/no-parameter-properties': "error",
         '@typescript-eslint/no-this-alias': "error",
         '@typescript-eslint/no-unnecessary-type-constraint': "error",
         '@typescript-eslint/no-unsafe-call': "error",
         '@typescript-eslint/no-useless-empty-export': "error",
+        '@typescript-eslint/parameter-properties': "error",
         '@typescript-eslint/prefer-literal-enum-member': "error",
         '@typescript-eslint/restrict-plus-operands': "error",
         // TSLint rules - warnings
@@ -185,18 +213,6 @@ exports.default = {
         '@typescript-eslint/consistent-type-assertions': ["warn", {
                 assertionStyle: "as",
                 objectLiteralTypeAssertions: "allow"
-            }],
-        '@typescript-eslint/member-delimiter-style': ["warn", {
-                overrides: {
-                    interface: {
-                        singleline: { delimiter: "semi", requireLast: true },
-                        multiline: { delimiter: "semi", requireLast: true }
-                    },
-                    typeLiteral: {
-                        singleline: { delimiter: "comma", requireLast: false },
-                        multiline: { delimiter: "comma", requireLast: false }
-                    }
-                }
             }],
         '@typescript-eslint/no-base-to-string': "warn",
         '@typescript-eslint/no-empty-interface': "warn",
@@ -246,7 +262,7 @@ exports.default = {
         'react/require-optimization': "warn",
         'react/self-closing-comp': "warn",
         'react/void-dom-elements-no-children': "error",
-        // Import rules
+        // Import rules (incompatible with eslint 9)
         'import/first': "error",
         'import/order': [
             "warn",

@@ -1,6 +1,5 @@
 import type { ArrayExpression, ArrayPattern, Node, ObjectExpression, ObjectPattern, Token, ImportDeclaration, ExportNamedDeclaration } from "@typescript-eslint/types/dist/generated/ast-spec";
-import { AST_TOKEN_TYPES } from "@typescript-eslint/types/dist/generated/ast-spec";
-import { AST_NODE_TYPES, ESLintUtils } from "@typescript-eslint/utils";
+import { AST_NODE_TYPES, AST_TOKEN_TYPES, ESLintUtils } from "@typescript-eslint/utils";
 
 import { closingLinePattern } from "../utils/patterns";
 

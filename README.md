@@ -4,19 +4,13 @@ ESLint plugin for [Daldalso](https://daldal.so)-style programming.
 
 ## Getting Started
 1. `yarn add @daldalso/eslint-plugin`
-2. Add following values to your ESLint configuration file.
-   ```json
-   {
-     "plugins": [
-       "@daldalso/eslint-plugin"
-     ],
-     "extends": [
-       "plugin:@daldalso/eslint-plugin/all"
-     ],
-     "parserOptions": {
-       "project": "./tsconfig.json"
-     }
-   }
+2. Add the plugin to your ESLint 9 configuration file like below:
+   ```js
+   import daldalsoPlugin from "@daldalso/eslint-plugin";
+
+   export default [
+     daldalsoPlugin.configs.all
+   ];
    ```
 
 ## Caveats

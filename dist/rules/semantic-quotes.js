@@ -27,7 +27,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var ast_spec_1 = require("@typescript-eslint/types/dist/generated/ast-spec");
 var utils_1 = require("@typescript-eslint/utils");
 var patterns_1 = require("../utils/patterns");
 var type_1 = require("../utils/type");
@@ -66,7 +65,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
         var valueishNamePattern = new RegExp(valueishNamePatternString);
         var sourceCode = context.getSourceCode();
         var assertStringLiteral = function (node, as, messageId) {
-            if (node.type !== ast_spec_1.AST_NODE_TYPES.Literal) {
+            if (node.type !== utils_1.AST_NODE_TYPES.Literal) {
                 return;
             }
             if (!quotes.includes(node.raw[0])) {
@@ -127,18 +126,18 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             }, {});
             for (var _i = 0, values_1 = values; _i < values_1.length; _i++) {
                 var v = values_1[_i];
-                if (v.type !== ast_spec_1.AST_NODE_TYPES.Property)
+                if (v.type !== utils_1.AST_NODE_TYPES.Property)
                     continue;
-                if (v.key.type !== ast_spec_1.AST_NODE_TYPES.Literal)
+                if (v.key.type !== utils_1.AST_NODE_TYPES.Literal)
                     continue;
                 if (typeof v.key.value !== "string")
                     continue;
                 var keySymbol = typeMap[v.key.value];
                 assertStringLiteral(v.key, 'key', 'from-keyish-usage');
-                if (keySymbol && v.value.type === ast_spec_1.AST_NODE_TYPES.Literal) {
+                if (keySymbol && v.value.type === utils_1.AST_NODE_TYPES.Literal) {
                     checkLiteral(keySymbol, v.value, true);
                 }
-                else if (v.value.type === ast_spec_1.AST_NODE_TYPES.ObjectExpression) {
+                else if (v.value.type === utils_1.AST_NODE_TYPES.ObjectExpression) {
                     checkObjectExpression((0, type_1.getTSTypeByNode)(context, v.value).getNonNullableType().getProperties(), v.value.properties);
                 }
             }
@@ -158,7 +157,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                     var argument = node.arguments[i];
                     var isRest = (0, type_1.isRestParameter)(context, parameter);
                     switch (argument.type) {
-                        case ast_spec_1.AST_NODE_TYPES.Literal:
+                        case utils_1.AST_NODE_TYPES.Literal:
                             if (!parameterIndex && isCallingEventMethod(node)) {
                                 assertStringLiteral(argument, 'key', 'from-event');
                             }
@@ -166,15 +165,15 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                                 checkLiteral(parameter, argument, false, isRest);
                             }
                             break;
-                        case ast_spec_1.AST_NODE_TYPES.ConditionalExpression:
+                        case utils_1.AST_NODE_TYPES.ConditionalExpression:
                             for (var _i = 0, _a = [argument.consequent, argument.alternate]; _i < _a.length; _i++) {
                                 var w = _a[_i];
-                                if (w.type !== ast_spec_1.AST_NODE_TYPES.Literal)
+                                if (w.type !== utils_1.AST_NODE_TYPES.Literal)
                                     continue;
                                 checkLiteral(parameter, w);
                             }
                             break;
-                        case ast_spec_1.AST_NODE_TYPES.ObjectExpression:
+                        case utils_1.AST_NODE_TYPES.ObjectExpression:
                             checkObjectExpression((0, type_1.getTSTypeBySymbol)(context, parameter, node).getProperties(), argument.properties);
                             break;
                     }
@@ -189,17 +188,17 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             ObjectExpression: function (node) {
                 var _a;
                 switch ((_a = node.parent) === null || _a === void 0 ? void 0 : _a.type) {
-                    case ast_spec_1.AST_NODE_TYPES.VariableDeclarator:
+                    case utils_1.AST_NODE_TYPES.VariableDeclarator:
                         checkObjectExpression((0, type_1.getObjectProperties)(context, node.parent.id), node.properties);
                         break;
-                    case ast_spec_1.AST_NODE_TYPES.TSAsExpression:
+                    case utils_1.AST_NODE_TYPES.TSAsExpression:
                         checkObjectExpression((0, type_1.getObjectProperties)(context, node.parent.typeAnnotation), node.properties);
                         break;
                 }
             },
             TSLiteralType: function (node) {
                 var _a;
-                if (((_a = node.parent) === null || _a === void 0 ? void 0 : _a.type) === ast_spec_1.AST_NODE_TYPES.TSIndexedAccessType) {
+                if (((_a = node.parent) === null || _a === void 0 ? void 0 : _a.type) === utils_1.AST_NODE_TYPES.TSIndexedAccessType) {
                     assertStringLiteral(node.literal, 'key', 'from-keyish-name');
                     return;
                 }
@@ -207,11 +206,11 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                 v: for (var _i = 0, _b = context.getAncestors().reverse(); _i < _b.length; _i++) {
                     var v = _b[_i];
                     switch (v.type) {
-                        case ast_spec_1.AST_NODE_TYPES.TSPropertySignature:
+                        case utils_1.AST_NODE_TYPES.TSPropertySignature:
                             fromGeneric = false;
                             break v;
-                        case ast_spec_1.AST_NODE_TYPES.TSTypeParameter:
-                        case ast_spec_1.AST_NODE_TYPES.TSTypeParameterInstantiation:
+                        case utils_1.AST_NODE_TYPES.TSTypeParameter:
+                        case utils_1.AST_NODE_TYPES.TSTypeParameterInstantiation:
                             fromGeneric = true;
                             break v;
                     }
@@ -230,11 +229,11 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
     }
 });
 function isCallingEventMethod(node) {
-    if (node.type !== ast_spec_1.AST_NODE_TYPES.CallExpression)
+    if (node.type !== utils_1.AST_NODE_TYPES.CallExpression)
         return false;
-    if (node.callee.type !== ast_spec_1.AST_NODE_TYPES.MemberExpression)
+    if (node.callee.type !== utils_1.AST_NODE_TYPES.MemberExpression)
         return false;
-    if (node.callee.property.type !== ast_spec_1.AST_NODE_TYPES.Identifier)
+    if (node.callee.property.type !== utils_1.AST_NODE_TYPES.Identifier)
         return false;
     return eventMethodNames.includes(node.callee.property.name);
 }

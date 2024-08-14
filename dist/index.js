@@ -4,7 +4,7 @@ var path_1 = require("path");
 var all_1 = require("./configs/all");
 var rules = (0, fs_1.readdirSync)((0, path_1.resolve)(__dirname, "rules"));
 var fileNamePattern = /^(.+)\.js$/;
-module.exports = {
+var plugin = {
     rules: rules.reduce(function (pv, v) {
         var chunk = v.match(fileNamePattern);
         if (!chunk)
@@ -16,3 +16,5 @@ module.exports = {
         all: all_1.default
     }
 };
+Object.assign(all_1.default.plugins, { '@daldalso': plugin });
+module.exports = plugin;

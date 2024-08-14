@@ -20,8 +20,8 @@ export default ESLintUtils.RuleCreator.withoutDocs({
     const getKey = ({ scope, name }:Variable) => `${scope.block.range[0]},${scope.block.range[1]}/${name}`;
 
     return {
-      Program: () => {
-        const variables = getReassignedVariables(context.getScope());
+      Program: node => {
+        const variables = getReassignedVariables(sourceCode.getScope(node));
 
         for(const v of variables){
           reassignedIdentifierTable[getKey(v)] = true;
@@ -31,7 +31,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         if(node.kind !== "let"){
           return;
         }
-        const scope = context.getScope();
+        const scope = sourceCode.getScope(node);
         const kindToken = sourceCode.getFirstToken(node)!;
 
         for(const v of node.declarations){
