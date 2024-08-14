@@ -203,7 +203,7 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
                     return;
                 }
                 var fromGeneric = false;
-                v: for (var _i = 0, _b = context.getAncestors().reverse(); _i < _b.length; _i++) {
+                v: for (var _i = 0, _b = sourceCode.getAncestors(node).reverse(); _i < _b.length; _i++) {
                     var v = _b[_i];
                     switch (v.type) {
                         case utils_1.AST_NODE_TYPES.TSPropertySignature:

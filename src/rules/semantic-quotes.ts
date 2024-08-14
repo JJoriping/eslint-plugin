@@ -168,7 +168,7 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         }
         let fromGeneric = false;
 
-        v: for(const v of context.getAncestors().reverse()){
+        v: for(const v of sourceCode.getAncestors(node).reverse()){
           switch(v.type){
             case AST_NODE_TYPES.TSPropertySignature:
               fromGeneric = false;
