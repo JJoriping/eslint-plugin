@@ -324,6 +324,9 @@ function getScore(node) {
             case "private":
                 accessModifierScore = 1 /* ScoreValue.PRIVATE */;
                 break;
+            case undefined:
+                accessModifierScore = 4 /* ScoreValue.IMPLICITLY_PUBLIC */;
+                break;
             default: throw Error("Unhandled accessibility: ".concat(node.accessibility));
         }
     else

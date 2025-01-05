@@ -276,6 +276,7 @@ function getScore(node:Node):number{
     case "public": accessModifierScore = ScoreValue.PUBLIC; break;
     case "protected": accessModifierScore = ScoreValue.PROTECTED; break;
     case "private": accessModifierScore = ScoreValue.PRIVATE; break;
+    case undefined: accessModifierScore = ScoreValue.IMPLICITLY_PUBLIC; break;
     default: throw Error(`Unhandled accessibility: ${node.accessibility}`);
   }else accessModifierScore = ScoreValue.IMPLICITLY_PUBLIC;
   if(invertedAccessModifierOrder){
