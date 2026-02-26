@@ -1,6 +1,6 @@
 {
   "name": "@daldalso/eslint-plugin",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "main": "./dist/index.js",
   "repository": {
     "url": "git+https://github.com/JJoriping/eslint-plugin.git"
@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "@eslint/compat": "^1.1.1",
-    "@stylistic/eslint-plugin-ts": "^2.6.2",
+    "@stylistic/eslint-plugin-ts": "^4",
     "@typescript-eslint/eslint-plugin": "^8.1.0",
     "@typescript-eslint/parser": "^8.1.0",
     "@typescript-eslint/types": "^8.1.0",

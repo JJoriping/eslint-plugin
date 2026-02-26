@@ -24,6 +24,7 @@ var kindTable = {
     filter: ["value", "index"],
     find: ["value", "index"],
     findIndex: ["value", "index"],
+    flatMap: ["value", "index"],
     forEach: ["value", "index"],
     map: ["value", "index"],
     reduce: ["previousValue", "value", "index"],
