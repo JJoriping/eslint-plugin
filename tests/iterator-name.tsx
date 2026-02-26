@@ -2,6 +2,9 @@ import React from "react";
 
 declare const keys:string[];
 declare const list:[null]|string[];
+declare const optionalList:Array<{
+  'foo': number[]
+}>|undefined;
 
 // O
 [].map(v => {});
@@ -24,6 +27,11 @@ console.log(<>
     </a>
   ))}
 </>);
+optionalList?.map(v => {
+  for(const w of v.foo){
+    console.log(w);
+  }
+});
 
 // X
 [].map(item => {});

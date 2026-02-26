@@ -72,11 +72,12 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         if(prevScore !== undefined){
           if(prevScore < score){
             context.report({
-              node: v,
+              node: v.parent,
               messageId: "interorder",
               data: { target: getScoreString(score), base: getScoreString(prevScore) },
               suggest: suggest(list.length, v.parent)
             });
+            break;
           }else if(checkEmptyLine && Math.floor(0.01 * prevScore) - Math.floor(0.01 * score) > 0){
             if(!hasEmptyLineBefore(sourceCode, v)){
               context.report({
@@ -96,11 +97,12 @@ export default ESLintUtils.RuleCreator.withoutDocs({
 
           if(prevKey && !isGroupHead && prevScore === score && compareString(prevKey, key) > 0){
             context.report({
-              node: v,
+              node: v.parent,
               messageId: "intraorder",
               data: { target: key, base: prevKey },
               suggest: suggest(list.length, v.parent)
             });
+            break;
           }
           prevKey = key;
         }

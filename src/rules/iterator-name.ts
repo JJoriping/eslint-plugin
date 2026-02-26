@@ -4,7 +4,7 @@ import { keyListLikeNamePattern as defaultKeyListLikeNamePattern } from "../util
 import { toOrdinal } from "../utils/text";
 import { getTSTypeByNode, useTypeChecker } from "../utils/type";
 
-const iterativeMethods = [ "map", "reduce", "every", "some", "forEach", "filter", "find", "findIndex" ];
+const iterativeMethods = [ "flatMap", "map", "reduce", "every", "some", "forEach", "filter", "find", "findIndex" ];
 const kindTable:Record<string, Array<'index'|'key'|'value'|'previousKey'|'previousValue'|'entry'>> = {
   for: [ "index" ],
   forIn: [ "key" ],
@@ -134,9 +134,6 @@ export default ESLintUtils.RuleCreator.withoutDocs({
         || v.type === AST_NODE_TYPES.ArrayPattern
         || v.type === AST_NODE_TYPES.ObjectPattern
       )){
-        return null;
-      }
-      if(!getTSTypeByNode(context, node.callee.object).getNumberIndexType()){
         return null;
       }
       if(!iterativeMethods.includes(node.callee.property.name)){

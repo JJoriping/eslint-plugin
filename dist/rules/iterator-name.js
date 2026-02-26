@@ -13,7 +13,7 @@ var utils_1 = require("@typescript-eslint/utils");
 var patterns_1 = require("../utils/patterns");
 var text_1 = require("../utils/text");
 var type_1 = require("../utils/type");
-var iterativeMethods = ["map", "reduce", "every", "some", "forEach", "filter", "find", "findIndex"];
+var iterativeMethods = ["flatMap", "map", "reduce", "every", "some", "forEach", "filter", "find", "findIndex"];
 var kindTable = {
     for: ["index"],
     forIn: ["key"],
@@ -143,9 +143,6 @@ exports.default = utils_1.ESLintUtils.RuleCreator.withoutDocs({
             if (!node.arguments[0].params.every(function (v) { return v.type === utils_1.AST_NODE_TYPES.Identifier
                 || v.type === utils_1.AST_NODE_TYPES.ArrayPattern
                 || v.type === utils_1.AST_NODE_TYPES.ObjectPattern; })) {
-                return null;
-            }
-            if (!(0, type_1.getTSTypeByNode)(context, node.callee.object).getNumberIndexType()) {
                 return null;
             }
             if (!iterativeMethods.includes(node.callee.property.name)) {
